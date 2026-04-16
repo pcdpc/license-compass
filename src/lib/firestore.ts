@@ -13,7 +13,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { StateLicense, CeuEntry, LicenseDocument, UserProfile } from '@/types/schema';
+import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotification } from '@/types/schema';
 
 // ─── User Profile ───────────────────────────────────────────────────────────
 
@@ -35,6 +35,11 @@ export async function updateUserProfile(userId: string, data: Partial<UserProfil
     ...data,
     updatedAt: serverTimestamp(),
   });
+}
+
+export async function getAllUsers(): Promise<(UserProfile & { id: string })[]> {
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() } as UserProfile & { id: string }));
 }
 
 // ─── State Licenses ─────────────────────────────────────────────────────────
@@ -133,8 +138,88 @@ export async function createDocument(userId: string, data: Omit<LicenseDocument,
   return docRef.id;
 }
 
+export async function getDocumentsByState(userId: string, stateCode: string): Promise<LicenseDocument[]> {
+  const q = query(
+    docsCol(userId), 
+    where('stateCode', 'in', [stateCode, 'ALL'])
+  );
+  const snap = await getDocs(q);
+  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as LicenseDocument));
+  
+  // Sort in-memory by date (descending) to avoid needing a composite index
+  return docs.sort((a, b) => {
+    const timeA = a.uploadedAt instanceof Date ? a.uploadedAt.getTime() : (a.uploadedAt as any).seconds * 1000;
+    const timeB = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : (b.uploadedAt as any).seconds * 1000;
+    return timeB - timeA;
+  });
+}
+
 export async function deleteDocument(userId: string, documentId: string): Promise<void> {
   await deleteDoc(doc(db, 'users', userId, 'documents', documentId));
+}
+
+export async function updateDocument(userId: string, documentId: string, data: Partial<LicenseDocument>): Promise<void> {
+  await updateDoc(doc(db, 'users', userId, 'documents', documentId), {
+    ...data,
+    updatedAt: new Date()
+  });
+}
+
+// ─── Notifications ──────────────────────────────────────────────────────────
+
+const notifsCol = (userId: string) =>
+  collection(db, 'users', userId, 'notifications');
+
+export async function getUserNotifications(userId: string): Promise<InAppNotification[]> {
+  const q = query(notifsCol(userId));
+  const snap = await getDocs(q);
+  const notifs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as InAppNotification));
+  
+  // Filter and sort in-memory to avoid needing a composite index
+  return notifs
+    .filter(n => !n.read)
+    .sort((a, b) => {
+      const timeA = toDate(a.createdAt)?.getTime() || 0;
+      const timeB = toDate(b.createdAt)?.getTime() || 0;
+      return timeB - timeA;
+    });
+}
+
+export async function markNotificationAsRead(userId: string, notifId: string): Promise<void> {
+  await updateDoc(doc(db, 'users', userId, 'notifications', notifId), {
+    read: true,
+  });
+}
+
+export async function clearAllNotifications(userId: string): Promise<void> {
+  const q = query(notifsCol(userId), where('read', '==', false));
+  const snap = await getDocs(q);
+  const batch = snap.docs.map(d => updateDoc(d.ref, { read: true }));
+  await Promise.all(batch);
+}
+
+export async function createNotification(userId: string, data: Omit<InAppNotification, 'id' | 'userId' | 'createdAt'>): Promise<string> {
+  const docRef = await addDoc(notifsCol(userId), {
+    ...data,
+    userId,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+export async function deleteUserFullAccount(userId: string): Promise<void> {
+  // 1. Delete all sub-collection data
+  const collections = ['licenses', 'ceus', 'documents', 'notifications'];
+  
+  for (const colName of collections) {
+    const colRef = collection(db, 'users', userId, colName);
+    const snap = await getDocs(colRef);
+    const batch = snap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(batch);
+  }
+
+  // 2. Delete the main User Profile
+  await deleteDoc(doc(db, 'users', userId));
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

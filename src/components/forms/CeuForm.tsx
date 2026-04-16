@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import type { CeuCategory } from '@/types/schema';
-import { Save, X } from 'lucide-react';
+import { Save, X, Upload, FileText, CheckCircle } from 'lucide-react';
 
 const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
@@ -20,6 +20,7 @@ interface CeuFormProps {
     category: CeuCategory;
     appliesToStates: string[];
     notes: string;
+    certificateFile?: File | null;
   }) => void | Promise<void>;
   onCancel: () => void;
 }
@@ -36,7 +37,9 @@ export function CeuForm({ onSubmit, onCancel }: CeuFormProps) {
   const [category, setCategory] = useState<CeuCategory>('general');
   const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleState = (code: string) => {
     setSelectedStates((prev) =>
@@ -44,11 +47,26 @@ export function CeuForm({ onSubmit, onCancel }: CeuFormProps) {
     );
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await onSubmit({ title, provider, courseDate, hours, category, appliesToStates: selectedStates, notes });
+      await onSubmit({ 
+        title, 
+        provider, 
+        courseDate, 
+        hours, 
+        category, 
+        appliesToStates: selectedStates, 
+        notes,
+        certificateFile: file
+      });
     } finally {
       setSaving(false);
     }
@@ -86,6 +104,41 @@ export function CeuForm({ onSubmit, onCancel }: CeuFormProps) {
               <option value="jurisprudence">Jurisprudence</option>
               <option value="other">Other</option>
             </select>
+          </div>
+          
+          {/* File Upload Section */}
+          <div className="md:col-span-2">
+            <label className={labelClass}>Certificate Document (Optional)</label>
+            {!file ? (
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all cursor-pointer group"
+              >
+                <Upload className="w-8 h-8 text-zinc-500 group-hover:text-indigo-400 mx-auto mb-2" />
+                <p className="text-sm font-bold text-zinc-300">Upload Certificate</p>
+                <p className="text-xs text-zinc-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} accept=".pdf,image/*" />
+              </div>
+            ) : (
+              <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-sm font-bold text-zinc-100 truncate">{file.name}</p>
+                    <p className="text-xs text-emerald-400/70 font-medium">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => setFile(null)}
+                  className="p-2 text-zinc-500 hover:text-rose-400 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -129,3 +182,4 @@ export function CeuForm({ onSubmit, onCancel }: CeuFormProps) {
     </form>
   );
 }
+

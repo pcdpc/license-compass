@@ -2,7 +2,7 @@ import type { StateLicense, CeuEntry } from '@/types/schema';
 import { toDate, daysUntil } from './firestore';
 
 export interface ReadinessResult {
-  readyStatus: 'ready' | 'almost_ready' | 'blocked' | 'expired';
+  readyStatus: 'ready' | 'almost_ready' | 'not_ready' | 'expired';
   readinessScore: number; // 0–100
   nextAction: string;
   issues: string[];
@@ -24,7 +24,9 @@ export function calculateReadiness(
 
   // ── RN License ──
   if (license.rnRequired) {
-    if (license.rnStatus === 'active') {
+    if (license.isRnCompact && license.rnCompactOriginalState) {
+      score += weights.rn; // Covered by compact state
+    } else if (license.rnStatus === 'active') {
       const daysLeft = daysUntil(toDate(license.rnExpirationDate));
       if (daysLeft !== null && daysLeft < 0) {
         issues.push('RN license is expired');
@@ -129,29 +131,42 @@ export function calculateReadiness(
   }
 
   // ── Background / Fingerprint ──
-  if (license.backgroundCheckRequired && !license.backgroundCheckCompleted) {
+  // Only grant points if requirement is specifically completed (either met or not required)
+  // But if the user hasn't clicked anything, we don't grant "free" points towards 90+
+  if (license.backgroundCheckRequired && !license.backgroundCheckCompleted && !license.backgroundCheckDocumentId) {
     issues.push('Background check not completed');
-  } else if (license.fingerprintRequired && !license.fingerprintCompleted) {
+  } else if (license.fingerprintRequired && !license.fingerprintCompleted && !license.fingerprintDocumentId) {
     issues.push('Fingerprints not submitted');
-  } else {
+  } else if (license.backgroundCheckRequired || license.fingerprintRequired || license.backgroundCheckCompleted || license.fingerprintCompleted) {
     score += weights.background;
+  } else {
+    // If nothing is clicked at all, we don't give the points, but we don't add an issue either.
+    // This keeps the score below 90 unless they engage with the requirements.
   }
 
   // ── Compute final status ──
-  const readinessScore = Math.round(score);
-
+  let readinessScore = Math.round(score);
   let readyStatus: ReadinessResult['readyStatus'];
-  if (issues.some((i) => i.includes('expired'))) {
+  
+  const isApplicationActive = license.applicationStatus === 'active';
+  const isLicenseActive = license.rnStatus === 'active' || license.aprnStatus === 'active';
+  const hasExpired = issues.some((i) => i.includes('expired'));
+
+  // OVERRIDE: If both are active, it's 100% ready regardless of other fields
+  if (isApplicationActive && isLicenseActive && !hasExpired) {
+    readinessScore = 100;
+    readyStatus = 'ready';
+  } else if (hasExpired) {
     readyStatus = 'expired';
   } else if (readinessScore >= 90) {
     readyStatus = 'ready';
   } else if (readinessScore >= 60) {
     readyStatus = 'almost_ready';
   } else {
-    readyStatus = 'blocked';
+    readyStatus = 'not_ready';
   }
 
-  const nextAction = issues.length > 0 ? issues[0] : 'None';
+  const nextAction = issues.length > 0 ? issues[0] : (readyStatus === 'ready' ? 'None' : 'Set active status');
 
   return { readyStatus, readinessScore, nextAction, issues };
 }

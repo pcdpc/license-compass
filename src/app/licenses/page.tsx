@@ -1,19 +1,122 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { ReadyStatus } from '@/types/schema';
-import { Plus, ArrowRight } from 'lucide-react';
-
-// Mock list based on the spec "Seed Data" section
-const mockLicenses: { id: string, state: string, rnAction: string, aprnAction: string, readyStatus: ReadyStatus, nextAction: string }[] = [
-  { id: 'GA', state: 'Georgia', rnAction: 'Active - Expires 1/2026', aprnAction: 'Active - Expires 1/2026', readyStatus: 'ready', nextAction: 'None' },
-  { id: 'TX', state: 'Texas', rnAction: 'Active', aprnAction: 'Active', readyStatus: 'almost_ready', nextAction: 'Needs Collaborative Agreement' },
-  { id: 'AZ', state: 'Arizona', rnAction: 'Pending', aprnAction: 'Pending', readyStatus: 'blocked', nextAction: 'Awaiting Fingerprints' },
-];
+import { StateLicense } from '@/types/schema';
+import { Plus, ArrowRight, Loader2, Map, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { getUserLicenses, deleteLicense } from '@/lib/firestore';
 
 export default function LicensesPage() {
+  const { user } = useAuth();
+  const [licenses, setLicenses] = useState<StateLicense[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  type SortKey = 'stateName' | 'rnStatus' | 'aprnStatus' | 'readyStatus';
+  type SortDirection = 'asc' | 'desc';
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    let isMounted = true;
+    const fetchLicenses = async () => {
+      try {
+        const data = await getUserLicenses(user.uid);
+        if (isMounted) {
+          setLicenses(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching licenses:', error);
+        if (isMounted) setLoading(false);
+      }
+    };
+    
+    fetchLicenses();
+    return () => { isMounted = false; };
+  }, [user]);
+
+  const getStatusDisplay = (status: string, expiration?: any, isCompact?: boolean) => {
+    if (isCompact) {
+      return 'Compact';
+    }
+    if (status === 'active') {
+      if (expiration) {
+        const date = expiration.toDate ? expiration.toDate() : new Date(expiration);
+        return `Active - Exp ${date.toLocaleDateString(undefined, {month: 'numeric', year: 'numeric'})}`;
+      }
+      return 'Active';
+    }
+    return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  const handleSort = (key: SortKey) => {
+    setSortConfig(prev => {
+      if (prev && prev.key === key && prev.direction === 'asc') {
+        return { key, direction: 'desc' };
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
+  const sortedLicenses = React.useMemo(() => {
+    const sortableLicenses = [...licenses];
+    if (sortConfig !== null) {
+      sortableLicenses.sort((a, b) => {
+        let aVal = String(a[sortConfig.key] || '').toLowerCase();
+        let bVal = String(b[sortConfig.key] || '').toLowerCase();
+
+        if (sortConfig.key === 'rnStatus') {
+          aVal = getStatusDisplay(a.rnStatus, a.rnExpirationDate, a.isRnCompact).toLowerCase();
+          bVal = getStatusDisplay(b.rnStatus, b.rnExpirationDate, b.isRnCompact).toLowerCase();
+        } else if (sortConfig.key === 'aprnStatus') {
+          aVal = getStatusDisplay(a.aprnStatus, a.aprnExpirationDate).toLowerCase();
+          bVal = getStatusDisplay(b.aprnStatus, b.aprnExpirationDate).toLowerCase();
+        }
+
+        if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortableLicenses;
+  }, [licenses, sortConfig]);
+
+  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
+    if (sortConfig?.key !== columnKey) return <ChevronUp className="w-3 h-3 opacity-0 group-hover:opacity-30 inline-block ml-1 transition-opacity" />;
+    return sortConfig.direction === 'asc' ? 
+      <ChevronUp className="w-3 h-3 inline-block ml-1 text-indigo-400" /> : 
+      <ChevronDown className="w-3 h-3 inline-block ml-1 text-indigo-400" />;
+  };
+
+  const handleDelete = async (licenseId: string, stateName: string) => {
+    if (!user) return;
+    if (window.confirm(`Are you sure you want to delete the license for ${stateName}? This cannot be undone.`)) {
+      try {
+        await deleteLicense(user.uid, licenseId);
+        setLicenses(prev => prev.filter(l => l.id !== licenseId));
+      } catch (error) {
+        console.error('Error deleting license:', error);
+        alert('Failed to delete license.');
+      }
+    }
+  };
+
+  const SortableHeader = ({ label, columnKey }: { label: string, columnKey: SortKey }) => (
+    <th 
+      scope="col" 
+      className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer group select-none hover:text-zinc-300 transition-colors"
+      onClick={() => handleSort(columnKey)}
+    >
+      <div className="flex items-center">
+        {label}
+        <SortIcon columnKey={columnKey} />
+      </div>
+    </th>
+  );
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -24,60 +127,79 @@ export default function LicensesPage() {
         </Link>
       </div>
 
-      <div className="glass-panel rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                  State
-                </th>
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                  RN Status
-                </th>
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                  APRN Status
-                </th>
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                  Readiness
-                </th>
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                  Next Action
-                </th>
-                <th scope="col" className="relative px-6 py-4">
-                  <span className="sr-only">View</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockLicenses.map((license, idx) => (
-                <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${idx !== mockLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-bold text-zinc-100">{license.state}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-zinc-400 font-medium">{license.rnAction}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-zinc-400 font-medium">{license.aprnAction}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={license.readyStatus} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-zinc-500 font-medium">{license.nextAction}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link href={`/licenses/${license.id}`} className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-bold transition-colors group/link">
-                      View Details
-                      <ArrowRight className="w-3.5 h-3.5 translate-x-0 group-hover/link:translate-x-1 transition-transform" />
-                    </Link>
-                  </td>
+      <div className="glass-panel rounded-2xl overflow-hidden min-h-[300px]">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-[300px] text-zinc-500">
+            <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
+            <p className="font-medium">Loading your licenses...</p>
+          </div>
+        ) : licenses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[300px] text-zinc-500">
+            <div className="p-4 bg-white/5 rounded-full border border-white/10 mb-4 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+              <Map className="w-10 h-10 text-indigo-400 opacity-80" />
+            </div>
+            <p className="text-lg font-bold text-zinc-300 mb-2">No licenses found</p>
+            <p className="text-sm">You haven't tracked any state licenses yet.</p>
+            <Link href="/licenses/add" className="mt-6 text-indigo-400 hover:text-indigo-300 font-bold text-sm">
+              + Add your first state
+            </Link>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/5">
+                  <SortableHeader label="State" columnKey="stateName" />
+                  <SortableHeader label="RN Status" columnKey="rnStatus" />
+                  <SortableHeader label="APRN Status" columnKey="aprnStatus" />
+                  <SortableHeader label="Readiness" columnKey="readyStatus" />
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                    Next Action
+                  </th>
+                  <th scope="col" className="relative px-6 py-4">
+                    <span className="sr-only">View</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {sortedLicenses.map((license, idx) => (
+                  <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${idx !== sortedLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-bold text-zinc-100">{license.stateName}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.rnStatus, license.rnExpirationDate, license.isRnCompact)}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.aprnStatus, license.aprnExpirationDate)}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <StatusBadge status={license.readyStatus || 'not_ready'} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-zinc-500 font-medium">{license.nextAction || 'Review Application'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex items-center justify-end gap-4">
+                        <button 
+                          onClick={() => license.id && handleDelete(license.id, license.stateName)}
+                          className="p-1 text-zinc-500 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
+                          title="Delete State"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <Link href={`/licenses/${license.id || ''}`} className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-bold transition-colors group/link">
+                          View Details
+                          <ArrowRight className="w-3.5 h-3.5 translate-x-0 group-hover/link:translate-x-1 transition-transform" />
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

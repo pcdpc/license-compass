@@ -11,9 +11,33 @@ export interface UserProfile {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   role: 'user' | 'admin';
+  status: 'active' | 'pending' | 'denied' | 'suspended';
+
+  // Professional Details
+  credentials?: string;
+  npiNumber?: string;
+  primaryState?: string;
+  yearsExperience?: number;
+  specialty?: string;
+  certifyingBody?: string;
+  certNumber?: string;
+  certExpiration?: Timestamp | null;
+  malpracticeNumber?: string;
+  malpracticeCertNumber?: string;
+  malpracticeCertExpiration?: Timestamp | null;
+
   settings: {
     emailNotifications: boolean;
-    reminderDays: number[];
+    notificationsEnabled: boolean; // Global setting for in-app or overall
+    alertSettings: {
+      license180: boolean;
+      license90: boolean;
+      license60: boolean;
+      license30: boolean;
+      license7: boolean;
+      deaExpiration: boolean;
+      missingDocuments: boolean;
+    };
     timezone: string;
   };
   stats: {
@@ -24,10 +48,20 @@ export interface UserProfile {
   };
 }
 
+export interface InAppNotification {
+  id?: string;
+  userId: string;
+  type: 'expiration' | 'document' | 'general';
+  message: string;
+  read: boolean;
+  clearAllTrigger?: number; // timestamp when cleared
+  createdAt: Timestamp;
+}
+
 export type ApplicationStatus = 'not_started' | 'researching' | 'in_progress' | 'submitted' | 'awaiting_documents' | 'awaiting_board' | 'active' | 'expired' | 'denied';
 export type CredentialStatus = 'not_required' | 'not_started' | 'pending' | 'active' | 'expired' | 'inactive' | 'denied';
 export type DeaStatus = 'not_required' | 'not_applied' | 'pending' | 'active' | 'expired';
-export type ReadyStatus = 'ready' | 'almost_ready' | 'blocked' | 'expired';
+export type ReadyStatus = 'ready' | 'almost_ready' | 'not_ready' | 'expired';
 
 export interface StateLicense {
   id?: string;
@@ -43,6 +77,8 @@ export interface StateLicense {
   rnIssueDate: Timestamp | null;
   rnExpirationDate: Timestamp | null;
   rnDocumentId?: string;
+  isRnCompact?: boolean;
+  rnCompactOriginalState?: string;
 
   aprnStatus: CredentialStatus;
   aprnLicenseNumber: string;
@@ -80,8 +116,13 @@ export interface StateLicense {
 
   backgroundCheckRequired: boolean;
   backgroundCheckCompleted: boolean;
+  backgroundCheckDocumentId?: string;
   fingerprintRequired: boolean;
   fingerprintCompleted: boolean;
+  fingerprintDocumentId?: string;
+
+  prescriberLicenseRequired?: boolean;
+  ceuRequirementsNotes?: string;
 
   malpracticeRequired: boolean;
   malpracticeDocumentIds: string[];

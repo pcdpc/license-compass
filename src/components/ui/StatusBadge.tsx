@@ -24,8 +24,8 @@ const statusConfig: Record<ReadyStatus, { label: string; bg: string; text: strin
     glow: 'shadow-[0_0_8px_rgba(251,191,36,0.3)]',
     icon: <AlertTriangle className="w-4 h-4 mr-1.5" />,
   },
-  blocked: {
-    label: 'Blocked',
+  not_ready: {
+    label: 'Not Ready',
     bg: 'bg-rose-500/10',
     text: 'text-rose-400',
     border: 'border-rose-500/20',
@@ -43,7 +43,7 @@ const statusConfig: Record<ReadyStatus, { label: string; bg: string; text: strin
 };
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = '' }) => {
-  const config = statusConfig[status];
+  const config = statusConfig[status] || statusConfig['not_ready'];
 
   return (
     <span

@@ -31,30 +31,75 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>({ uid: 'mock-user', email: 'np@example.com', displayName: 'Larry Montgomery' } as any);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>({
-    email: 'np@example.com',
-    displayName: 'Larry Montgomery',
-    photoURL: '',
-    createdAt: new Date() as any,
-    updatedAt: new Date() as any,
-    role: 'user',
-    settings: {
-      emailNotifications: true,
-      reminderDays: [180, 90],
-      timezone: 'America/New_York'
-    },
-    stats: {
-      totalStates: 3,
-      activeStates: 2,
-      pendingStates: 1,
-      readyStates: 1
-    }
-  } as UserProfile);
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Disabled for mock demo
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        try {
+          // Check if profile exists
+          const profileDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (profileDoc.exists()) {
+            let data = profileDoc.data() as UserProfile;
+            
+            // Bootstrap Super Admin
+            if (firebaseUser.email === 'larry.a.montgomery@gmail.com') {
+              if (data.role !== 'admin' || data.status !== 'active') {
+                data = { ...data, role: 'admin', status: 'active' };
+                await setDoc(doc(db, 'users', firebaseUser.uid), data, { merge: true });
+              }
+            }
+            
+            setUserProfile(data);
+          } else {
+            // First time login - create default profile
+            const isSuperAdmin = firebaseUser.email === 'larry.a.montgomery@gmail.com';
+            
+            const newProfile: UserProfile = {
+              email: firebaseUser.email || '',
+              displayName: firebaseUser.displayName || 'New User',
+              photoURL: firebaseUser.photoURL || '',
+              createdAt: serverTimestamp() as any,
+              updatedAt: serverTimestamp() as any,
+              role: isSuperAdmin ? 'admin' : 'user',
+              status: isSuperAdmin ? 'active' : 'pending',
+              settings: {
+                emailNotifications: true,
+                notificationsEnabled: true,
+                alertSettings: {
+                  license180: true,
+                  license90: true,
+                  license60: true,
+                  license30: true,
+                  license7: true,
+                  deaExpiration: true,
+                  missingDocuments: true,
+                },
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York',
+              },
+              stats: {
+                totalStates: 0,
+                activeStates: 0,
+                pendingStates: 0,
+                readyStates: 0,
+              },
+            };
+            await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
+            setUserProfile(newProfile);
+          }
+        } catch (error) {
+          console.error("Error fetching/creating user profile:", error);
+        }
+      } else {
+        setUserProfile(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {

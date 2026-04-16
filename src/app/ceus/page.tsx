@@ -1,17 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Award, Plus, BookOpen, FlaskConical, Scale, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Award, Plus, BookOpen, FlaskConical, Scale, X, Loader2, FileText, ExternalLink, Eye, Download } from 'lucide-react';
 import { CeuForm } from '@/components/forms/CeuForm';
-import type { CeuCategory } from '@/types/schema';
-
-// Mock CEU data
-const mockCeus: { id: string; title: string; provider: string; courseDate: string; hours: number; category: CeuCategory; appliesToStates: string[] }[] = [
-  { id: '1', title: 'Advanced Pharmacology Update 2025', provider: 'AANP', courseDate: '2025-03-15', hours: 10, category: 'pharmacology', appliesToStates: ['GA', 'TX'] },
-  { id: '2', title: 'Ethics in Telehealth', provider: 'ANCC', courseDate: '2025-02-20', hours: 3, category: 'ethics', appliesToStates: ['GA'] },
-  { id: '3', title: 'Controlled Substance Prescribing', provider: 'State Board CE', courseDate: '2025-01-10', hours: 2, category: 'controlled_substance', appliesToStates: ['GA', 'TX', 'AZ'] },
-  { id: '4', title: 'Primary Care Review', provider: 'Medscape', courseDate: '2024-12-05', hours: 15, category: 'general', appliesToStates: ['GA', 'TX', 'AZ'] },
-];
+import type { CeuCategory, CeuEntry, LicenseDocument } from '@/types/schema';
+import { useAuth } from '@/context/AuthContext';
+import { getUserCeus, createCeu, getUserDocuments, toDate } from '@/lib/firestore';
+import { uploadLicenseDocument } from '@/lib/storage';
 
 const categoryIcons: Record<CeuCategory, React.ReactNode> = {
   general: <BookOpen className="w-4 h-4" />,
@@ -34,17 +29,83 @@ const categoryColors: Record<CeuCategory, string> = {
 };
 
 export default function CeusPage() {
+  const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
-  const [ceus, setCeus] = useState(mockCeus);
+  const [ceus, setCeus] = useState<CeuEntry[]>([]);
+  const [documents, setDocuments] = useState<LicenseDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [ceuData, docData] = await Promise.all([
+          getUserCeus(user.uid),
+          getUserDocuments(user.uid)
+        ]);
+        setCeus(ceuData);
+        setDocuments(docData);
+      } catch (error) {
+        console.error('Error fetching CEU data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [user]);
 
   const totalHours = ceus.reduce((sum, c) => sum + c.hours, 0);
   const pharmHours = ceus.filter((c) => c.category === 'pharmacology').reduce((sum, c) => sum + c.hours, 0);
   const ethicsHours = ceus.filter((c) => c.category === 'ethics').reduce((sum, c) => sum + c.hours, 0);
 
   const handleSubmit = async (data: any) => {
-    const newCeu = { id: String(ceus.length + 1), ...data };
-    setCeus((prev) => [newCeu, ...prev]);
-    setShowForm(false);
+    if (!user) return;
+    
+    try {
+      let certificateDocumentId = undefined;
+      
+      // Handle file upload if present
+      if (data.certificateFile) {
+        certificateDocumentId = await uploadLicenseDocument(
+          user.uid,
+          data.certificateFile,
+          {
+            category: 'ceu_certificate',
+            stateCode: data.appliesToStates[0] || 'ALL', // Default to first state or ALL
+            notes: `Certificate for ${data.title}`
+          }
+        );
+      }
+      
+      const { certificateFile, ...ceuDetails } = data;
+      
+      const ceuData = {
+        ...ceuDetails,
+        courseDate: new Date(data.courseDate),
+        certificateDocumentId
+      };
+      
+      const newCeuId = await createCeu(user.uid, ceuData);
+      
+      // Refresh list
+      const updatedCeus = await getUserCeus(user.uid);
+      const updatedDocs = await getUserDocuments(user.uid);
+      setCeus(updatedCeus);
+      setDocuments(updatedDocs);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error saving CEU:', error);
+      alert('Failed to save CEU. Please try again.');
+    }
+  };
+
+  const getDocumentUrl = (docId?: string) => {
+    if (!docId) return null;
+    const doc = documents.find(d => d.id === docId);
+    return doc?.downloadURL || null;
   };
 
   if (showForm) {
@@ -72,57 +133,109 @@ export default function CeusPage() {
         </button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { label: 'Total Hours', value: totalHours, color: 'text-indigo-400', glow: 'bg-indigo-500/10' },
-          { label: 'Pharmacology', value: pharmHours, color: 'text-purple-400', glow: 'bg-purple-500/10' },
-          { label: 'Ethics', value: ethicsHours, color: 'text-amber-400', glow: 'bg-amber-500/10' },
-        ].map((card) => (
-          <div key={card.label} className="glass-card rounded-2xl p-5 relative overflow-hidden group">
-            <div className={`absolute -right-4 -top-4 w-24 h-24 ${card.glow} rounded-full blur-2xl opacity-30 group-hover:scale-150 transition-all duration-700`}></div>
-            <div className="relative z-10">
-              <p className="text-sm font-bold text-zinc-400 mb-1">{card.label}</p>
-              <p className={`text-3xl font-extrabold ${card.color}`}>{card.value}<span className="text-lg ml-1 text-zinc-500">hrs</span></p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* CEU List */}
-      <div className="glass-panel rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/5">
-          <h2 className="text-lg font-bold text-zinc-100">Logged CEUs</h2>
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
+          <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
+          <p className="font-medium animate-pulse">Loading your CEU history...</p>
         </div>
-        <div className="divide-y divide-white/5">
-          {ceus.map((ceu) => (
-            <div key={ceu.id} className="px-6 py-4 hover:bg-white/5 transition-all group">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-xl border ${categoryColors[ceu.category]}`}>
-                    {categoryIcons[ceu.category]}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-zinc-100">{ceu.title}</p>
-                    <p className="text-xs text-zinc-500 font-medium">{ceu.provider} · {new Date(ceu.courseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex flex-wrap gap-1.5">
-                    {ceu.appliesToStates.map((s) => (
-                      <span key={s} className="px-2 py-0.5 text-xs font-bold bg-white/5 border border-white/10 rounded text-zinc-400">{s}</span>
-                    ))}
-                  </div>
-                  <span className="text-sm font-extrabold text-zinc-200 whitespace-nowrap">{ceu.hours} hrs</span>
+      ) : (
+        <>
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: 'Total Hours', value: totalHours, color: 'text-indigo-400', glow: 'bg-indigo-500/10' },
+              { label: 'Pharmacology', value: pharmHours, color: 'text-purple-400', glow: 'bg-purple-500/10' },
+              { label: 'Ethics', value: ethicsHours, color: 'text-amber-400', glow: 'bg-amber-500/10' },
+            ].map((card) => (
+              <div key={card.label} className="glass-card rounded-2xl p-5 relative overflow-hidden group">
+                <div className={`absolute -right-4 -top-4 w-24 h-24 ${card.glow} rounded-full blur-2xl opacity-30 group-hover:scale-150 transition-all duration-700`}></div>
+                <div className="relative z-10">
+                  <p className="text-sm font-bold text-zinc-400 mb-1">{card.label}</p>
+                  <p className={`text-3xl font-extrabold ${card.color}`}>{card.value}<span className="text-lg ml-1 text-zinc-500">hrs</span></p>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* CEU List */}
+          <div className="glass-panel rounded-2xl overflow-hidden min-h-[400px]">
+            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-zinc-100">Logged CEUs</h2>
+              <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">{ceus.length} Entries</span>
             </div>
-          ))}
-          {ceus.length === 0 && (
-            <div className="px-6 py-12 text-center text-sm font-medium text-zinc-500">No CEUs logged yet.</div>
-          )}
-        </div>
-      </div>
+            <div className="divide-y divide-white/5">
+              {ceus.map((ceu) => {
+                const docUrl = getDocumentUrl(ceu.certificateDocumentId);
+                const courseDate = toDate(ceu.courseDate);
+                
+                return (
+                  <div key={ceu.id} className="px-6 py-4 hover:bg-white/5 transition-all group">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`p-2 rounded-xl border ${categoryColors[ceu.category]}`}>
+                          {categoryIcons[ceu.category]}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-zinc-100">{ceu.title}</p>
+                          <p className="text-xs text-zinc-500 font-medium">
+                            {ceu.provider} · {courseDate ? courseDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown Date'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <div className="flex flex-wrap gap-1.5">
+                          {ceu.appliesToStates.map((s) => (
+                            <span key={s} className="px-2 py-0.5 text-xs font-bold bg-white/5 border border-white/10 rounded text-zinc-400">{s}</span>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <span className="text-sm font-extrabold text-zinc-200 whitespace-nowrap">{ceu.hours} hrs</span>
+                          {docUrl ? (
+                            <div className="flex items-center gap-2">
+                              <a 
+                                href={docUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="p-2 bg-white/5 text-zinc-400 rounded-lg hover:bg-white/10 hover:text-indigo-400 transition-all flex items-center gap-1.5 text-xs font-bold border border-white/10 shadow-sm group/btn"
+                                title="View Certificate"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </a>
+                              <a 
+                                href={docUrl} 
+                                download
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="p-2 bg-white/5 text-zinc-400 rounded-lg hover:bg-white/10 hover:text-emerald-400 transition-all flex items-center gap-1.5 text-xs font-bold border border-white/10 shadow-sm group/btn"
+                                title="Download Certificate"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                <span>Download</span>
+                              </a>
+                            </div>
+                          ) : (
+                            <div className="w-[160px]"></div> // Adjusted spacer to keep alignment
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {ceus.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/10">
+                    <Award className="w-8 h-8 text-zinc-600" />
+                  </div>
+                  <p className="text-sm font-medium text-zinc-500 max-w-[200px]">No CEUs logged yet. Start tracking your progress today!</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
+

@@ -6,21 +6,35 @@ import { LicenseForm } from '@/components/forms/LicenseForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import type { StateLicense } from '@/types/schema';
-// import { useAuth } from '@/context/AuthContext';
-// import { createLicense } from '@/lib/firestore';
+import { useAuth } from '@/context/AuthContext';
+import { createLicense } from '@/lib/firestore';
+import { calculateReadiness } from '@/lib/readiness';
 
 export default function AddLicensePage() {
   const router = useRouter();
-  // const { user } = useAuth();
+  const { user } = useAuth();
 
   const handleSubmit = async (data: Partial<StateLicense>) => {
-    // When Firebase is connected:
-    // if (!user) return;
-    // await createLicense(user.uid, data as any);
+    if (!user) return;
     
-    // For now, just navigate back
-    console.log('License data to save:', data);
-    router.push('/licenses');
+    try {
+      const fullLicenseData = data as StateLicense;
+      // Calculate readiness right before saving
+      const readiness = calculateReadiness(fullLicenseData);
+      
+      const payload: Omit<StateLicense, 'id' | 'userId' | 'createdAt' | 'updatedAt'> = {
+        ...fullLicenseData,
+        readyStatus: readiness.readyStatus,
+        readinessScore: readiness.readinessScore,
+        nextAction: readiness.nextAction,
+      };
+
+      await createLicense(user.uid, payload);
+      router.push('/licenses');
+    } catch (error) {
+      console.error('Error saving license:', error);
+      alert('Failed to save license. Please try again.');
+    }
   };
 
   return (
