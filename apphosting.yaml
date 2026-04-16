@@ -1,0 +1,22 @@
+runConfig:
+  minInstances: 0
+  maxInstances: 5
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8"
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "license-compass.firebaseapp.com"
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "license-compass"
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "license-compass.firebasestorage.app"
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "921022138763"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:921022138763:web:996d06392371fce6a5878e"
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: "G-9SELKRFV3D"
