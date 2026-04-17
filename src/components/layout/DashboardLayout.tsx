@@ -12,7 +12,8 @@ import {
   LogOut,
   Menu,
   X,
-  Compass
+  Compass,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -33,6 +34,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     { name: 'Documents', href: '/documents', icon: Files },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
+
+  if (userProfile?.role === 'admin') {
+    navItems.push({ name: 'Admin', href: '/admin', icon: ShieldCheck });
+  }
 
   return (
     <div className="flex h-screen bg-transparent">

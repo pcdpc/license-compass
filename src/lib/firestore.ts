@@ -208,6 +208,12 @@ export async function createNotification(userId: string, data: Omit<InAppNotific
 }
 
 export async function deleteUserFullAccount(userId: string): Promise<void> {
+  // Safeguard: Never delete the super admin
+  const userProfile = await getUserProfile(userId);
+  if (userProfile?.email === 'larry.a.montgomery@gmail.com') {
+    throw new Error("Critical Safeguard: The Super Admin account cannot be deleted.");
+  }
+
   // 1. Delete all sub-collection data
   const collections = ['licenses', 'ceus', 'documents', 'notifications'];
   
