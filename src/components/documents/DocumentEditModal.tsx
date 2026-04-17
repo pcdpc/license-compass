@@ -30,8 +30,7 @@ const US_STATES = [
 const categories: { value: DocumentCategory; label: string }[] = [
   { value: 'rn_license', label: 'RN License' },
   { value: 'aprn_license', label: 'APRN License' },
-  { value: 'dea', label: 'DEA Registration' },
-  { value: 'state_controlled_substance', label: 'DEA' },
+  { value: 'dea', label: 'DEA' },
   { value: 'supervisor_agreement', label: 'Supervisor Agreement' },
   { value: 'malpractice', label: 'Malpractice Insurance' },
   { value: 'background_check', label: 'Background Check' },

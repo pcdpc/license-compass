@@ -52,10 +52,8 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const [licenseData, docsData] = await Promise.all([
-          getLicense(user.uid, licenseId),
-          // We'll fetch documents after we have the license to get the stateCode
-          null 
+        const [licenseData] = await Promise.all([
+          getLicense(user.uid, licenseId)
         ]);
 
         if (isMounted) {
@@ -65,7 +63,7 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
           }
           setLicense(licenseData);
           
-          // Now fetch docs for this state
+          // Fetch all documents for this state (including 'ALL' state code)
           const docs = await getDocumentsByState(user.uid, licenseData.stateCode);
           setAssociatedDocs(docs);
           
@@ -80,6 +78,12 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
     fetchData();
     return () => { isMounted = false; };
   }, [user, licenseId, router]);
+
+  const getDocumentUrl = (docId?: string) => {
+    if (!docId) return null;
+    const doc = associatedDocs.find(d => d.id === docId);
+    return doc?.downloadURL || null;
+  };
 
   const handleUpdate = async (updatedData: Partial<StateLicense>) => {
     if (!user || !license) return;
@@ -238,18 +242,36 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                         <dd className="font-medium">
                           {license.aprnDocumentId ? (
                             <div className="flex items-center gap-1.5">
-                              <button className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                              <a 
+                                href={getDocumentUrl(license.aprnDocumentId) || '#'} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                              >
                                 <Eye className="w-3 h-3" /> View
-                              </button>
+                              </a>
                               <span className="text-zinc-700">|</span>
-                              <button className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                              <a 
+                                href={getDocumentUrl(license.aprnDocumentId) || '#'} 
+                                download
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                              >
                                 <Download className="w-3 h-3" /> Save
+                              </a>
+                              <span className="text-zinc-700">|</span>
+                              <button 
+                                onClick={() => openSelector('aprnDocumentId', 'aprn_license', 'Change APRN License')}
+                                className="text-zinc-500 hover:text-zinc-300 flex items-center gap-1"
+                              >
+                                <Edit className="w-3 h-3" /> Change
                               </button>
                             </div>
                           ) : (
                             <button 
                               onClick={() => openSelector('aprnDocumentId', 'aprn_license', 'Select APRN License')}
-                              className="text-zinc-500 hover:text-zinc-300 flex items-center gap-1 text-xs"
+                              className="text-zinc-500 hover:text-zinc-300 flex items-center gap-1 text-xs font-bold"
                             >
                               <LinkIcon className="w-3 h-3" /> Link Copy
                             </button>
@@ -275,6 +297,47 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                              {toDate(license.rnExpirationDate)?.toLocaleDateString() || 'N/A'}
                            </dd>
                          </div>
+                         <div className="flex justify-between pt-2 border-t border-white/5 mt-2">
+                            <dt className="text-zinc-500">Document</dt>
+                            <dd className="font-medium">
+                              {license.rnDocumentId ? (
+                                <div className="flex items-center gap-1.5">
+                                  <a 
+                                    href={getDocumentUrl(license.rnDocumentId) || '#'} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                                  >
+                                    <Eye className="w-3 h-3" /> View
+                                  </a>
+                                  <span className="text-zinc-700">|</span>
+                                  <a 
+                                    href={getDocumentUrl(license.rnDocumentId) || '#'} 
+                                    download
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                                  >
+                                    <Download className="w-3 h-3" /> Save
+                                  </a>
+                                  <span className="text-zinc-700">|</span>
+                                  <button 
+                                    onClick={() => openSelector('rnDocumentId', 'rn_license', 'Change RN License')}
+                                    className="text-zinc-500 hover:text-zinc-300 flex items-center gap-1"
+                                  >
+                                    <Edit className="w-3 h-3" /> Change
+                                  </button>
+                                </div>
+                              ) : (
+                                <button 
+                                  onClick={() => openSelector('rnDocumentId', 'rn_license', 'Select RN License')}
+                                  className="text-zinc-500 hover:text-zinc-300 flex items-center gap-1 text-xs font-bold"
+                                >
+                                  <LinkIcon className="w-3 h-3" /> Link Copy
+                                </button>
+                              )}
+                            </dd>
+                          </div>
                        </dl>
                     )}
                   </div>
@@ -288,7 +351,7 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                 </div>
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-sm font-bold text-zinc-200 border-b border-white/10 pb-2 mb-3">DEA Registration</h3>
+                    <h3 className="text-sm font-bold text-zinc-200 border-b border-white/10 pb-2 mb-3">DEA</h3>
                     <dl className="space-y-3 text-sm">
                       <div className="flex justify-between"><dt className="text-zinc-500">Status</dt><dd className="font-medium text-zinc-200 capitalize">{license.deaStatus.replace('_', ' ')}</dd></div>
                       <div className="flex justify-between"><dt className="text-zinc-500">Number</dt><dd className="font-medium text-zinc-200">{license.deaNumber || 'N/A'}</dd></div>
@@ -355,7 +418,7 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                     { label: 'Background Check', field: 'backgroundCheckDocumentId' as keyof StateLicense, category: 'background_check' as DocumentCategory, required: !!license.backgroundCheckRequired, met: !!license.backgroundCheckCompleted || !!license.backgroundCheckDocumentId },
                     { label: 'Fingerprints', field: 'fingerprintDocumentId' as keyof StateLicense, category: 'fingerprint' as DocumentCategory, required: !!license.fingerprintRequired, met: !!license.fingerprintCompleted || !!license.fingerprintDocumentId },
                     { label: 'Malpractice Insurance', field: 'malpracticeDocumentIds' as keyof StateLicense, category: 'malpractice' as DocumentCategory, required: !!license.malpracticeRequired, met: license.malpracticeDocumentIds && license.malpracticeDocumentIds.length > 0 },
-                    { label: 'DEA', field: 'stateControlledSubstanceDocumentId' as keyof StateLicense, category: 'state_controlled_substance' as DocumentCategory, required: !!license.stateControlledSubstanceRequired, met: license.stateControlledSubstanceStatus === 'active' || !!license.stateControlledSubstanceDocumentId },
+                    { label: 'DEA', field: 'stateControlledSubstanceDocumentId' as keyof StateLicense, category: 'dea' as DocumentCategory, required: !!license.stateControlledSubstanceRequired, met: license.stateControlledSubstanceStatus === 'active' || !!license.stateControlledSubstanceDocumentId },
                     { label: 'Prescriber License', field: 'id' as keyof StateLicense, category: 'other' as DocumentCategory, required: !!license.prescriberLicenseRequired, met: true } // Prescriber license is a simple checkbox for now
                   ].map((req, i) => (
                     req.required && (

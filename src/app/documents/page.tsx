@@ -11,7 +11,7 @@ import { getUserDocuments, deleteDocument, toDate } from '@/lib/firestore';
 const categoryLabels: Record<DocumentCategory, string> = {
   rn_license: 'RN License',
   aprn_license: 'APRN License',
-  dea: 'DEA Registration',
+  dea: 'DEA',
   state_controlled_substance: 'DEA',
   supervisor_agreement: 'Supervisor Agreement',
   collaborative_agreement: 'Collaborative Agreement',
@@ -176,9 +176,9 @@ export default function DocumentsPage() {
           <button onClick={() => setFilterCategory('all')} className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${filterCategory === 'all' ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10'}`}>
             All
           </button>
-          {['aprn_license', 'rn_license', 'dea', 'malpractice', 'collaborative_agreement', 'ceu_certificate'].map((cat) => (
+          {['aprn_license', 'rn_license', 'dea', 'malpractice', 'ceu_certificate'].map((cat) => (
             <button key={cat} onClick={() => setFilterCategory(cat)} className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${filterCategory === cat ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10'}`}>
-              {cat === 'ceu_certificate' ? 'CEUs' : categoryLabels[cat as DocumentCategory]}
+              {cat === 'ceu_certificate' ? 'CEUs' : (cat === 'dea' ? 'DEA' : categoryLabels[cat as DocumentCategory])}
             </button>
           ))}
         </div>
