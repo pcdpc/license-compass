@@ -5,15 +5,16 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Map, AlertCircle, Clock, CheckCircle, Loader2 } from 'lucide-react';
-import { getUserLicenses } from '@/lib/firestore';
-import { StateLicense } from '@/types/schema';
+import { getUserLicenses, getUserDocuments } from '@/lib/firestore';
+import { LicenseDocument, StateLicense } from '@/types/schema';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   
   const [licenses, setLicenses] = useState<StateLicense[]>([]);
-  const [licensesLoading, setLicensesLoading] = useState(true);
+  const [documents, setDocuments] = useState<LicenseDocument[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -24,19 +25,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return;
     let isMounted = true;
-    const fetchLicenses = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getUserLicenses(user.uid);
+        const [licenseData, docData] = await Promise.all([
+          getUserLicenses(user.uid),
+          getUserDocuments(user.uid)
+        ]);
         if (isMounted) {
-          setLicenses(data);
-          setLicensesLoading(false);
+          setLicenses(licenseData);
+          setDocuments(docData);
+          setDataLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching licenses:', error);
-        if (isMounted) setLicensesLoading(false);
+        console.error('Error fetching dashboard data:', error);
+        if (isMounted) setDataLoading(false);
       }
     };
-    fetchLicenses();
+    fetchData();
     return () => { isMounted = false; };
   }, [user]);
 
@@ -77,6 +82,32 @@ export default function DashboardPage() {
     addIfExpiring(l, 'State Controlled Sub.', l.stateControlledSubstanceExpirationDate);
   });
 
+  // Also check all standalone documents for expiration
+  documents.forEach(d => {
+    if (d.expirationDate) {
+      const jsDate = d.expirationDate.toDate ? d.expirationDate.toDate() : new Date(d.expirationDate);
+      const dUntil = Math.ceil((jsDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      
+      const categoryLabel = d.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      if (dUntil > 0 && dUntil <= 90) {
+        expiringSoon.push({ 
+          state: (d.stateCode && d.stateCode !== 'ALL') ? d.stateCode : 'General', 
+          type: `${categoryLabel}: ${d.fileName}`, 
+          date: `${dUntil} days`, 
+          id: d.id || '' 
+        });
+      } else if (dUntil <= 0) {
+        expiringSoon.push({ 
+          state: (d.stateCode && d.stateCode !== 'ALL') ? d.stateCode : 'General', 
+          type: `${categoryLabel}: ${d.fileName}`, 
+          date: 'Expired', 
+          id: d.id || '' 
+        });
+      }
+    }
+  });
+
   // Sort expiring soon by days
   expiringSoon.sort((a, b) => {
     if (a.date === 'Expired') return -1;
@@ -107,7 +138,7 @@ export default function DashboardPage() {
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 via-indigo-200 to-zinc-400 tracking-tight text-glow">Dashboard Overview</h1>
       </div>
 
-      {licensesLoading ? (
+      {dataLoading ? (
         <div className="flex justify-center items-center h-40">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
         </div>

@@ -1,0 +1,672 @@
+[debug] [2026-04-17T18:56:47.877Z] ----------------------------------------------------------------------
+[debug] [2026-04-17T18:56:47.878Z] Command:       /usr/local/bin/node /Users/pcdpc/Desktop/license-compass/node_modules/.bin/firebase deploy --only hosting
+[debug] [2026-04-17T18:56:47.879Z] CLI Version:   15.15.0
+[debug] [2026-04-17T18:56:47.879Z] Platform:      darwin
+[debug] [2026-04-17T18:56:47.879Z] Node Version:  v22.14.0
+[debug] [2026-04-17T18:56:47.879Z] Time:          Fri Apr 17 2026 14:56:47 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-04-17T18:56:47.879Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-17T18:56:48.675Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-17T18:56:48.675Z] > authorizing via signed-in user (larry.a.montgomery@gmail.com)
+[debug] [2026-04-17T18:56:48.675Z] [iam] checking project license-compass for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-04-17T18:56:48.675Z] Checked if tokens are valid: false, expires at: 1776449761474
+[debug] [2026-04-17T18:56:48.676Z] Checked if tokens are valid: false, expires at: 1776449761474
+[debug] [2026-04-17T18:56:48.676Z] > refreshing access token with scopes: []
+[debug] [2026-04-17T18:56:48.676Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-04-17T18:56:48.676Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-17T18:56:48.731Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-04-17T18:56:48.731Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-17T18:56:48.741Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions [none]
+[debug] [2026-04-17T18:56:48.741Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions  x-goog-user-project=license-compass
+[debug] [2026-04-17T18:56:48.741Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-04-17T18:56:48.854Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions 200
+[debug] [2026-04-17T18:56:48.854Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-04-17T18:56:48.855Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:48.855Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:48.855Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/license-compass [none]
+[debug] [2026-04-17T18:56:49.021Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/license-compass 200
+[debug] [2026-04-17T18:56:49.021Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/license-compass {"projectId":"license-compass","projectNumber":"921022138763","displayName":"License Compass","name":"projects/license-compass","resources":{"hostingSite":"license-compass","realtimeDatabaseInstance":"license-compass-default-rtdb"},"state":"ACTIVE","etag":"1_cde67e91-e04a-4797-9a89-78e9c6f64555"}
+[debug] [2026-04-17T18:56:49.777Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:49.777Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:49.777Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites pageToken=&pageSize=10
+[debug] [2026-04-17T18:56:50.381Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites 200
+[debug] [2026-04-17T18:56:50.381Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites {"sites":[{"name":"projects/license-compass/sites/license-compass","defaultUrl":"https://license-compass.web.app","appId":"1:921022138763:web:996d06392371fce6a5878e","type":"DEFAULT_SITE"}]}
+[debug] [2026-04-17T18:56:50.382Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:50.382Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:50.382Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:921022138763:web:996d06392371fce6a5878e/config [none]
+[debug] [2026-04-17T18:56:50.736Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:921022138763:web:996d06392371fce6a5878e/config 200
+[debug] [2026-04-17T18:56:50.736Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:921022138763:web:996d06392371fce6a5878e/config {"projectId":"license-compass","appId":"1:921022138763:web:996d06392371fce6a5878e","databaseURL":"https://license-compass-default-rtdb.firebaseio.com","storageBucket":"license-compass.firebasestorage.app","apiKey":"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8","authDomain":"license-compass.firebaseapp.com","messagingSenderId":"921022138763","measurementId":"G-9SELKRFV3D","projectNumber":"921022138763","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-04-17T18:56:52.559Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:52.559Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:52.559Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass [none]
+[debug] [2026-04-17T18:56:52.890Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass 200
+[debug] [2026-04-17T18:56:52.890Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass {"name":"projects/license-compass/sites/license-compass","defaultUrl":"https://license-compass.web.app","appId":"1:921022138763:web:996d06392371fce6a5878e","type":"DEFAULT_SITE"}
+[info] ▲ Next.js 16.2.3 (Turbopack)
+
+[info] - Environments: .env.local
+
+
+[info]   Creating an optimized production build ...
+
+[info] ✓ Compiled successfully in 1549ms
+
+[info]   Running TypeScript ...
+
+[info]   Finished TypeScript in 1456ms ...
+
+[info]   Collecting page data using 9 workers ...
+
+[info]   Generating static pages using 9 workers (0/12) ...
+
+[info]   Generating static pages using 9 workers (3/12) 
+
+[info]   Generating static pages using 9 workers (6/12) 
+
+[info]   Generating static pages using 9 workers (9/12) 
+
+[info] ✓ Generating static pages using 9 workers (12/12) in 142ms
+
+[info]   Finalizing page optimization ...
+
+[info] 
+
+[info] Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /ceus
+├ ○ /documents
+├ ○ /licenses
+├ ƒ /licenses/[licenseId]
+├ ○ /licenses/add
+├ ○ /login
+├ ○ /pipeline
+└ ○ /settings
+
+
+[info] 
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+[info] Building a Cloud Function to run this application. This is needed due to:
+[info]  • non-static component /licenses/[licenseId]/page
+[info] 
+[debug] [2026-04-17T18:56:58.791Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:58.791Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:56:58.791Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass [none]
+[debug] [2026-04-17T18:56:59.192Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass 200
+[debug] [2026-04-17T18:56:59.192Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass {"name":"projects/license-compass/sites/license-compass","defaultUrl":"https://license-compass.web.app","appId":"1:921022138763:web:996d06392371fce6a5878e","type":"DEFAULT_SITE"}
+[debug] [2026-04-17T18:57:03.745Z] [web frameworks] effective firebase.json:  {
+  "hosting": [
+    {
+      "source": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "site": "license-compass",
+      "rewrites": [
+        {
+          "source": "**",
+          "function": {
+            "functionId": "ssrlicensecompass",
+            "region": "us-central1",
+            "pinTag": true
+          }
+        }
+      ],
+      "redirects": [],
+      "headers": [
+        {
+          "source": "/_global-error",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_global-error/layout,_N_T_/_global-error/page,_N_T_/_global-error"
+            }
+          ]
+        },
+        {
+          "source": "/_not-found",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_not-found/layout,_N_T_/_not-found/page,_N_T_/_not-found"
+            }
+          ]
+        },
+        {
+          "source": "/admin",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/page,_N_T_/admin"
+            }
+          ]
+        },
+        {
+          "source": "/ceus",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/ceus/layout,_N_T_/ceus/page,_N_T_/ceus"
+            }
+          ]
+        },
+        {
+          "source": "/favicon.ico",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "image/x-icon"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico"
+            }
+          ]
+        },
+        {
+          "source": "/licenses/add",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/licenses/layout,_N_T_/licenses/add/layout,_N_T_/licenses/add/page,_N_T_/licenses/add"
+            }
+          ]
+        },
+        {
+          "source": "/login",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/login/layout,_N_T_/login/page,_N_T_/login"
+            }
+          ]
+        },
+        {
+          "source": "/licenses",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/licenses/layout,_N_T_/licenses/page,_N_T_/licenses"
+            }
+          ]
+        },
+        {
+          "source": "/pipeline",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/pipeline/layout,_N_T_/pipeline/page,_N_T_/pipeline"
+            }
+          ]
+        },
+        {
+          "source": "/documents",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/documents/layout,_N_T_/documents/page,_N_T_/documents"
+            }
+          ]
+        },
+        {
+          "source": "/settings",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/settings/layout,_N_T_/settings/page,_N_T_/settings"
+            }
+          ]
+        },
+        {
+          "source": "**/*.[jt]s",
+          "headers": [
+            {
+              "key": "Set-Cookie",
+              "value": "__FIREBASE_DEFAULTS__=eyJjb25maWciOnsicHJvamVjdElkIjoibGljZW5zZS1jb21wYXNzIiwiYXBwSWQiOiIxOjkyMTAyMjEzODc2Mzp3ZWI6OTk2ZDA2MzkyMzcxZmNlNmE1ODc4ZSIsImRhdGFiYXNlVVJMIjoiaHR0cHM6Ly9saWNlbnNlLWNvbXBhc3MtZGVmYXVsdC1ydGRiLmZpcmViYXNlaW8uY29tIiwic3RvcmFnZUJ1Y2tldCI6ImxpY2Vuc2UtY29tcGFzcy5maXJlYmFzZXN0b3JhZ2UuYXBwIiwiYXBpS2V5IjoiQUl6YVN5QkdtSkR6UVZsSkZwT3gteDVCUWd3UHBiTEYxalVxa3k4IiwiYXV0aERvbWFpbiI6ImxpY2Vuc2UtY29tcGFzcy5maXJlYmFzZWFwcC5jb20iLCJtZXNzYWdpbmdTZW5kZXJJZCI6IjkyMTAyMjEzODc2MyIsIm1lYXN1cmVtZW50SWQiOiJHLTlTRUxLUkZWM0QiLCJwcm9qZWN0TnVtYmVyIjoiOTIxMDIyMTM4NzYzIiwidmVyc2lvbiI6IjIifSwiX2F1dGhUb2tlblN5bmNVUkwiOiIvX19zZXNzaW9uIn0; SameSite=Strict; Expires=2028-03-12T05:37:03.745Z; Path=/;"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "public": ".firebase/license-compass/hosting",
+      "webFramework": "next_ssr"
+    }
+  ],
+  "functions": [
+    {
+      "source": ".firebase/license-compass/functions",
+      "codebase": "firebase-frameworks-license-compass"
+    }
+  ]
+}
+[debug] [2026-04-17T18:57:03.746Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-17T18:57:03.746Z] > authorizing via signed-in user (larry.a.montgomery@gmail.com)
+[debug] [2026-04-17T18:57:03.746Z] [iam] checking project license-compass for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-04-17T18:57:03.746Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:03.746Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:03.746Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions [none]
+[debug] [2026-04-17T18:57:03.746Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions  x-goog-user-project=license-compass
+[debug] [2026-04-17T18:57:03.746Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-04-17T18:57:03.815Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions 200
+[debug] [2026-04-17T18:57:03.815Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-04-17T18:57:03.815Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:03.815Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:03.815Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/license-compass/locations/-/functions [none]
+[debug] [2026-04-17T18:57:04.380Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/license-compass/locations/-/functions 200
+[debug] [2026-04-17T18:57:04.380Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/license-compass/locations/-/functions {}
+[debug] [2026-04-17T18:57:04.381Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:04.381Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:04.381Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2026-04-17T18:57:04.849Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/-/functions 200
+[debug] [2026-04-17T18:57:04.849Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/-/functions {"functions":[{"name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"build":"projects/921022138763/locations/us-central1/builds/40e1b59e-07ea-4261-8355-eaa05882033c","runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"maxInstanceCount":20,"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2026-04-17T17:32:08.686906224Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"1f91abcb62e5343251f72f3b21beb4d78b25faca"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","createTime":"2026-04-17T12:31:14.197236979Z","satisfiesPzi":true}]}
+[info] i  hosting: The following function(s) are pinned to site license-compass and will be deployed as well: ssrlicensecompass 
+[info] 
+[info] === Deploying to 'license-compass'...
+[info] 
+[info] i  deploying functions, hosting 
+[debug] [2026-04-17T18:57:04.850Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:04.850Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:04.850Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/license-compass [none]
+[debug] [2026-04-17T18:57:04.939Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/license-compass 200
+[debug] [2026-04-17T18:57:04.939Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/license-compass {"projectNumber":"921022138763","projectId":"license-compass","lifecycleState":"ACTIVE","name":"License Compass","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-15T16:46:09.892Z"}
+[info] i  functions: preparing codebase firebase-frameworks-license-compass for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-04-17T18:57:04.940Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:04.940Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:04.940Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/license-compass/adminSdkConfig [none]
+[debug] [2026-04-17T18:57:05.100Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/license-compass/adminSdkConfig 200
+[debug] [2026-04-17T18:57:05.100Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/license-compass/adminSdkConfig {"projectId":"license-compass","databaseURL":"https://license-compass-default-rtdb.firebaseio.com","storageBucket":"license-compass.firebasestorage.app"}
+[debug] [2026-04-17T18:57:05.100Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:05.100Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:05.100Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/license-compass/configs [none]
+[debug] [2026-04-17T18:57:05.231Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/license-compass/configs 200
+[debug] [2026-04-17T18:57:05.231Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/license-compass/configs {}
+[debug] [2026-04-17T18:57:05.232Z] Validating nodejs source
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2026-04-17T18:57:05.454Z] > [functions] package.json contents: {
+  "name": "license-compass",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "firebase": "^12.12.0",
+    "lucide-react": "^1.8.0",
+    "next": "16.2.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.72.1",
+    "firebase-frameworks": "^0.11.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-admin": "^11.11.1"
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "22"
+  }
+}
+[debug] [2026-04-17T18:57:05.454Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase firebase-frameworks-license-compass to determine what to deploy 
+[debug] [2026-04-17T18:57:05.454Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-04-17T18:57:05.458Z] Found firebase-functions binary at '/Users/pcdpc/Desktop/license-compass/.firebase/license-compass/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8454
+
+[debug] [2026-04-17T18:57:05.682Z] Got response from /__/functions.yaml {"endpoints":{"ssrlicensecompass":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"ssrlicensecompass"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2026-04-17T18:57:09.699Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-17T18:57:09.699Z] > authorizing via signed-in user (larry.a.montgomery@gmail.com)
+[debug] [2026-04-17T18:57:09.699Z] [iam] checking project license-compass for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2026-04-17T18:57:09.699Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:09.699Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:09.699Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions [none]
+[debug] [2026-04-17T18:57:09.699Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions  x-goog-user-project=license-compass
+[debug] [2026-04-17T18:57:09.699Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2026-04-17T18:57:09.754Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions 200
+[debug] [2026-04-17T18:57:09.754Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2026-04-17T18:57:09.754Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:09.754Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:09.754Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/license-compass/instances pageSize=100&pageToken=
+[debug] [2026-04-17T18:57:10.038Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/license-compass/instances 200
+[debug] [2026-04-17T18:57:10.038Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/license-compass/instances {}
+[info] i  functions: Loaded environment variables from .env. 
+[info] i  functions: preparing .firebase/license-compass/functions directory for uploading... 
+[info] i  functions: packaged /Users/pcdpc/Desktop/license-compass/.firebase/license-compass/functions (204.02 MB) for uploading 
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[info] i  functions: generating the service identity for pubsub.googleapis.com... 
+[debug] [2026-04-17T18:57:15.326Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.326Z] Checked if tokens are valid: true, expires at: 1776455807731
+[info] i  functions: generating the service identity for eventarc.googleapis.com... 
+[debug] [2026-04-17T18:57:15.326Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.326Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.326Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[debug] [2026-04-17T18:57:15.326Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/pubsub.googleapis.com:generateServiceIdentity  x-goog-user-project=921022138763
+[debug] [2026-04-17T18:57:15.326Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/pubsub.googleapis.com:generateServiceIdentity {}
+[debug] [2026-04-17T18:57:15.327Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[debug] [2026-04-17T18:57:15.327Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/eventarc.googleapis.com:generateServiceIdentity  x-goog-user-project=921022138763
+[debug] [2026-04-17T18:57:15.327Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/eventarc.googleapis.com:generateServiceIdentity {}
+[debug] [2026-04-17T18:57:15.648Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/pubsub.googleapis.com:generateServiceIdentity 200
+[debug] [2026-04-17T18:57:15.648Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-921022138763@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"108538106308562476598"}}
+[debug] [2026-04-17T18:57:15.688Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/eventarc.googleapis.com:generateServiceIdentity 200
+[debug] [2026-04-17T18:57:15.688Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/921022138763/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-921022138763@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"110043263429296102317"}}
+[debug] [2026-04-17T18:57:15.690Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.690Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.690Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/license-compass [none]
+[debug] [2026-04-17T18:57:15.837Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/license-compass 200
+[debug] [2026-04-17T18:57:15.837Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/license-compass {"projectNumber":"921022138763","projectId":"license-compass","lifecycleState":"ACTIVE","name":"License Compass","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-15T16:46:09.892Z"}
+[debug] [2026-04-17T18:57:15.837Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.837Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.837Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/921022138763 [none]
+[debug] [2026-04-17T18:57:15.968Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/921022138763 403
+[debug] [2026-04-17T18:57:15.968Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/921022138763 {"error":{"code":403,"message":"Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763","serviceTitle":"Compute Engine API","service":"compute.googleapis.com","containerInfo":"921022138763","consumer":"projects/921022138763"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763"}]}]}}
+[debug] [2026-04-17T18:57:15.968Z] unable to look up default compute service account. Falling back to 921022138763-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763","serviceTitle":"Compute Engine API","service":"compute.googleapis.com","containerInfo":"921022138763","consumer":"projects/921022138763"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/921022138763 had HTTP Error: 403, Compute Engine API has not been used in project 921022138763 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=921022138763 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[debug] [2026-04-17T18:57:15.969Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.969Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:15.969Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/license-compass/versions [none]
+[debug] [2026-04-17T18:57:15.969Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/license-compass/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase","firebase-web-framework":"next_ssr"}}
+[debug] [2026-04-17T18:57:16.827Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/license-compass/versions 200
+[debug] [2026-04-17T18:57:16.827Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/license-compass/versions {"name":"projects/921022138763/sites/license-compass/versions/725e09dfb6456e0c","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase","firebase-web-framework":"next_ssr"}}
+[debug] [2026-04-17T18:57:16.828Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:16.828Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:16.828Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/license-compass/billingInfo [none]
+[debug] [2026-04-17T18:57:16.966Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/license-compass/billingInfo 200
+[debug] [2026-04-17T18:57:16.966Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/license-compass/billingInfo {"name":"projects/license-compass/billingInfo","projectId":"license-compass","billingAccountName":"billingAccounts/01A52B-2F4F9E-9B8FE8","billingEnabled":true}
+[debug] [2026-04-17T18:57:16.968Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:16.968Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:16.969Z] >>> [apiv2][query] POST https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions:generateUploadUrl [none]
+[debug] [2026-04-17T18:57:17.240Z] <<< [apiv2][status] POST https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions:generateUploadUrl 200
+[debug] [2026-04-17T18:57:17.240Z] <<< [apiv2][body] POST https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions:generateUploadUrl {"uploadUrl":"https://storage.googleapis.com/gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com/a5c76a13-ae72-4324-923e-218688268b44.zip?GoogleAccessId=service-921022138763@gcf-admin-robot.iam.gserviceaccount.com&Expires=1776454037&Signature=aQBMEN9d0zRGDpvyDjAuLvqCTJSIoheeCAMdJspUw%2BHkxS%2FoGWuBWJ%2F71dU6KPfz8xH7ef5Q0l0bNBbVJ6CaKfpmzfaM6NdKsAqupno%2FcAtNe%2FAEXKpVM19U2TzDYFEM0mb%2B2rIinO4LsiOZv%2Fur6Khr0324HO0TZHAVJ9MKvspeGMLpQHpkmptHyuVcFRZOAtTvr7OWVEOO5XBHvH6G5TQn7TNxV9prUmdGJ%2FjMmN6CvFuthIu8AQESc2v7TJMqHcOLAVfzBznEtCbfe1sHw%2Bdle2SuUcGZYWA7bYiJG5NuaT16PvwP9VU9nhnk%2BYwD9ZYt2mwUa1gnBWAd0NrwWA%3D%3D","storageSource":{"bucket":"gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com","object":"a5c76a13-ae72-4324-923e-218688268b44.zip"}}
+[debug] [2026-04-17T18:57:17.242Z] >>> [apiv2][query] PUT https://storage.googleapis.com/gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com/a5c76a13-ae72-4324-923e-218688268b44.zip GoogleAccessId=service-921022138763%40gcf-admin-robot.iam.gserviceaccount.com&Expires=1776454037&Signature=aQBMEN9d0zRGDpvyDjAuLvqCTJSIoheeCAMdJspUw%2BHkxS%2FoGWuBWJ%2F71dU6KPfz8xH7ef5Q0l0bNBbVJ6CaKfpmzfaM6NdKsAqupno%2FcAtNe%2FAEXKpVM19U2TzDYFEM0mb%2B2rIinO4LsiOZv%2Fur6Khr0324HO0TZHAVJ9MKvspeGMLpQHpkmptHyuVcFRZOAtTvr7OWVEOO5XBHvH6G5TQn7TNxV9prUmdGJ%2FjMmN6CvFuthIu8AQESc2v7TJMqHcOLAVfzBznEtCbfe1sHw%2Bdle2SuUcGZYWA7bYiJG5NuaT16PvwP9VU9nhnk%2BYwD9ZYt2mwUa1gnBWAd0NrwWA%3D%3D
+[debug] [2026-04-17T18:57:17.242Z] >>> [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com/a5c76a13-ae72-4324-923e-218688268b44.zip [stream]
+[debug] [2026-04-17T18:57:23.353Z] <<< [apiv2][status] PUT https://storage.googleapis.com/gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com/a5c76a13-ae72-4324-923e-218688268b44.zip 200
+[debug] [2026-04-17T18:57:23.353Z] <<< [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com/a5c76a13-ae72-4324-923e-218688268b44.zip [omitted]
+[info] ✔  functions: .firebase/license-compass/functions source uploaded successfully 
+[info] i  hosting[license-compass]: beginning deploy... 
+[info] i  hosting[license-compass]: found 46 files in .firebase/license-compass/hosting 
+[debug] [2026-04-17T18:57:23.368Z] [hosting] uploading with 200 concurrency
+[debug] [2026-04-17T18:57:23.409Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:23.409Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:23.414Z] [hosting] hash cache [LmZpcmViYXNlL2xpY2Vuc2UtY29tcGFzcy9ob3N0aW5n] stored for 46 files
+[debug] [2026-04-17T18:57:23.414Z] [hosting][hash queue][FINAL] {"max":35,"min":19,"avg":21.15217391304347,"active":0,"complete":46,"success":46,"errored":0,"retried":0,"total":46,"elapsed":43}
+[debug] [2026-04-17T18:57:23.414Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/921022138763/sites/license-compass/versions/725e09dfb6456e0c:populateFiles [none]
+[debug] [2026-04-17T18:57:23.414Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/921022138763/sites/license-compass/versions/725e09dfb6456e0c:populateFiles {"files":{"/login.html":"ffc37c3739193c58a6a242caa390b29b6ec4a3f6cf50d23af602621d768c4bc5","/settings.html":"0c5e39c971c9d2100ffb075406d282b24fe64829f0f3f059095f4e9101d923bd","/pipeline.html":"77e4de85418864eaa99d072bbe1e06ceaf144073107d6d6385b42ebf4b3bb4de","/licenses.html":"0a44c4c09c4982fd6665c6976cd34ec597567a44d75cf9ae871257cb59eaefc1","/ceus.html":"773052fd3605a7d932bc232993b4d7b322083a7bfbc7312412bdea008e9188c7","/documents.html":"d2dcb83e9540a7fadee7b124ae96bdb2f196b93c1d3fa876b18d37afd9b03154","/admin.html":"3d1c993409785cba529229012fd19aa01095b4d32edc2d3068570cf83d3239b8","/index.html":"61a035d98550ed3e743abf2471e312181ec5a030ed597d732627a121f563c200","/_not-found.html":"7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161","/500.html":"b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5","/licenses/add.html":"95df60375766802a0335f35334d3c571c0b4bca5bc049d23f3b5cd59be93264d","/404.html":"7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161","/_global-error.html":"b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5","/_next/static/media/ad66f9afd8947f86-s.11u06r12fd6v_.woff2":"1a0e14609112860ada68bcd117557d881c437c49a652fc25f03478d32db23261","/_next/static/media/2bbe8d2671613f1f-s.067x_6k0k23tk.woff2":"bbf2b69affb52c37fbd41b4c75ae7fc2f2421b70be2218dbe876cef0fcdc18a9","/_next/static/chunks/turbopack-0b.xtynzoyj6u.js":"6c6f5a29a22a2abfedbd1303c6f6b75e7b870787aa030b18f6e5ce9dfa31fbfa","/_next/static/media/favicon.0x3dzn~oxb6tn.ico":"8b9c4dce3353938d2027ab21f0489807587db05d65ef390a6947d32312e501a0","/_next/static/chunks/0u25y2vilx12f.js":"c417028131d76b588857c3b7b53c1be596e0254a9a56ef4c3168378f376ddb7b","/favicon.ico":"8b9c4dce3353938d2027ab21f0489807587db05d65ef390a6947d32312e501a0","/_next/static/chunks/15pjn.n4_q6le.js":"7f2e4d45a46b79081f3ad6fedc2daee494b290a476d063590dcfce9c139a6116","/_next/static/chunks/15mdfmn0x.cm-.js":"c21ee52dfd448539cc124016c0bf44caa8d99f2d8cf4c7af224cd79850b8d85b","/_next/static/chunks/0hocx7la_7dkz.js":"262250c29245e381cfcc06c56ed8b37abcb2948413ab953936e30fb2a19fbc77","/_next/static/chunks/0pqt~8bl3ukh4.js":"995799e9828ae81fb22159bd724840bc5de93f775c4d165df55f1bbaa0f0c425","/_next/static/chunks/0f.8w3ij2t~1b.js":"0484f35ed1f5e640a48231e900b6b000e461a6a9712cc481a58d244c0830c199","/_next/static/chunks/0ezr_w~t-s.qi.js":"6d33dce9c6686056a93cfbfec1ead4634ec940dec5a8747331a0af87bdf6d1e8","/_next/static/chunks/0do.cdd2cba.b.js":"cbdab0d8ba9df2f87ff80c807b5c85632fac2e9c3d27908faab2b4b4f35a5918","/_next/static/chunks/01xlw8hd842-c.js":"c90d7c0d267a90f7e4131a6344b4c4ba8a742ad532d02b55a00b2d3ecd305a15","/_next/static/chunks/02yx0b9egehzt.js":"053c68ca9972d3ca5bc096df75900693ff6e05a12bce8359a5d8b1705ce2eda3","/_next/static/chunks/0_xu9q1x9bokz.js":"a89e9b01b16ab51780ce6280d90458f2d0ec7a29d7f964e8ad61b341046e55e5","/_next/static/chunks/088g3nko8_g.3.js":"daffded930cae1c9f6cb97217885dfe1a0577477935584defd1009fbdc01dcdc","/_next/static/4AftU9gSyrrJU4B5mHZpq/_clientMiddlewareManifest.js":"111d6778f1ad49c6d53d2afe18b83896c7f0692e57e7c959628d3b90d187a887","/_next/static/4AftU9gSyrrJU4B5mHZpq/_ssgManifest.js":"02dbc1aeab6ef0a6ff2ff9a1643158cf9bb38929945eaa343a3627dee9ba6778","/_next/static/chunks/0.y1qq3gehp~7.js":"14e9f9cca4d75f22ce74ef38f251afd79fe8e0fda4f226b5e6642fbc6039c697","/_next/static/chunks/02paalg1tn1_y.js":"3c2771b0af0b7a90c01ff3218e6b43b2bdb73bfb4bec9c5deb50b431a114823b","/_next/static/chunks/0d3shmwh5_nmn.js":"04918df0687565e918de58305483cf319dcaed6dffea73899ec35283819a34a5","/_next/static/4AftU9gSyrrJU4B5mHZpq/_buildManifest.js":"30ef2ac8f5c7eb81cae36ed0e00068cbbdf1fe45eaa179abe62d8e5cbcb54834","/_next/static/media/9c72aa0f40e4eef8-s.0m6w47a4e5dy9.woff2":"a30747ba3d635d16cfc52331d3364bcbb1024d1d1bfe0e830e6329ef1e7dda23","/_next/static/media/5476f68d60460930-s.0wxq9webf.ew4.woff2":"9158a62c685560cf2e28de5854b559863dc9dbda0bf98277ab1ed711bddd8a77","/_next/static/media/2c55a0e60120577a-s.0bjc5tiuqdqro.woff2":"60bcc7eca099398d9118a54458d766e098397b9b59a1788046e101bc7797906b","/_next/static/chunks/0npq9dou91o62.css":"13f89c3accb90adc642a94a8a6ad7dcee03c0ca9a1186fcca29d708b7174bbac","/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2":"28d3c49d99e0f60c3d54343c8188ada21c804877b2b1fd9acc1695bf6b47ef22","/_next/static/chunks/0e-wrhqh4h3r5.js":"da7f0c944aec68c4d784f3b8c38d7c63a3b96db6ee3b859012c47cc3ff8febc9","/_next/static/chunks/03~yq9q893hmn.js":"67dee1c02c6a6700d63b5c1898cf2df618101a68a395db469192763d24925a23","/_next/static/media/1bffadaabf893a1e-s.16ipb6fqu393i.woff2":"865e90fb09b8be8261d53d6a40c80daa87669020b3d5fa186cb66c1944efca21","/_next/static/chunks/0mstyq17cbf8-.js":"b02bb93ebca39e5758b46cf70fa744779e304d889f5f20588e19661454d28b5d","/_next/static/chunks/15ia-6z9bwfld.js":"2cee961da0d01c3cae4f1a9b5d3dd21220b95911f9da7797d4d08f20f416ea0f"}}
+[debug] [2026-04-17T18:57:24.351Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/921022138763/sites/license-compass/versions/725e09dfb6456e0c:populateFiles 200
+[debug] [2026-04-17T18:57:24.352Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/921022138763/sites/license-compass/versions/725e09dfb6456e0c:populateFiles {"uploadRequiredHashes":["b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5","95df60375766802a0335f35334d3c571c0b4bca5bc049d23f3b5cd59be93264d","773052fd3605a7d932bc232993b4d7b322083a7bfbc7312412bdea008e9188c7","77e4de85418864eaa99d072bbe1e06ceaf144073107d6d6385b42ebf4b3bb4de","0c5e39c971c9d2100ffb075406d282b24fe64829f0f3f059095f4e9101d923bd","3d1c993409785cba529229012fd19aa01095b4d32edc2d3068570cf83d3239b8","7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161","a89e9b01b16ab51780ce6280d90458f2d0ec7a29d7f964e8ad61b341046e55e5","daffded930cae1c9f6cb97217885dfe1a0577477935584defd1009fbdc01dcdc","0a44c4c09c4982fd6665c6976cd34ec597567a44d75cf9ae871257cb59eaefc1","ffc37c3739193c58a6a242caa390b29b6ec4a3f6cf50d23af602621d768c4bc5","d2dcb83e9540a7fadee7b124ae96bdb2f196b93c1d3fa876b18d37afd9b03154","6d33dce9c6686056a93cfbfec1ead4634ec940dec5a8747331a0af87bdf6d1e8","61a035d98550ed3e743abf2471e312181ec5a030ed597d732627a121f563c200"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files"}
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.353Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:24.354Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5 [none]
+[debug] [2026-04-17T18:57:24.354Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5 [stream]
+[debug] [2026-04-17T18:57:24.356Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/95df60375766802a0335f35334d3c571c0b4bca5bc049d23f3b5cd59be93264d [none]
+[debug] [2026-04-17T18:57:24.356Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/95df60375766802a0335f35334d3c571c0b4bca5bc049d23f3b5cd59be93264d [stream]
+[debug] [2026-04-17T18:57:24.357Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/773052fd3605a7d932bc232993b4d7b322083a7bfbc7312412bdea008e9188c7 [none]
+[debug] [2026-04-17T18:57:24.357Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/773052fd3605a7d932bc232993b4d7b322083a7bfbc7312412bdea008e9188c7 [stream]
+[debug] [2026-04-17T18:57:24.357Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/77e4de85418864eaa99d072bbe1e06ceaf144073107d6d6385b42ebf4b3bb4de [none]
+[debug] [2026-04-17T18:57:24.357Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/77e4de85418864eaa99d072bbe1e06ceaf144073107d6d6385b42ebf4b3bb4de [stream]
+[debug] [2026-04-17T18:57:24.358Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0c5e39c971c9d2100ffb075406d282b24fe64829f0f3f059095f4e9101d923bd [none]
+[debug] [2026-04-17T18:57:24.358Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0c5e39c971c9d2100ffb075406d282b24fe64829f0f3f059095f4e9101d923bd [stream]
+[debug] [2026-04-17T18:57:24.358Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/3d1c993409785cba529229012fd19aa01095b4d32edc2d3068570cf83d3239b8 [none]
+[debug] [2026-04-17T18:57:24.359Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/3d1c993409785cba529229012fd19aa01095b4d32edc2d3068570cf83d3239b8 [stream]
+[debug] [2026-04-17T18:57:24.359Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161 [none]
+[debug] [2026-04-17T18:57:24.359Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161 [stream]
+[debug] [2026-04-17T18:57:24.359Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/a89e9b01b16ab51780ce6280d90458f2d0ec7a29d7f964e8ad61b341046e55e5 [none]
+[debug] [2026-04-17T18:57:24.359Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/a89e9b01b16ab51780ce6280d90458f2d0ec7a29d7f964e8ad61b341046e55e5 [stream]
+[debug] [2026-04-17T18:57:24.360Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/daffded930cae1c9f6cb97217885dfe1a0577477935584defd1009fbdc01dcdc [none]
+[debug] [2026-04-17T18:57:24.360Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/daffded930cae1c9f6cb97217885dfe1a0577477935584defd1009fbdc01dcdc [stream]
+[debug] [2026-04-17T18:57:24.360Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0a44c4c09c4982fd6665c6976cd34ec597567a44d75cf9ae871257cb59eaefc1 [none]
+[debug] [2026-04-17T18:57:24.360Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0a44c4c09c4982fd6665c6976cd34ec597567a44d75cf9ae871257cb59eaefc1 [stream]
+[debug] [2026-04-17T18:57:24.361Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/ffc37c3739193c58a6a242caa390b29b6ec4a3f6cf50d23af602621d768c4bc5 [none]
+[debug] [2026-04-17T18:57:24.361Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/ffc37c3739193c58a6a242caa390b29b6ec4a3f6cf50d23af602621d768c4bc5 [stream]
+[debug] [2026-04-17T18:57:24.361Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/d2dcb83e9540a7fadee7b124ae96bdb2f196b93c1d3fa876b18d37afd9b03154 [none]
+[debug] [2026-04-17T18:57:24.361Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/d2dcb83e9540a7fadee7b124ae96bdb2f196b93c1d3fa876b18d37afd9b03154 [stream]
+[debug] [2026-04-17T18:57:24.361Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/6d33dce9c6686056a93cfbfec1ead4634ec940dec5a8747331a0af87bdf6d1e8 [none]
+[debug] [2026-04-17T18:57:24.361Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/6d33dce9c6686056a93cfbfec1ead4634ec940dec5a8747331a0af87bdf6d1e8 [stream]
+[debug] [2026-04-17T18:57:24.362Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/61a035d98550ed3e743abf2471e312181ec5a030ed597d732627a121f563c200 [none]
+[debug] [2026-04-17T18:57:24.362Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/61a035d98550ed3e743abf2471e312181ec5a030ed597d732627a121f563c200 [stream]
+[debug] [2026-04-17T18:57:24.362Z] [hosting][populate queue][FINAL] {"max":945,"min":945,"avg":945,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":953}
+[debug] [2026-04-17T18:57:24.362Z] [hosting] uploads queued: 14
+[debug] [2026-04-17T18:57:24.877Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0c5e39c971c9d2100ffb075406d282b24fe64829f0f3f059095f4e9101d923bd 200
+[debug] [2026-04-17T18:57:24.877Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0c5e39c971c9d2100ffb075406d282b24fe64829f0f3f059095f4e9101d923bd [stream]
+[debug] [2026-04-17T18:57:24.878Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/773052fd3605a7d932bc232993b4d7b322083a7bfbc7312412bdea008e9188c7 200
+[debug] [2026-04-17T18:57:24.878Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/773052fd3605a7d932bc232993b4d7b322083a7bfbc7312412bdea008e9188c7 [stream]
+[debug] [2026-04-17T18:57:24.891Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0a44c4c09c4982fd6665c6976cd34ec597567a44d75cf9ae871257cb59eaefc1 200
+[debug] [2026-04-17T18:57:24.891Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/0a44c4c09c4982fd6665c6976cd34ec597567a44d75cf9ae871257cb59eaefc1 [stream]
+[debug] [2026-04-17T18:57:24.892Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/daffded930cae1c9f6cb97217885dfe1a0577477935584defd1009fbdc01dcdc 200
+[debug] [2026-04-17T18:57:24.892Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/daffded930cae1c9f6cb97217885dfe1a0577477935584defd1009fbdc01dcdc [stream]
+[debug] [2026-04-17T18:57:24.895Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5 200
+[debug] [2026-04-17T18:57:24.895Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/b8c4175a9c248ed335fb40fc8dcd6c197b499bc71e2365ad30cc128daa44a0a5 [stream]
+[debug] [2026-04-17T18:57:24.898Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/d2dcb83e9540a7fadee7b124ae96bdb2f196b93c1d3fa876b18d37afd9b03154 200
+[debug] [2026-04-17T18:57:24.898Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/d2dcb83e9540a7fadee7b124ae96bdb2f196b93c1d3fa876b18d37afd9b03154 [stream]
+[debug] [2026-04-17T18:57:24.920Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/77e4de85418864eaa99d072bbe1e06ceaf144073107d6d6385b42ebf4b3bb4de 200
+[debug] [2026-04-17T18:57:24.920Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/77e4de85418864eaa99d072bbe1e06ceaf144073107d6d6385b42ebf4b3bb4de [stream]
+[debug] [2026-04-17T18:57:24.933Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/a89e9b01b16ab51780ce6280d90458f2d0ec7a29d7f964e8ad61b341046e55e5 200
+[debug] [2026-04-17T18:57:24.933Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/a89e9b01b16ab51780ce6280d90458f2d0ec7a29d7f964e8ad61b341046e55e5 [stream]
+[debug] [2026-04-17T18:57:24.934Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/95df60375766802a0335f35334d3c571c0b4bca5bc049d23f3b5cd59be93264d 200
+[debug] [2026-04-17T18:57:24.934Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/95df60375766802a0335f35334d3c571c0b4bca5bc049d23f3b5cd59be93264d [stream]
+[debug] [2026-04-17T18:57:24.948Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/3d1c993409785cba529229012fd19aa01095b4d32edc2d3068570cf83d3239b8 200
+[debug] [2026-04-17T18:57:24.949Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/3d1c993409785cba529229012fd19aa01095b4d32edc2d3068570cf83d3239b8 [stream]
+[debug] [2026-04-17T18:57:24.958Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/61a035d98550ed3e743abf2471e312181ec5a030ed597d732627a121f563c200 200
+[debug] [2026-04-17T18:57:24.958Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/61a035d98550ed3e743abf2471e312181ec5a030ed597d732627a121f563c200 [stream]
+[debug] [2026-04-17T18:57:24.964Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/ffc37c3739193c58a6a242caa390b29b6ec4a3f6cf50d23af602621d768c4bc5 200
+[debug] [2026-04-17T18:57:24.965Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/ffc37c3739193c58a6a242caa390b29b6ec4a3f6cf50d23af602621d768c4bc5 [stream]
+[debug] [2026-04-17T18:57:25.005Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/6d33dce9c6686056a93cfbfec1ead4634ec940dec5a8747331a0af87bdf6d1e8 200
+[debug] [2026-04-17T18:57:25.006Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/6d33dce9c6686056a93cfbfec1ead4634ec940dec5a8747331a0af87bdf6d1e8 [stream]
+[debug] [2026-04-17T18:57:25.263Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161 200
+[debug] [2026-04-17T18:57:25.263Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/license-compass/versions/725e09dfb6456e0c/files/7ab2797f17595bdb5bc51bcb407586a0c77749aff9552289af7f84d7b2da6161 [stream]
+[debug] [2026-04-17T18:57:25.263Z] [hosting][upload queue][FINAL] {"max":909,"min":524,"avg":593.7857142857143,"active":0,"complete":14,"success":14,"errored":0,"retried":0,"total":14,"elapsed":911}
+[info] ✔  hosting[license-compass]: file upload complete 
+[debug] [2026-04-17T18:57:25.264Z] [hosting] deploy completed after 1907ms
+[info] i  functions: updating Node.js 22 (2nd Gen) function firebase-frameworks-license-compass:ssrlicensecompass(us-central1)... 
+[debug] [2026-04-17T18:57:25.268Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:25.268Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:25.269Z] >>> [apiv2][query] PATCH https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions/ssrlicensecompass updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2CserviceConfig.directVpcNetworkInterface%2CserviceConfig.directVpcEgress%2Clabels
+[debug] [2026-04-17T18:57:25.269Z] >>> [apiv2][body] PATCH https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions/ssrlicensecompass {"name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-uploads-921022138763.us-central1.cloudfunctions.appspot.com","object":"a5c76a13-ae72-4324-923e-218688268b44.zip"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""}},"serviceConfig":{"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":null,"timeoutSeconds":null,"serviceAccountEmail":null,"availableMemory":"256Mi","minInstanceCount":null,"maxInstanceCount":null,"maxInstanceRequestConcurrency":80,"availableCpu":"1","vpcConnector":null,"vpcConnectorEgressSettings":null,"directVpcNetworkInterface":null,"directVpcEgress":null},"labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"}}
+[debug] [2026-04-17T18:57:26.957Z] <<< [apiv2][status] PATCH https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions/ssrlicensecompass 200
+[debug] [2026-04-17T18:57:26.957Z] <<< [apiv2][body] PATCH https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/functions/ssrlicensecompass {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2"},"done":false}
+[debug] [2026-04-17T18:57:26.958Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:26.958Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:26.958Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:27.138Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:27.138Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2"},"done":false}
+[debug] [2026-04-17T18:57:27.640Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:57:27.640Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:27.640Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:27.640Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:27.833Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:27.833Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","state":"NOT_STARTED"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION"},"done":false}
+[debug] [2026-04-17T18:57:28.834Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:57:28.834Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:28.834Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:28.835Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:29.020Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:29.020Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:57:31.021Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:57:31.021Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:31.021Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:31.021Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:31.223Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:31.224Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:57:35.225Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:57:35.225Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:35.225Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:35.225Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:35.429Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:35.430Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:57:43.431Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:57:43.431Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:43.431Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:43.431Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:43.630Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:43.630Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:57:53.632Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:57:53.633Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:53.633Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:57:53.633Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:57:53.757Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:57:53.757Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:58:03.760Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:58:03.760Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:03.760Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:03.760Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:58:03.939Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:58:03.939Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:58:13.940Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:58:13.941Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:13.941Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:13.941Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:58:14.129Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:58:14.130Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:58:24.131Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:58:24.132Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:24.132Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:24.132Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:58:24.342Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:58:24.342Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:58:34.343Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:58:34.343Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:34.343Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:34.343Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:58:34.470Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:58:34.470Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:58:44.471Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:58:44.472Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:44.472Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:44.472Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:58:44.661Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:58:44.662Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
+[debug] [2026-04-17T18:58:54.663Z] [update-firebase-frameworks-license-compass-us-central1-ssrlicensecompass] Retrying task index 0
+[debug] [2026-04-17T18:58:54.663Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:54.663Z] Checked if tokens are valid: true, expires at: 1776455807731
+[debug] [2026-04-17T18:58:54.663Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d [none]
+[debug] [2026-04-17T18:58:54.772Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d 200
+[debug] [2026-04-17T18:58:54.772Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d {"name":"projects/license-compass/locations/us-central1/operations/operation-1776452245866-64fac8513488d-ee589614-efb40d0d","metadata":{"@type":"type.googleapis.com/google.cloud.functions.v2.OperationMetadata","createTime":"2026-04-17T18:57:26.919061121Z","target":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","verb":"update","cancelRequested":false,"apiVersion":"v2","requestResource":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","name":"projects/license-compass/locations/us-central1/functions/ssrlicensecompass","buildConfig":{"runtime":"nodejs22","entryPoint":"ssrlicensecompass","source":{"storageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776452246858810"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/license-compass/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-921022138763-us-central1","object":"ssrlicensecompass/function-source.zip","generation":"1776446980182673"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/license-compass/serviceAccounts/921022138763-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","timeoutSeconds":60,"environmentVariables":{"VERCEL_URL":"license-compass.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"license-compass\",\"appId\":\"1:921022138763:web:996d06392371fce6a5878e\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\",\"apiKey\":\"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8\",\"authDomain\":\"license-compass.firebaseapp.com\",\"messagingSenderId\":\"921022138763\",\"measurementId\":\"G-9SELKRFV3D\",\"projectNumber\":\"921022138763\",\"version\":\"2\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"license-compass\",\"databaseURL\":\"https://license-compass-default-rtdb.firebaseio.com\",\"storageBucket\":\"license-compass.firebasestorage.app\"}","GCLOUD_PROJECT":"license-compass","EVENTARC_CLOUD_EVENT_SOURCE":"projects/license-compass/locations/us-central1/services/ssrlicensecompass","FUNCTION_TARGET":"ssrlicensecompass","LOG_EXECUTION_ID":"true"},"ingressSettings":"ALLOW_ALL","uri":"https://ssrlicensecompass-ozlclhilaa-uc.a.run.app","serviceAccountEmail":"921022138763-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrlicensecompass-00009-hik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-license-compass","firebase-functions-hash":"7c4c6efafce94af598faa023579e67fa6614204e"},"environment":"GEN_2","url":"https://us-central1-license-compass.cloudfunctions.net/ssrlicensecompass","satisfiesPzi":true},"stages":[{"name":"BUILD","message":"Build in progress","state":"IN_PROGRESS","resource":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d","resourceUri":"https://console.cloud.google.com/cloud-build/builds;region=us-central1/403e3e7b-9747-4aac-b024-a1f75566772d?project=921022138763"},{"name":"SERVICE","state":"NOT_STARTED"}],"operationType":"UPDATE_FUNCTION","buildName":"projects/921022138763/locations/us-central1/builds/403e3e7b-9747-4aac-b024-a1f75566772d"},"done":false}
