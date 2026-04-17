@@ -16,15 +16,32 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { PendingApproval } from '@/components/auth/PendingApproval';
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const { userProfile, signOut } = useAuth();
+  const { userProfile, signOut, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
-  // If rendering auth/login page, don't show dashboard sidebar
+  // 1. Loading state
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
+
+  // 2. If rendering login page, bypass layout
   if (pathname === '/login') {
     return <>{children}</>;
+  }
+
+  // 3. Block non-active users (unless they are super-admin bootstrap)
+  const isActive = userProfile?.status === 'active' || userProfile?.role === 'admin';
+  
+  if (userProfile && !isActive) {
+    return <PendingApproval />;
   }
 
   const navItems = [
