@@ -105,7 +105,10 @@ export function calculateReadiness(
 
   // ── CEU Compliance ──
   if (stateRequirements) {
-    const applicableCeus = ceus.filter((c) => c.appliesToStates.includes(license.stateCode));
+    const applicableCeus = ceus.filter((c) => {
+      const states = (Array.isArray(c.appliesToStates) ? c.appliesToStates : Object.values(c.appliesToStates || {}) as string[]);
+      return states.includes(license.stateCode);
+    });
     const totalHours = applicableCeus.reduce((sum, c) => sum + c.hours, 0);
     const pharmHours = applicableCeus
       .filter((c) => c.category === 'pharmacology')

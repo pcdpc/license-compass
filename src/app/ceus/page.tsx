@@ -184,7 +184,7 @@ export default function CeusPage() {
                       </div>
                       <div className="flex items-center gap-6">
                         <div className="flex flex-wrap gap-1.5">
-                          {ceu.appliesToStates.map((s) => (
+                          {(Array.isArray(ceu.appliesToStates) ? ceu.appliesToStates : Object.values(ceu.appliesToStates || {}) as string[]).map((s) => (
                             <span key={s} className="px-2 py-0.5 text-xs font-bold bg-white/5 border border-white/10 rounded text-zinc-400">{s}</span>
                           ))}
                         </div>
