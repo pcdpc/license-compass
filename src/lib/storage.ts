@@ -56,7 +56,7 @@ export async function uploadLicenseDocument(
           const docData: Omit<LicenseDocument, 'id' | 'userId'> = {
             category: metadata.category,
             stateCode: metadata.stateCode,
-            licenseId: metadata.licenseId || null,
+            licenseId: metadata.licenseId,
             fileName: file.name,
             storagePath: storagePath,
             downloadURL: downloadURL,
