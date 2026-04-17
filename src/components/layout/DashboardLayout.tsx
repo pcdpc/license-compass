@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Map, 
@@ -19,9 +19,18 @@ import { useAuth } from '@/context/AuthContext';
 import { PendingApproval } from '@/components/auth/PendingApproval';
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
   const { userProfile, signOut, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isSignOutLoading, setIsSignOutLoading] = React.useState(false);
+
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!authLoading && !userProfile && pathname !== '/login') {
+      router.push('/login');
+    }
+  }, [userProfile, authLoading, pathname, router]);
 
   // 1. Loading state
   if (authLoading) {
@@ -73,13 +82,15 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         }`}
       >
         <div className="flex flex-col h-full relative z-10">
-          <div className="flex items-center justify-center h-20 px-4 border-b border-white/10">
-            <div className="p-2 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.5)] border border-indigo-400/50 relative">
-              <Compass className="w-8 h-8 text-white" />
-            </div>
-            <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 tracking-tight text-glow">License Compass</span>
+          <div className="flex items-center justify-between h-20 px-4 border-b border-white/10">
+            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center group/brand">
+              <div className="p-2 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.5)] border border-indigo-400/50 relative group-hover/brand:scale-105 transition-transform">
+                <Compass className="w-8 h-8 text-white" />
+              </div>
+              <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 tracking-tight text-glow group-hover/brand:from-white group-hover/brand:to-zinc-300 transition-all">License Compass</span>
+            </Link>
             <button 
-              className="md:hidden ml-auto p-2 rounded-lg text-zinc-400 hover:bg-white/10 transition-colors"
+              className="md:hidden p-2 rounded-lg text-zinc-400 hover:bg-white/10 transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <X className="w-6 h-6" />
@@ -119,11 +130,19 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
               </div>
             </div>
             <button
-              onClick={signOut}
-              className="flex items-center w-full px-4 py-2.5 text-sm font-medium text-zinc-400 rounded-xl hover:bg-rose-500/10 hover:text-rose-400 border border-transparent hover:border-rose-500/30 hover:shadow-[0_0_10px_rgba(244,63,94,0.1)] transition-all duration-300 hover:-translate-y-[1px]"
+              onClick={async () => {
+                setIsSignOutLoading(true);
+                await signOut();
+              }}
+              disabled={isSignOutLoading}
+              className="flex items-center w-full px-4 py-2.5 text-sm font-medium text-zinc-400 rounded-xl hover:bg-rose-500/10 hover:text-rose-400 border border-transparent hover:border-rose-500/30 hover:shadow-[0_0_10px_rgba(244,63,94,0.1)] transition-all duration-300 hover:-translate-y-[1px] disabled:opacity-50"
             >
-              <LogOut className="w-5 h-5 mr-3 group-hover:text-rose-400 transition-colors" />
-              Sign Out
+              {isSignOutLoading ? (
+                <div className="w-5 h-5 mr-3 border-2 border-rose-500/30 border-t-rose-500 rounded-full animate-spin"></div>
+              ) : (
+                <LogOut className="w-5 h-5 mr-3 group-hover:text-rose-400 transition-colors" />
+              )}
+              {isSignOutLoading ? 'Signing out...' : 'Sign Out'}
             </button>
           </div>
         </div>
@@ -140,9 +159,9 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             <span className="sr-only">Open sidebar</span>
             <Menu className="w-6 h-6" />
           </button>
-          <div className="flex items-center px-4">
+          <Link href="/" className="flex items-center px-4">
              <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 text-glow">License Compass</span>
-          </div>
+          </Link>
         </div>
         
         <main className="flex-1 overflow-y-auto focus:outline-none scroll-smooth">

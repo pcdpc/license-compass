@@ -145,60 +145,106 @@ export default function LicensesPage() {
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead>
-                <tr className="border-b border-white/10 bg-white/5">
-                  <SortableHeader label="State" columnKey="stateName" />
-                  <SortableHeader label="RN Status" columnKey="rnStatus" />
-                  <SortableHeader label="APRN Status" columnKey="aprnStatus" />
-                  <SortableHeader label="Readiness" columnKey="readyStatus" />
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                    Next Action
-                  </th>
-                  <th scope="col" className="relative px-6 py-4">
-                    <span className="sr-only">View</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedLicenses.map((license, idx) => (
-                  <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${idx !== sortedLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-bold text-zinc-100">{license.stateName}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.rnStatus, license.rnExpirationDate, license.isRnCompact)}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.aprnStatus, license.aprnExpirationDate)}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBadge status={license.readyStatus || 'not_ready'} />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-zinc-500 font-medium">{license.nextAction || 'Review Application'}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end gap-4">
-                        <button 
-                          onClick={() => license.id && handleDelete(license.id, license.stateName)}
-                          className="p-1 text-zinc-500 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
-                          title="Delete State"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                        <Link href={`/licenses/${license.id || ''}`} className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-bold transition-colors group/link">
-                          View Details
-                          <ArrowRight className="w-3.5 h-3.5 translate-x-0 group-hover/link:translate-x-1 transition-transform" />
-                        </Link>
-                      </div>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-white/10 bg-white/5">
+                    <SortableHeader label="State" columnKey="stateName" />
+                    <SortableHeader label="RN Status" columnKey="rnStatus" />
+                    <SortableHeader label="APRN Status" columnKey="aprnStatus" />
+                    <SortableHeader label="Readiness" columnKey="readyStatus" />
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                      Next Action
+                    </th>
+                    <th scope="col" className="relative px-6 py-4">
+                      <span className="sr-only">View</span>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {sortedLicenses.map((license, idx) => (
+                    <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${idx !== sortedLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-bold text-zinc-100">{license.stateName}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.rnStatus, license.rnExpirationDate, license.isRnCompact)}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.aprnStatus, license.aprnExpirationDate)}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <StatusBadge status={license.readyStatus || 'not_ready'} />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-zinc-500 font-medium">{license.nextAction || 'Review Application'}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end gap-4">
+                          <button 
+                            onClick={() => license.id && handleDelete(license.id, license.stateName)}
+                            className="p-1 text-zinc-500 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100"
+                            title="Delete State"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <Link href={`/licenses/${license.id || ''}`} className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-bold transition-colors group/link">
+                            View Details
+                            <ArrowRight className="w-3.5 h-3.5 translate-x-0 group-hover/link:translate-x-1 transition-transform" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-white/5">
+              {sortedLicenses.map((license) => (
+                <div key={license.id} className="p-5 hover:bg-white/5 transition-colors">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-zinc-100">{license.stateName}</h3>
+                      <div className="mt-1 flex items-center gap-2">
+                         <StatusBadge status={license.readyStatus || 'not_ready'} className="text-[10px] px-2 py-0.5" />
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => license.id && handleDelete(license.id, license.stateName)}
+                      className="p-2 text-zinc-600 hover:text-rose-400 bg-white/5 rounded-lg border border-white/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-5">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">RN Status</p>
+                      <p className="text-sm text-zinc-300 font-medium">{getStatusDisplay(license.rnStatus, license.rnExpirationDate, license.isRnCompact)}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">APRN Status</p>
+                      <p className="text-sm text-zinc-300 font-medium">{getStatusDisplay(license.aprnStatus, license.aprnExpirationDate)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                    <div className="text-[11px] text-zinc-500 font-medium italic">
+                      {license.nextAction || 'Review Application'}
+                    </div>
+                    <Link href={`/licenses/${license.id || ''}`} className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-xl font-bold text-sm transition-all">
+                      Details
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
