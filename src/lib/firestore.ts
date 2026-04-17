@@ -36,15 +36,16 @@ export function daysUntil(date: Date | null): number | null {
 
 /** Strip undefined values from an object before sending to Firestore */
 function stripUndefined(obj: any): any {
-  if (typeof obj !== 'object' || obj === null) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map(item => stripUndefined(item));
+  }
+  if (typeof obj !== 'object' || obj === null || obj instanceof Date || obj instanceof Timestamp) {
+    return obj;
+  }
   const clean: any = {};
   Object.keys(obj).forEach(key => {
     if (obj[key] !== undefined) {
-      if (typeof obj[key] === 'object' && obj[key] !== null && !(obj[key] instanceof Date) && !(obj[key] instanceof Timestamp)) {
-        clean[key] = stripUndefined(obj[key]);
-      } else {
-        clean[key] = obj[key];
-      }
+      clean[key] = stripUndefined(obj[key]);
     }
   });
   return clean;
