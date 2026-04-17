@@ -20,3 +20,5 @@ env:
     value: "1:921022138763:web:996d06392371fce6a5878e"
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     value: "G-9SELKRFV3D"
+  - variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
+    value: "https://license-compass-default-rtdb.firebaseio.com"
