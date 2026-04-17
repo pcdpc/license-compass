@@ -85,7 +85,7 @@ export default function CeusPage() {
       const ceuData = {
         ...ceuDetails,
         courseDate: new Date(data.courseDate),
-        certificateDocumentId
+        certificateDocumentId: certificateDocumentId || null
       };
       
       const newCeuId = await createCeu(user.uid, ceuData);

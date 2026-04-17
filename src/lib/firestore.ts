@@ -15,6 +15,41 @@ import {
 import { db } from './firebase';
 import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotification } from '@/types/schema';
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+/** Convert a Firestore Timestamp (or Date) to a JS Date */
+export function toDate(ts: any): Date | null {
+  if (!ts) return null;
+  if (ts instanceof Date) return ts;
+  if (ts?.toDate) return ts.toDate();
+  if (ts?.seconds) return new Date(ts.seconds * 1000);
+  return null;
+}
+
+/** Days until a given date. Negative = already past. */
+export function daysUntil(date: Date | null): number | null {
+  if (!date) return null;
+  const now = new Date();
+  const diff = date.getTime() - now.getTime();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+/** Strip undefined values from an object before sending to Firestore */
+function stripUndefined(obj: any): any {
+  if (typeof obj !== 'object' || obj === null) return obj;
+  const clean: any = {};
+  Object.keys(obj).forEach(key => {
+    if (obj[key] !== undefined) {
+      if (typeof obj[key] === 'object' && obj[key] !== null && !(obj[key] instanceof Date) && !(obj[key] instanceof Timestamp)) {
+        clean[key] = stripUndefined(obj[key]);
+      } else {
+        clean[key] = obj[key];
+      }
+    }
+  });
+  return clean;
+}
+
 // ─── User Profile ───────────────────────────────────────────────────────────
 
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
@@ -23,18 +58,18 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
 }
 
 export async function createUserProfile(userId: string, data: Partial<UserProfile>): Promise<void> {
-  await updateDoc(doc(db, 'users', userId), {
+  await updateDoc(doc(db, 'users', userId), stripUndefined({
     ...data,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  });
+  }));
 }
 
 export async function updateUserProfile(userId: string, data: Partial<UserProfile>): Promise<void> {
-  await updateDoc(doc(db, 'users', userId), {
+  await updateDoc(doc(db, 'users', userId), stripUndefined({
     ...data,
     updatedAt: serverTimestamp(),
-  });
+  }));
 }
 
 export async function getAllUsers(): Promise<(UserProfile & { id: string })[]> {
@@ -67,20 +102,20 @@ export async function getLicenseByState(userId: string, stateCode: string): Prom
 }
 
 export async function createLicense(userId: string, data: Omit<StateLicense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
-  const docRef = await addDoc(licensesCol(userId), {
+  const docRef = await addDoc(licensesCol(userId), stripUndefined({
     ...data,
     userId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  });
+  }));
   return docRef.id;
 }
 
 export async function updateLicense(userId: string, licenseId: string, data: Partial<StateLicense>): Promise<void> {
-  await updateDoc(doc(db, 'users', userId, 'licenses', licenseId), {
+  await updateDoc(doc(db, 'users', userId, 'licenses', licenseId), stripUndefined({
     ...data,
     updatedAt: serverTimestamp(),
-  });
+  }));
 }
 
 export async function deleteLicense(userId: string, licenseId: string): Promise<void> {
@@ -99,20 +134,20 @@ export async function getUserCeus(userId: string): Promise<CeuEntry[]> {
 }
 
 export async function createCeu(userId: string, data: Omit<CeuEntry, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
-  const docRef = await addDoc(ceusCol(userId), {
+  const docRef = await addDoc(ceusCol(userId), stripUndefined({
     ...data,
     userId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  });
+  }));
   return docRef.id;
 }
 
 export async function updateCeu(userId: string, ceuId: string, data: Partial<CeuEntry>): Promise<void> {
-  await updateDoc(doc(db, 'users', userId, 'ceus', ceuId), {
+  await updateDoc(doc(db, 'users', userId, 'ceus', ceuId), stripUndefined({
     ...data,
     updatedAt: serverTimestamp(),
-  });
+  }));
 }
 
 export async function deleteCeu(userId: string, ceuId: string): Promise<void> {
@@ -131,10 +166,10 @@ export async function getUserDocuments(userId: string): Promise<LicenseDocument[
 }
 
 export async function createDocument(userId: string, data: Omit<LicenseDocument, 'id' | 'userId'>): Promise<string> {
-  const docRef = await addDoc(docsCol(userId), {
+  const docRef = await addDoc(docsCol(userId), stripUndefined({
     ...data,
     userId,
-  });
+  }));
   return docRef.id;
 }
 
@@ -159,10 +194,10 @@ export async function deleteDocument(userId: string, documentId: string): Promis
 }
 
 export async function updateDocument(userId: string, documentId: string, data: Partial<LicenseDocument>): Promise<void> {
-  await updateDoc(doc(db, 'users', userId, 'documents', documentId), {
+  await updateDoc(doc(db, 'users', userId, 'documents', documentId), stripUndefined({
     ...data,
     updatedAt: new Date()
-  });
+  }));
 }
 
 // ─── Notifications ──────────────────────────────────────────────────────────
@@ -199,11 +234,11 @@ export async function clearAllNotifications(userId: string): Promise<void> {
 }
 
 export async function createNotification(userId: string, data: Omit<InAppNotification, 'id' | 'userId' | 'createdAt'>): Promise<string> {
-  const docRef = await addDoc(notifsCol(userId), {
+  const docRef = await addDoc(notifsCol(userId), stripUndefined({
     ...data,
     userId,
     createdAt: serverTimestamp(),
-  });
+  }));
   return docRef.id;
 }
 
@@ -228,21 +263,4 @@ export async function deleteUserFullAccount(userId: string): Promise<void> {
   await deleteDoc(doc(db, 'users', userId));
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-/** Convert a Firestore Timestamp (or Date) to a JS Date */
-export function toDate(ts: any): Date | null {
-  if (!ts) return null;
-  if (ts instanceof Date) return ts;
-  if (ts?.toDate) return ts.toDate();
-  if (ts?.seconds) return new Date(ts.seconds * 1000);
-  return null;
-}
-
-/** Days until a given date. Negative = already past. */
-export function daysUntil(date: Date | null): number | null {
-  if (!date) return null;
-  const now = new Date();
-  const diff = date.getTime() - now.getTime();
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
-}
+// ─── Helpers moved to top ──────────────────────────────────────────────────
