@@ -19,7 +19,7 @@ const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
   'KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
   'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT',
-  'VA','WA','WV','WI','WY','DC',
+  'VA','WA','WV','WI','WY','DC', 'Multi-state'
 ];
 
 export function CareerOpportunityModal({ isOpen, onClose, onSubmit, initialData }: CareerOpportunityModalProps) {
@@ -74,13 +74,16 @@ export function CareerOpportunityModal({ isOpen, onClose, onSubmit, initialData 
     try {
       // Convert date strings back to Dates before submission
       const submissionData = { ...formData };
-      const dateFields = ['dateFound', 'dateApplied', 'followUpDate', 'interviewDate', 'offerDate', 'startDate', 'endDate', 'reminderDate'];
       dateFields.forEach(field => {
-        if (submissionData[field as keyof CareerOpportunity]) {
-          submissionData[field as keyof CareerOpportunity] = new Date(submissionData[field as keyof CareerOpportunity] as string) as any;
+        const val = submissionData[field as keyof CareerOpportunity];
+        if (val && typeof val === 'string' && val.trim() !== '') {
+          submissionData[field as keyof CareerOpportunity] = new Date(val) as any;
+        } else if (val === '') {
+          submissionData[field as keyof CareerOpportunity] = null as any;
         }
       });
       await onSubmit(submissionData);
+      onClose();
     } catch (error) {
       console.error('Error saving career opportunity:', error);
     } finally {

@@ -207,8 +207,8 @@ export default function CareerHubPage() {
                   <div className="space-y-1">
                     <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Location/Mode</p>
                     <div className="flex items-center gap-2 text-xs font-bold text-zinc-300 capitalize">
-                      {career.workMode === 'remote' ? <Globe className="w-3.5 h-3.5" /> : <MapPin className="w-3.5 h-3.5" />}
-                      {career.state && career.workMode !== 'remote' ? `${career.state} (${career.workMode})` : career.workMode}
+                      {career.workMode === 'remote' || career.state === 'Multi-state' ? <Globe className="w-3.5 h-3.5" /> : <MapPin className="w-3.5 h-3.5" />}
+                      {career.state === 'Multi-state' ? 'Multi-state' : (career.state && career.workMode !== 'remote' ? `${career.state} (${career.workMode})` : career.workMode)}
                     </div>
                   </div>
                   <div className="space-y-1">
@@ -218,7 +218,20 @@ export default function CareerHubPage() {
                       {career.employmentType}
                     </div>
                   </div>
-                  {career.salary && (
+                  
+                  {career.type === 'active' || career.startDate ? (
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Timeline</p>
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-zinc-300">
+                        <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+                        {career.startDate ? toDate(career.startDate)?.toLocaleDateString(undefined, { month: 'short', year: '2-digit' }) : 'Start'}
+                        <span className="text-zinc-600 mx-0.5">→</span>
+                        <span className={!career.endDate ? 'text-emerald-400' : ''}>
+                          {career.endDate ? toDate(career.endDate)?.toLocaleDateString(undefined, { month: 'short', year: '2-digit' }) : 'Current'}
+                        </span>
+                      </div>
+                    </div>
+                  ) : career.salary ? (
                     <div className="space-y-1">
                       <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Comp</p>
                       <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
@@ -226,7 +239,8 @@ export default function CareerHubPage() {
                         {career.salary}
                       </div>
                     </div>
-                  )}
+                  ) : null}
+
                   <div className="space-y-1">
                     <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Updated</p>
                     <div className="flex items-center gap-2 text-xs font-bold text-zinc-400">
