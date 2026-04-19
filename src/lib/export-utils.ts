@@ -1,5 +1,5 @@
-import { getUserLicenses, getUserCeus, toDate } from './firestore';
-import type { UserProfile, StateLicense, CeuEntry } from '@/types/schema';
+import { getUserLicenses, getUserCeus, getUserCareers, toDate } from './firestore';
+import type { UserProfile, StateLicense, CeuEntry, CareerOpportunity } from '@/types/schema';
 
 /**
  * Escapes a string for CSV format
@@ -17,9 +17,10 @@ function escapeCSV(val: any): string {
  * Generates a full data export CSV
  */
 export async function generateUserDataCSV(userId: string, profile: UserProfile): Promise<string> {
-  const [licenses, ceus] = await Promise.all([
+  const [licenses, ceus, careers] = await Promise.all([
     getUserLicenses(userId),
-    getUserCeus(userId)
+    getUserCeus(userId),
+    getUserCareers(userId)
   ]);
 
   const rows: string[][] = [];
@@ -65,7 +66,22 @@ export async function generateUserDataCSV(userId: string, profile: UserProfile):
       c.provider,
       c.hours.toString(),
       c.category,
-      c.appliesToStates.join(', ')
+      (Array.isArray(c.appliesToStates) ? c.appliesToStates : Object.values(c.appliesToStates || {}) as string[]).join(', ')
+    ]);
+  });
+  rows.push([]); // Empty spacing row
+
+  // Career Hub Section
+  rows.push(['CAREER', 'Type', 'Status', 'Title', 'Employer', 'Mode', 'Location']);
+  careers.forEach(c => {
+    rows.push([
+      'CAREER',
+      c.type,
+      c.status,
+      c.title,
+      c.employer,
+      c.workMode,
+      c.state || 'N/A'
     ]);
   });
 

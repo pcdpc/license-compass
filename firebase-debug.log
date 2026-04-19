@@ -1,0 +1,27 @@
+[debug] [2026-04-17T17:16:01.512Z] ----------------------------------------------------------------------
+[debug] [2026-04-17T17:16:01.513Z] Command:       /usr/local/bin/node /Users/pcdpc/Desktop/license-compass/node_modules/.bin/firebase deploy --only hosting
+[debug] [2026-04-17T17:16:01.513Z] CLI Version:   15.15.0
+[debug] [2026-04-17T17:16:01.513Z] Platform:      darwin
+[debug] [2026-04-17T17:16:01.513Z] Node Version:  v22.14.0
+[debug] [2026-04-17T17:16:01.513Z] Time:          Fri Apr 17 2026 13:16:01 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-04-17T17:16:01.513Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-17T17:16:02.408Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-17T17:16:02.409Z] > authorizing via signed-in user (larry.a.montgomery@gmail.com)
+[debug] [2026-04-17T17:16:02.409Z] [iam] checking project license-compass for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-04-17T17:16:02.409Z] Checked if tokens are valid: false, expires at: 1776442608642
+[debug] [2026-04-17T17:16:02.409Z] Checked if tokens are valid: false, expires at: 1776442608642
+[debug] [2026-04-17T17:16:02.409Z] > refreshing access token with scopes: []
+[debug] [2026-04-17T17:16:02.410Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-04-17T17:16:02.410Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-17T17:16:02.474Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-04-17T17:16:02.474Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-17T17:16:02.484Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions [none]
+[debug] [2026-04-17T17:16:02.484Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions  x-goog-user-project=license-compass
+[debug] [2026-04-17T17:16:02.484Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-04-17T17:16:02.668Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions 200
+[debug] [2026-04-17T17:16:02.669Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-04-17T17:16:02.670Z] Checked if tokens are valid: true, expires at: 1776449761474
+[debug] [2026-04-17T17:16:02.670Z] Checked if tokens are valid: true, expires at: 1776449761474
+[debug] [2026-04-17T17:16:02.670Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/license-compass [none]
+[debug] [2026-04-17T17:16:02.898Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/license-compass 200

@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   Compass,
-  ShieldCheck
+  ShieldCheck,
+  Briefcase
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { PendingApproval } from '@/components/auth/PendingApproval';
@@ -58,6 +59,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     { name: 'My Licenses', href: '/licenses', icon: Map },
     { name: 'CEUs', href: '/ceus', icon: Award },
     { name: 'Documents', href: '/documents', icon: Files },
+    { name: 'Career Hub', href: '/career-hub', icon: Briefcase },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
@@ -132,7 +134,13 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             <button
               onClick={async () => {
                 setIsSignOutLoading(true);
-                await signOut();
+                try {
+                  await signOut();
+                  router.push('/login');
+                } catch (error) {
+                  console.error('Sign out error:', error);
+                  setIsSignOutLoading(false);
+                }
               }}
               disabled={isSignOutLoading}
               className="flex items-center w-full px-4 py-2.5 text-sm font-medium text-zinc-400 rounded-xl hover:bg-rose-500/10 hover:text-rose-400 border border-transparent hover:border-rose-500/30 hover:shadow-[0_0_10px_rgba(244,63,94,0.1)] transition-all duration-300 hover:-translate-y-[1px] disabled:opacity-50"

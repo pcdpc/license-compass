@@ -169,53 +169,52 @@ export default function CeusPage() {
                 const courseDate = toDate(ceu.courseDate);
                 
                 return (
-                  <div key={ceu.id} className="px-6 py-4 hover:bg-white/5 transition-all group">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className={`p-2 rounded-xl border ${categoryColors[ceu.category]}`}>
+                  <div key={ceu.id} className="px-4 sm:px-6 py-5 hover:bg-white/5 transition-all group">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className={`p-2.5 rounded-xl border flex-shrink-0 ${categoryColors[ceu.category]}`}>
                           {categoryIcons[ceu.category]}
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-zinc-100">{ceu.title}</p>
-                          <p className="text-xs text-zinc-500 font-medium">
+                        <div className="min-w-0">
+                          <p className="text-sm font-extrabold text-zinc-100 truncate">{ceu.title}</p>
+                          <p className="text-xs text-zinc-500 font-medium truncate">
                             {ceu.provider} · {courseDate ? courseDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown Date'}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-6">
+
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 ml-14 sm:ml-0">
                         <div className="flex flex-wrap gap-1.5">
                           {(Array.isArray(ceu.appliesToStates) ? ceu.appliesToStates : Object.values(ceu.appliesToStates || {}) as string[]).map((s) => (
-                            <span key={s} className="px-2 py-0.5 text-xs font-bold bg-white/5 border border-white/10 rounded text-zinc-400">{s}</span>
+                            <span key={s} className="px-2 py-0.5 text-[10px] font-black bg-indigo-500/10 border border-indigo-500/20 rounded text-indigo-300 uppercase tracking-tighter">{s}</span>
                           ))}
                         </div>
-                        <div className="flex items-center gap-6">
-                          <span className="text-sm font-extrabold text-zinc-200 whitespace-nowrap">{ceu.hours} hrs</span>
-                          {docUrl ? (
-                            <div className="flex items-center gap-2">
+                        
+                        <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto">
+                          <span className="text-sm font-black text-zinc-200 bg-white/5 px-2 py-1 rounded-lg border border-white/5">{ceu.hours}<span className="text-[10px] ml-0.5 text-zinc-500 uppercase">hrs</span></span>
+                          
+                          {docUrl && (
+                            <div className="flex items-center gap-1.5">
                               <a 
                                 href={docUrl} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="p-2 bg-white/5 text-zinc-400 rounded-lg hover:bg-white/10 hover:text-indigo-400 transition-all flex items-center gap-1.5 text-xs font-bold border border-white/10 shadow-sm group/btn"
+                                className="p-2 sm:p-2.5 bg-white/5 text-zinc-400 rounded-xl hover:bg-indigo-500/10 hover:text-indigo-400 transition-all border border-white/10 shadow-sm"
                                 title="View Certificate"
                               >
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>View</span>
+                                <Eye className="w-4 h-4" />
                               </a>
                               <a 
                                 href={docUrl} 
                                 download
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="p-2 bg-white/5 text-zinc-400 rounded-lg hover:bg-white/10 hover:text-emerald-400 transition-all flex items-center gap-1.5 text-xs font-bold border border-white/10 shadow-sm group/btn"
+                                className="p-2 sm:p-2.5 bg-white/5 text-zinc-400 rounded-xl hover:bg-emerald-500/10 hover:text-emerald-400 transition-all border border-white/10 shadow-sm"
                                 title="Download Certificate"
                               >
-                                <Download className="w-3.5 h-3.5" />
-                                <span>Download</span>
+                                <Download className="w-4 h-4" />
                               </a>
                             </div>
-                          ) : (
-                            <div className="w-[160px]"></div> // Adjusted spacer to keep alignment
                           )}
                         </div>
                       </div>

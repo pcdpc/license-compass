@@ -42,7 +42,7 @@ export const PendingApproval = () => {
         </p>
 
         <div className="flex flex-col gap-3">
-          <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/10 text-xs font-bold text-indigo-300 uppercase tracking-widest mb-4">
+          <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/10 text-xs font-bold text-indigo-300 uppercase tracking-widest mb-4 break-all">
              User: {userProfile?.email}
           </div>
           

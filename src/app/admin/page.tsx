@@ -144,7 +144,82 @@ export default function AdminPage() {
       </div>
 
       <div className="glass-panel rounded-2xl overflow-hidden border border-white/10 shadow-xl">
-        <div className="overflow-x-auto">
+        {/* Mobile View: Cards */}
+        <div className="md:hidden divide-y divide-white/5">
+          {filteredUsers.map((user) => (
+            <div key={user.id} className="p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-lg flex-shrink-0">
+                  {user.displayName?.charAt(0) || 'U'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-zinc-100 truncate">{user.displayName}</p>
+                  <p className="text-xs text-zinc-500 font-medium truncate">{user.email}</p>
+                </div>
+                <div className="flex-shrink-0">
+                  {user.role === 'admin' ? (
+                    <ShieldCheck className="w-4 h-4 text-indigo-400" />
+                  ) : (
+                    <ShieldAlert className="w-4 h-4 text-zinc-600" />
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Status</p>
+                  {getStatusBadge(user.status)}
+                </div>
+                <div className="space-y-1 text-right">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Joined</p>
+                  <p className="text-xs text-zinc-100 font-medium">{toDate(user.createdAt)?.toLocaleDateString()}</p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap gap-2 border-t border-white/5">
+                {user.email === 'larry.a.montgomery@gmail.com' ? (
+                  <span className="w-full text-center px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(99,102,241,0.2)] flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Super User
+                  </span>
+                ) : (
+                  <>
+                    {user.status !== 'active' && (
+                      <button 
+                        onClick={() => handleStatusUpdate(user.id, 'active')}
+                        disabled={processingId === user.id}
+                        className="flex-1 px-3 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-xs font-bold hover:bg-emerald-500/20 transition-all disabled:opacity-50"
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {user.status !== 'suspended' && (
+                      <button 
+                        onClick={() => handleStatusUpdate(user.id, 'suspended')}
+                        disabled={processingId === user.id}
+                        className="flex-1 px-3 py-2 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-xs font-bold hover:bg-amber-500/20 transition-all disabled:opacity-50"
+                      >
+                        Suspend
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => handleDeleteUser(user.id, user.email)}
+                      disabled={processingId === user.id}
+                      className="flex-1 px-3 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+          {filteredUsers.length === 0 && (
+            <div className="p-8 text-center text-sm font-medium text-zinc-500">No users found.</div>
+          )}
+        </div>
+
+        {/* Desktop View: Table */}
+        <div className="hidden md:block">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-white/5 border-b border-white/10">
@@ -229,6 +304,7 @@ export default function AdminPage() {
             </tbody>
           </table>
         </div>
+
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

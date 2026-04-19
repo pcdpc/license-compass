@@ -7,6 +7,8 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
@@ -17,6 +19,8 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   isSigningIn: boolean;
 }
@@ -26,6 +30,8 @@ const AuthContext = createContext<AuthContextType>({
   userProfile: null,
   loading: true,
   signInWithGoogle: async () => {},
+  signInWithEmail: async () => {},
+  signUpWithEmail: async () => {},
   signOut: async () => {},
   isSigningIn: false,
 });
@@ -122,6 +128,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const signInWithEmail = async (email: string, pass: string) => {
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (error) {
+      console.error('Error signing in with Email', error);
+      throw error;
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
+
+  const signUpWithEmail = async (email: string, pass: string, name: string) => {
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, pass);
+      // Wait for onAuthStateChanged to handle profile creation, 
+      // but we might want to update displayName immediately
+      // Actually, our onAuthStateChanged logic already creates a profile if it doesn't exist.
+      // We can update the profile later if needed, but for now this is clean.
+    } catch (error) {
+      console.error('Error signing up with Email', error);
+      throw error;
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
+
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
@@ -132,7 +168,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, userProfile, loading, signInWithGoogle, signOut, isSigningIn }}>
+    <AuthContext.Provider value={{ user, userProfile, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, isSigningIn }}>
       {children}
     </AuthContext.Provider>
   );

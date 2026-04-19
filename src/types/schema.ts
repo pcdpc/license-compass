@@ -188,32 +188,42 @@ export interface CeuEntry {
   updatedAt: Timestamp;
 }
 
-// Added State Requirements reference schema to assist with calculations
-export interface StateRequirements {
-  stateCode: string;
-  stateName: string;
-  rnRequired: boolean;
-  aprnRequired: boolean;
-  independentPracticeAllowed: boolean;
-  supervisionRequired: boolean;
-  deaRequiredForControlledSubstances: boolean;
-  stateControlledSubstanceRequired: boolean;
-  ceuRequirements: {
-    renewalCycleMonths: number;
-    totalHoursRequired: number;
-    pharmacologyHoursRequired: number;
-    ethicsHoursRequired: number;
-    controlledSubstanceHoursRequired: number;
-    specialRequirementsNotes: string;
-  };
-  extraRequirements: {
-    backgroundCheckRequired: boolean;
-    fingerprintRequired: boolean;
-  };
-  links: {
-    boardWebsite: string;
-    renewalPage: string;
-    ceRequirementsPage: string;
-  };
+export type CareerType = 'saved' | 'applied' | 'active';
+
+export interface CareerOpportunity {
+  id?: string;
+  userId: string;
+  type: CareerType;
+  status: string;
+  title: string;
+  employer: string;
+  specialty?: string;
+  state?: string;
+  workMode: 'remote' | 'hybrid' | 'onsite';
+  employmentType: 'full-time' | 'part-time' | 'PRN' | 'locums' | 'contract';
+  description?: string;
+  notes?: string;
+  salary?: string;
+  compensationModel?: string;
+  recruiterName?: string;
+  recruiterEmail?: string;
+  recruiterPhone?: string;
+  jobPostingUrl?: string;
+  dateFound?: Timestamp | null;
+  dateApplied?: Timestamp | null;
+  followUpDate?: Timestamp | null;
+  interviewDate?: Timestamp | null;
+  offerDate?: Timestamp | null;
+  startDate?: Timestamp | null;
+  endDate?: Timestamp | null;
+  licenseRequirements?: string;
+  deaRequired?: boolean;
+  collaboratingPhysicianRequired?: boolean;
+  documentsSubmitted?: string[];
+  linkedDocumentIds?: string[];
+  reminderDate?: Timestamp | null;
+  currentEmployerContact?: string;
+  currentRoleDetails?: string;
+  createdAt: Timestamp;
   updatedAt: Timestamp;
 }

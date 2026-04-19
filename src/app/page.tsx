@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Map, AlertCircle, Clock, CheckCircle, Loader2 } from 'lucide-react';
-import { getUserLicenses, getUserDocuments } from '@/lib/firestore';
-import { LicenseDocument, StateLicense } from '@/types/schema';
+import { Map, AlertCircle, Clock, CheckCircle, Loader2, Briefcase, Bookmark, Send, Building } from 'lucide-react';
+import { getUserLicenses, getUserDocuments, getUserCareers, toDate } from '@/lib/firestore';
+import { LicenseDocument, StateLicense, CareerOpportunity } from '@/types/schema';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -14,6 +14,7 @@ export default function DashboardPage() {
   
   const [licenses, setLicenses] = useState<StateLicense[]>([]);
   const [documents, setDocuments] = useState<LicenseDocument[]>([]);
+  const [careers, setCareers] = useState<CareerOpportunity[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
@@ -27,13 +28,15 @@ export default function DashboardPage() {
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const [licenseData, docData] = await Promise.all([
+        const [licenseData, docData, careerData] = await Promise.all([
           getUserLicenses(user.uid),
-          getUserDocuments(user.uid)
+          getUserDocuments(user.uid),
+          getUserCareers(user.uid)
         ]);
         if (isMounted) {
           setLicenses(licenseData);
           setDocuments(docData);
+          setCareers(careerData);
           setDataLoading(false);
         }
       } catch (error) {
@@ -60,6 +63,20 @@ export default function DashboardPage() {
     activeStates: activeStates.length,
     pendingStates: pendingStates.length,
     readyStates: readyStates.length
+  };
+
+  // Career Metrics
+  const careerStats = {
+    saved: careers.filter(c => c.type === 'saved').length,
+    applied: careers.filter(c => c.type === 'applied').length,
+    active: careers.filter(c => c.type === 'active').length,
+    followUps: careers.filter(c => {
+      if (!c.followUpDate) return false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const fuDate = toDate(c.followUpDate);
+      return fuDate ? fuDate <= today && c.status !== 'accepted' && c.status !== 'rejected' : false;
+    }).length
   };
 
   // Compile Expiring Soon items (within 90 days)
@@ -132,8 +149,15 @@ export default function DashboardPage() {
     { name: 'Ready to Practice', value: stats.readyStates, icon: AlertCircle, iconColor: 'text-blue-600', iconBg: 'bg-blue-100/60', bg: 'bg-white/40' },
   ];
 
+  const careerStatCards = [
+    { name: 'Saved Jobs', value: careerStats.saved, icon: Bookmark, iconColor: 'text-indigo-500', iconBg: 'bg-indigo-500/10', color: 'indigo' },
+    { name: 'Applications', value: careerStats.applied, icon: Send, iconColor: 'text-emerald-500', iconBg: 'bg-emerald-500/10', color: 'emerald' },
+    { name: 'Active Jobs', value: careerStats.active, icon: Building, iconColor: 'text-amber-500', iconBg: 'bg-amber-500/10', color: 'amber' },
+    { name: 'Follow-ups Due', value: careerStats.followUps, icon: Clock, iconColor: 'text-rose-500', iconBg: 'bg-rose-500/10', color: 'rose' },
+  ];
+
   return (
-    <div className="space-y-8 relative z-10">
+    <div className="space-y-8 relative z-10 pb-10">
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 via-indigo-200 to-zinc-400 tracking-tight text-glow">Dashboard Overview</h1>
       </div>
@@ -144,7 +168,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             {statCards.map((stat) => (
               <div key={stat.name} className={`glass-card rounded-2xl relative overflow-hidden group`}>
                 <div className={`absolute -right-6 -top-6 w-32 h-32 ${stat.iconBg} rounded-full blur-3xl opacity-20 group-hover:scale-150 transition-all duration-700 ease-out z-0`}></div>
@@ -161,6 +185,35 @@ export default function DashboardPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-sm font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                <Briefcase className="w-4 h-4" />
+                Career Pipeline
+              </h2>
+              <Link href="/career-hub" className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-widest">Manage Hub</Link>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+              {careerStatCards.map((stat) => (
+                <div key={stat.name} className="glass-panel rounded-2xl p-6 border border-white/5 group relative overflow-hidden">
+                  <div className={`absolute -right-4 -top-4 w-24 h-24 ${stat.iconBg} rounded-full blur-2xl opacity-40 group-hover:scale-125 transition-transform duration-500`}></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`p-2 rounded-lg bg-white/5 border border-white/10`}>
+                        <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
+                      </div>
+                      {stat.name === 'Follow-ups Due' && stat.value > 0 && (
+                        <span className="flex h-2 w-2 rounded-full bg-rose-500 animate-ping"></span>
+                      )}
+                    </div>
+                    <p className="text-[9px] sm:text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1 truncate">{stat.name}</p>
+                    <p className="text-2xl sm:text-3xl font-black text-zinc-100">{stat.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

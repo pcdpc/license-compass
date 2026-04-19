@@ -188,68 +188,67 @@ export default function DocumentsPage() {
       <div className="glass-panel rounded-2xl overflow-hidden">
         <div className="divide-y divide-white/5">
           {filtered.map((doc) => (
-            <div key={doc.id} className="px-6 py-4 hover:bg-white/5 transition-all group flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className={`p-2 rounded-xl border ${categoryColors[doc.category] || categoryColors.other}`}>
+            <div key={doc.id} className="px-4 sm:px-6 py-4 hover:bg-white/5 transition-all group flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className={`p-2 rounded-xl border flex-shrink-0 ${categoryColors[doc.category] || categoryColors.other}`}>
                   <FileText className="w-5 h-5" />
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-zinc-100">{doc.fileName}</p>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    <span className="text-xs text-zinc-500 font-medium">{categoryLabels[doc.category]}</span>
-                    <span className="text-xs text-zinc-600">·</span>
-                    <span className="text-xs text-zinc-500 font-medium">{doc.stateCode}</span>
-                    <span className="text-xs text-zinc-600">·</span>
-                    <span className="text-xs text-zinc-500 font-medium">{formatFileSize(doc.fileSize)}</span>
-                    <span className="text-xs text-zinc-600">·</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-zinc-100 truncate">{doc.fileName}</p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                    <span className="text-[10px] sm:text-xs text-zinc-500 font-bold uppercase tracking-wider">{categoryLabels[doc.category]}</span>
+                    <span className="hidden sm:inline text-xs text-zinc-600">·</span>
+                    <span className="text-[10px] sm:text-xs text-zinc-500 font-bold uppercase tracking-wider">{doc.stateCode}</span>
+                    <span className="hidden sm:inline text-xs text-zinc-600">·</span>
+                    <span className="text-[10px] sm:text-xs text-zinc-500 font-bold uppercase tracking-wider">{formatFileSize(doc.fileSize)}</span>
+                    <span className="hidden sm:inline text-xs text-zinc-600">·</span>
                     <DateDisplay date={doc.uploadedAt} />
-                    {doc.expirationDate && (
-                      <>
-                        <span className="text-xs text-zinc-600">·</span>
-                        <DateDisplay 
-                          date={doc.expirationDate} 
-                          icon={Calendar} 
-                          label="Expires"
-                          colorClass={toDate(doc.expirationDate)! < new Date() ? "text-rose-400" : "text-amber-400/80"} 
-                        />
-                      </>
-                    )}
                   </div>
+                  {doc.expirationDate && (
+                    <div className="mt-1 flex items-center">
+                      <DateDisplay 
+                        date={doc.expirationDate} 
+                        icon={Calendar} 
+                        label="Expires"
+                        colorClass={toDate(doc.expirationDate)! < new Date() ? "text-rose-400" : "text-amber-400/80"} 
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-all justify-end sm:justify-start border-t border-white/5 sm:border-0 pt-2 sm:pt-0">
                 <a 
                    href={doc.downloadURL} 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="p-2 rounded-lg text-zinc-600 hover:text-indigo-400 hover:bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                   className="p-2 sm:p-2.5 rounded-xl text-zinc-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all flex items-center justify-center"
                    title="View Document"
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
                 <a 
                    href={doc.downloadURL} 
                    download
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="p-2 rounded-lg text-zinc-600 hover:text-emerald-400 hover:bg-emerald-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                   className="p-2 sm:p-2.5 rounded-xl text-zinc-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center justify-center"
                    title="Download Document"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
                 <button 
                   onClick={() => setEditingDoc(doc)} 
-                  className="p-2 rounded-lg text-zinc-600 hover:text-indigo-400 hover:bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                  className="p-2 sm:p-2.5 rounded-xl text-zinc-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all flex items-center justify-center"
                   title="Edit info"
                 >
-                  <Edit2 className="w-4 h-4" />
+                  <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
                 <button 
                   onClick={() => handleDelete(doc.id!)} 
-                  className="p-2 rounded-lg text-zinc-600 hover:text-rose-400 hover:bg-rose-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                  className="p-2 sm:p-2.5 rounded-xl text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all flex items-center justify-center"
                   title="Delete"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>

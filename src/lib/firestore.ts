@@ -13,7 +13,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotification } from '@/types/schema';
+import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotification, CareerOpportunity } from '@/types/schema';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -243,6 +243,40 @@ export async function createNotification(userId: string, data: Omit<InAppNotific
   return docRef.id;
 }
 
+// ─── Career Opportunities ────────────────────────────────────────────────────
+
+const careersCol = (userId: string) =>
+  collection(db, 'users', userId, 'careers');
+
+export async function getUserCareers(userId: string): Promise<CareerOpportunity[]> {
+  const q = query(careersCol(userId), orderBy('updatedAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as CareerOpportunity));
+}
+
+export async function createCareer(userId: string, data: Omit<CareerOpportunity, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const docRef = await addDoc(careersCol(userId), stripUndefined({
+    ...data,
+    userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }));
+  return docRef.id;
+}
+
+export async function updateCareer(userId: string, careerId: string, data: Partial<CareerOpportunity>): Promise<void> {
+  await updateDoc(doc(db, 'users', userId, 'careers', careerId), stripUndefined({
+    ...data,
+    updatedAt: serverTimestamp(),
+  }));
+}
+
+export async function deleteCareer(userId: string, careerId: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', userId, 'careers', careerId));
+}
+
+// ─── Delete Account Cleanup ──────────────────────────────────────────────────
+
 export async function deleteUserFullAccount(userId: string): Promise<void> {
   // Safeguard: Never delete the super admin
   const userProfile = await getUserProfile(userId);
@@ -251,7 +285,7 @@ export async function deleteUserFullAccount(userId: string): Promise<void> {
   }
 
   // 1. Delete all sub-collection data
-  const collections = ['licenses', 'ceus', 'documents', 'notifications'];
+  const collections = ['licenses', 'ceus', 'documents', 'notifications', 'careers'];
   
   for (const colName of collections) {
     const colRef = collection(db, 'users', userId, colName);
