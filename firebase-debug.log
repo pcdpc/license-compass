@@ -1,0 +1,79 @@
+[debug] [2026-04-19T20:37:29.827Z] ----------------------------------------------------------------------
+[debug] [2026-04-19T20:37:29.829Z] Command:       /usr/local/bin/node /Users/pcdpc/Desktop/license-compass/node_modules/.bin/firebase deploy --only hosting --project license-compass
+[debug] [2026-04-19T20:37:29.829Z] CLI Version:   15.15.0
+[debug] [2026-04-19T20:37:29.829Z] Platform:      darwin
+[debug] [2026-04-19T20:37:29.829Z] Node Version:  v22.14.0
+[debug] [2026-04-19T20:37:29.829Z] Time:          Sun Apr 19 2026 16:37:29 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-04-19T20:37:29.829Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-19T20:37:30.580Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-19T20:37:30.580Z] > authorizing via signed-in user (larry.a.montgomery@gmail.com)
+[debug] [2026-04-19T20:37:30.580Z] [iam] checking project license-compass for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-04-19T20:37:30.580Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:30.580Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:30.580Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions [none]
+[debug] [2026-04-19T20:37:30.581Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions  x-goog-user-project=license-compass
+[debug] [2026-04-19T20:37:30.581Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-04-19T20:37:30.749Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions 200
+[debug] [2026-04-19T20:37:30.749Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/license-compass:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-04-19T20:37:30.750Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:30.750Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:30.750Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/license-compass [none]
+[debug] [2026-04-19T20:37:30.978Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/license-compass 200
+[debug] [2026-04-19T20:37:30.978Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/license-compass {"projectId":"license-compass","projectNumber":"921022138763","displayName":"License Compass","name":"projects/license-compass","resources":{"hostingSite":"license-compass","realtimeDatabaseInstance":"license-compass-default-rtdb"},"state":"ACTIVE","etag":"1_cde67e91-e04a-4797-9a89-78e9c6f64555"}
+[debug] [2026-04-19T20:37:31.706Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:31.706Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:31.706Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites pageToken=&pageSize=10
+[debug] [2026-04-19T20:37:32.279Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites 200
+[debug] [2026-04-19T20:37:32.279Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites {"sites":[{"name":"projects/license-compass/sites/license-compass","defaultUrl":"https://license-compass.web.app","appId":"1:921022138763:web:996d06392371fce6a5878e","type":"DEFAULT_SITE"}]}
+[debug] [2026-04-19T20:37:32.279Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:32.279Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:32.280Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:921022138763:web:996d06392371fce6a5878e/config [none]
+[debug] [2026-04-19T20:37:32.588Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:921022138763:web:996d06392371fce6a5878e/config 200
+[debug] [2026-04-19T20:37:32.588Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:921022138763:web:996d06392371fce6a5878e/config {"projectId":"license-compass","appId":"1:921022138763:web:996d06392371fce6a5878e","databaseURL":"https://license-compass-default-rtdb.firebaseio.com","storageBucket":"license-compass.firebasestorage.app","apiKey":"AIzaSyBGmJDzQVlJFpOx-x5BQgwPpbLF1jUqky8","authDomain":"license-compass.firebaseapp.com","messagingSenderId":"921022138763","measurementId":"G-9SELKRFV3D","projectNumber":"921022138763","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-04-19T20:37:34.494Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:34.494Z] Checked if tokens are valid: true, expires at: 1776633790470
+[debug] [2026-04-19T20:37:34.494Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass [none]
+[debug] [2026-04-19T20:37:34.840Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass 200
+[debug] [2026-04-19T20:37:34.840Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/license-compass/sites/license-compass {"name":"projects/license-compass/sites/license-compass","defaultUrl":"https://license-compass.web.app","appId":"1:921022138763:web:996d06392371fce6a5878e","type":"DEFAULT_SITE"}
+[info] ▲ Next.js 16.2.3 (Turbopack)
+
+[info] - Environments: .env.local
+
+
+[info]   Creating an optimized production build ...
+
+[info] ✓ Compiled successfully in 1679ms
+
+[info]   Running TypeScript ...
+
+[info] Failed to type check.
+
+
+[info] ./src/components/career/CareerOpportunityModal.tsx:77:7
+Type error: Cannot find name 'dateFields'.
+
+  75 |       // Convert date strings back to Dates before submission
+  76 |       const submissionData = { ...formData };
+> 77 |       dateFields.forEach(field => {
+     |       ^
+  78 |         const val = submissionData[field as keyof CareerOpportunity];
+  79 |         if (val && typeof val === 'string' && val.trim() !== '') {
+  80 |           submissionData[field as keyof CareerOpportunity] = new Date(val) as any;
+
+[info] Next.js build worker exited with code: 1 and signal: null
+
+[debug] [2026-04-19T20:37:38.896Z] Error: ENOENT: no such file or directory, open '/Users/pcdpc/Desktop/license-compass/.next/export-marker.json'
+[error] 
+[error] Error: An unexpected error has occurred.

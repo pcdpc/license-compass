@@ -74,6 +74,7 @@ export function CareerOpportunityModal({ isOpen, onClose, onSubmit, initialData 
     try {
       // Convert date strings back to Dates before submission
       const submissionData = { ...formData };
+      const dateFields = ['dateFound', 'dateApplied', 'followUpDate', 'interviewDate', 'offerDate', 'startDate', 'endDate', 'reminderDate'];
       dateFields.forEach(field => {
         const val = submissionData[field as keyof CareerOpportunity];
         if (val && typeof val === 'string' && val.trim() !== '') {
