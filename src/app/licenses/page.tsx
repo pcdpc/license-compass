@@ -49,6 +49,9 @@ export default function LicensesPage() {
       }
       return 'Active';
     }
+    if (status === 'avoid_licensing') {
+      return 'Avoid Licensing';
+    }
     return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
@@ -165,7 +168,7 @@ export default function LicensesPage() {
                 </thead>
                 <tbody>
                   {sortedLicenses.map((license, idx) => (
-                    <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${idx !== sortedLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
+                    <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${license.applicationStatus === 'avoid_licensing' ? 'bg-rose-500/10 border-rose-500/20' : idx !== sortedLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-bold text-zinc-100">{license.stateName}</div>
                       </td>
@@ -176,7 +179,7 @@ export default function LicensesPage() {
                         <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.aprnStatus, license.aprnExpirationDate)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <StatusBadge status={license.readyStatus || 'not_ready'} />
+                        <StatusBadge status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.readyStatus || 'not_ready')} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-zinc-500 font-medium">{license.nextAction || 'Review Application'}</div>
@@ -205,12 +208,15 @@ export default function LicensesPage() {
             {/* Mobile Card View */}
             <div className="md:hidden divide-y divide-white/5">
               {sortedLicenses.map((license) => (
-                <div key={license.id} className="p-5 hover:bg-white/5 transition-colors">
+                <div key={license.id} className={`p-5 hover:bg-white/5 transition-colors ${license.applicationStatus === 'avoid_licensing' ? 'bg-rose-500/5 border-l-4 border-l-rose-500' : ''}`}>
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-bold text-zinc-100">{license.stateName}</h3>
                       <div className="mt-1 flex items-center gap-2">
-                         <StatusBadge status={license.readyStatus || 'not_ready'} className="text-[10px] px-2 py-0.5" />
+                         <StatusBadge 
+                           status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.readyStatus || 'not_ready')} 
+                           className="text-[10px] px-2 py-0.5" 
+                         />
                       </div>
                     </div>
                     <button 

@@ -177,6 +177,46 @@ export function CareerOpportunityModal({ isOpen, onClose, onSubmit, initialData 
               />
             </div>
             <div>
+              <label className={labelClass}>Employer Website</label>
+              <input
+                type="url"
+                value={formData.employerWebsite || ''}
+                onChange={(e) => setFormData({ ...formData, employerWebsite: e.target.value })}
+                className={inputClass}
+                placeholder="https://..."
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Employer Phone</label>
+              <input
+                type="tel"
+                value={formData.employerPhone || ''}
+                onChange={(e) => setFormData({ ...formData, employerPhone: e.target.value })}
+                className={inputClass}
+                placeholder="555-000-0000"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Employer Fax</label>
+              <input
+                type="tel"
+                value={formData.employerFax || ''}
+                onChange={(e) => setFormData({ ...formData, employerFax: e.target.value })}
+                className={inputClass}
+                placeholder="555-000-0001"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass}>Employer Address</label>
+              <input
+                type="text"
+                value={formData.employerAddress || ''}
+                onChange={(e) => setFormData({ ...formData, employerAddress: e.target.value })}
+                className={inputClass}
+                placeholder="123 Medical Way, Suite 100, City, ST 12345"
+              />
+            </div>
+            <div>
               <label className={labelClass}>Specialty</label>
               <input
                 type="text"

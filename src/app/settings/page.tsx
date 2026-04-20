@@ -17,7 +17,8 @@ import {
   X,
   Plus,
   Trash2,
-  Download
+  Download,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { updateUserProfile, toDate } from '@/lib/firestore';
@@ -273,6 +274,107 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+
+          {/* Other Professional Affiliations */}
+          <div className="glass-panel rounded-2xl overflow-hidden p-6 space-y-6">
+            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <div className="p-2 bg-indigo-500/10 rounded-xl">
+                <GraduationCap className="w-5 h-5 text-indigo-400" />
+              </div>
+              <h2 className="text-lg font-bold text-zinc-100">Other Professional Affiliations</h2>
+            </div>
+
+            <div className="space-y-4">
+              {(form.otherAffiliations || []).map((aff, idx) => (
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end p-4 bg-white/5 border border-white/10 rounded-xl relative group">
+                  <button 
+                    onClick={() => {
+                      const newAffs = [...(form.otherAffiliations || [])];
+                      newAffs.splice(idx, 1);
+                      update('otherAffiliations', newAffs);
+                    }}
+                    className="absolute -top-2 -right-2 p-1.5 bg-rose-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                    type="button"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                  <div className="md:col-span-1">
+                    <label className={labelClass}>Affiliation/Org Name</label>
+                    <input 
+                      type="text" 
+                      value={aff.name || ''} 
+                      onChange={(e) => {
+                        const newAffs = [...(form.otherAffiliations || [])];
+                        newAffs[idx] = { ...newAffs[idx], name: e.target.value };
+                        update('otherAffiliations', newAffs);
+                      }}
+                      className={inputClass}
+                      placeholder="e.g. AANP Member"
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Certification # (Optional)</label>
+                    <input 
+                      type="text" 
+                      value={aff.certNumber || ''} 
+                      onChange={(e) => {
+                        const newAffs = [...(form.otherAffiliations || [])];
+                        newAffs[idx] = { ...newAffs[idx], certNumber: e.target.value };
+                        update('otherAffiliations', newAffs);
+                      }}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Expiration Date (Optional)</label>
+                    <input 
+                      type="date" 
+                      value={formatDateForInput(aff.expirationDate)} 
+                      onChange={(e) => {
+                        const newAffs = [...(form.otherAffiliations || [])];
+                        newAffs[idx] = { ...newAffs[idx], expirationDate: e.target.value ? new Date(e.target.value) : null };
+                        update('otherAffiliations', newAffs);
+                      }}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              ))}
+
+              <button 
+                onClick={() => {
+                  const newAffs = [...(form.otherAffiliations || []), { name: '', certNumber: '', expirationDate: null }];
+                  update('otherAffiliations', newAffs);
+                }}
+                className="w-full py-3 border border-dashed border-white/10 rounded-xl text-zinc-500 hover:text-indigo-400 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all text-sm font-bold flex items-center justify-center gap-2"
+                type="button"
+              >
+                <Plus className="w-4 h-4" /> Add Affiliation
+              </button>
+            </div>
+          </div>
+
+          {/* General Notes */}
+          <div className="glass-panel rounded-2xl overflow-hidden p-6 space-y-6">
+            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <div className="p-2 bg-zinc-500/10 rounded-xl">
+                <FileText className="w-5 h-5 text-zinc-400" />
+              </div>
+              <h2 className="text-lg font-bold text-zinc-100">Additional Information</h2>
+            </div>
+            
+            <div>
+              <label className={labelClass}>Notes</label>
+              <textarea 
+                value={form.generalNotes || ''} 
+                onChange={(e) => update('generalNotes', e.target.value)}
+                rows={6}
+                className={inputClass + " resize-none"}
+                placeholder="Store any additional information not captured in the web app here..."
+              />
+              <p className="text-xs text-zinc-500 mt-2 font-medium">Use this area for passwords, specific state-board login hints, or any other professional details.</p>
+            </div>
+          </div>
         </div>
 
         {/* Right Column - Settings & Misc */}
@@ -368,6 +470,7 @@ export default function SettingsPage() {
                 onClick={handleExport}
                 disabled={exporting}
                 className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/5 border border-white/10 text-zinc-100 font-bold text-sm rounded-xl hover:bg-white/10 hover:border-white/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                type="button"
               >
                 {exporting ? (
                   <div className="w-4 h-4 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin"></div>

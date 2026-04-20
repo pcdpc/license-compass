@@ -179,6 +179,7 @@ export function LicenseForm({ initialData, onSubmit, onCancel, onDelete, isEditi
               <option value="awaiting_documents">Awaiting Documents</option>
               <option value="awaiting_board">Awaiting Board</option>
               <option value="active">Active</option>
+              <option value="avoid_licensing">Avoid Licensing</option>
             </select>
           </div>
         </div>

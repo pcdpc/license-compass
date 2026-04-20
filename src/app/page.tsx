@@ -55,8 +55,8 @@ export default function DashboardPage() {
 
   // Calculate real metrics based on fetched licenses
   const activeStates = licenses.filter(l => l.applicationStatus === 'active');
-  const readyStates = licenses.filter(l => l.readyStatus === 'ready');
-  const pipelineStatesList = licenses.filter(l => l.applicationStatus === 'not_started' || l.applicationStatus === 'researching');
+  const readyStates = licenses.filter(l => l.readyStatus === 'ready' && l.applicationStatus !== 'avoid_licensing');
+  const pipelineStatesList = licenses.filter(l => (l.applicationStatus === 'not_started' || l.applicationStatus === 'researching'));
   const pendingStates = licenses.filter(l => ['in_progress', 'submitted', 'awaiting_documents', 'awaiting_board'].includes(l.applicationStatus));
 
   const stats = {
@@ -93,7 +93,7 @@ export default function DashboardPage() {
     }
   };
 
-  licenses.forEach(l => {
+  licenses.filter(l => l.applicationStatus !== 'avoid_licensing').forEach(l => {
     addIfExpiring(l, 'RN License', l.rnExpirationDate);
     addIfExpiring(l, 'APRN License', l.aprnExpirationDate);
     addIfExpiring(l, 'DEA Registration', l.deaExpirationDate);
@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
   // Compile Needs Action (blocked or with immediate next steps)
   const needsAction = licenses
-    .filter(l => l.readyStatus === 'not_ready' || l.nextAction || ['in_progress', 'awaiting_documents'].includes(l.applicationStatus))
+    .filter(l => (l.readyStatus === 'not_ready' || l.nextAction || ['in_progress', 'awaiting_documents'].includes(l.applicationStatus)) && l.applicationStatus !== 'avoid_licensing')
     .slice(0, 5)
     .map(l => ({
       state: l.stateName,

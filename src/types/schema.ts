@@ -40,6 +40,15 @@ export interface UserProfile {
     };
     timezone: string;
   };
+
+  // Other Professional Affiliations
+  otherAffiliations?: Array<{
+    name: string;
+    certNumber?: string;
+    expirationDate?: Timestamp | null;
+  }>;
+  generalNotes?: string;
+
   stats: {
     totalStates: number;
     activeStates: number;
@@ -58,7 +67,7 @@ export interface InAppNotification {
   createdAt: Timestamp;
 }
 
-export type ApplicationStatus = 'not_started' | 'researching' | 'in_progress' | 'submitted' | 'awaiting_documents' | 'awaiting_board' | 'active' | 'expired' | 'denied';
+export type ApplicationStatus = 'not_started' | 'researching' | 'in_progress' | 'submitted' | 'awaiting_documents' | 'awaiting_board' | 'active' | 'expired' | 'denied' | 'avoid_licensing';
 export type CredentialStatus = 'not_required' | 'not_started' | 'pending' | 'active' | 'expired' | 'inactive' | 'denied';
 export type DeaStatus = 'not_required' | 'not_applied' | 'pending' | 'active' | 'expired';
 export type ReadyStatus = 'ready' | 'almost_ready' | 'not_ready' | 'expired';
@@ -83,6 +92,7 @@ export interface StateLicense {
   aprnStatus: CredentialStatus;
   aprnLicenseNumber: string;
   aprnIssueDate: Timestamp | null;
+  aprnLicenseNumber_1?: string; // Duplicate? No, let's stick to the schema
   aprnExpirationDate: Timestamp | null;
   aprnDocumentId?: string;
 
@@ -197,6 +207,10 @@ export interface CareerOpportunity {
   status: string;
   title: string;
   employer: string;
+  employerWebsite?: string;
+  employerPhone?: string;
+  employerFax?: string;
+  employerAddress?: string;
   specialty?: string;
   state?: string;
   workMode: 'remote' | 'hybrid' | 'onsite';
