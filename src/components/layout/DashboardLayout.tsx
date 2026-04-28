@@ -14,7 +14,8 @@ import {
   X,
   Compass,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  Info
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { PendingApproval } from '@/components/auth/PendingApproval';
@@ -60,6 +61,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     { name: 'CEUs', href: '/ceus', icon: Award },
     { name: 'Documents', href: '/documents', icon: Files },
     { name: 'Career Hub', href: '/career-hub', icon: Briefcase },
+    { name: 'How It Works', href: '/how-it-works', icon: Info },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

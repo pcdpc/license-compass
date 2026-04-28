@@ -9,6 +9,8 @@ import { Map, AlertCircle, Clock, CheckCircle, Loader2, Briefcase, Bookmark, Sen
 import { getUserLicenses, getUserDocuments, getUserCareers, toDate } from '@/lib/firestore';
 import { LicenseDocument, StateLicense, CareerOpportunity, LicenseTask } from '@/types/schema';
 import { Timestamp } from 'firebase/firestore';
+import { getLicenseExpiration } from '@/lib/expiration';
+import { ExpirationBadge } from '@/components/ui/ExpirationBadge';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -135,14 +137,40 @@ export default function DashboardPage() {
   });
 
   // Compile Needs Action (blocked or with immediate next steps)
-  const needsAction = licenses
-    .filter(l => (l.readyStatus === 'not_ready' || l.nextAction || ['in_progress', 'awaiting_documents'].includes(l.applicationStatus)) && l.applicationStatus !== 'avoid_licensing')
-    .slice(0, 5)
-    .map(l => ({
-      state: l.stateName,
-      action: l.nextAction || 'Update application status',
-      id: l.id
-    }));
+  const needsAction: { state: string, action: string, id: string }[] = [];
+  
+  licenses.filter(l => l.applicationStatus !== 'avoid_licensing' && l.applicationStatus !== 'not_started' && l.applicationStatus !== 'researching').forEach(l => {
+    // Priority 1: Incomplete tasks
+    const incompleteTasks = (l.tasks || []).filter(t => !t.completed);
+    if (incompleteTasks.length > 0) {
+      const nextTask = incompleteTasks.slice().sort((a, b) => {
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        const timeA = a.dueDate instanceof Timestamp ? a.dueDate.toMillis() : (a.dueDate as any)?.seconds * 1000 || 0;
+        const timeB = b.dueDate instanceof Timestamp ? b.dueDate.toMillis() : (b.dueDate as any)?.seconds * 1000 || 0;
+        return timeA - timeB;
+      })[0];
+      needsAction.push({ state: l.stateName, action: nextTask.title, id: l.id || '' });
+      return;
+    }
+
+    // Priority 2: Applications not submitted
+    if (l.applicationStatus === 'in_progress') {
+      needsAction.push({ state: l.stateName, action: 'Submit application', id: l.id || '' });
+      return;
+    }
+
+    // Priority 3: Expiring licenses
+    const exp = getLicenseExpiration(l);
+    if (exp && exp.daysRemaining <= 90) {
+      if (exp.daysRemaining < 0) {
+        needsAction.push({ state: l.stateName, action: `License expired`, id: l.id || '' });
+      } else {
+        needsAction.push({ state: l.stateName, action: `License expires in ${exp.daysRemaining} days`, id: l.id || '' });
+      }
+      return;
+    }
+  });
 
   // Compile Task Metrics
   const allTasks: (LicenseTask & { stateName: string, licenseId: string })[] = [];
@@ -164,9 +192,9 @@ export default function DashboardPage() {
 
   const statCards = [
     { name: 'Total States', value: stats.totalStates, icon: Map, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100/60', bg: 'bg-white/40' },
-    { name: 'Active States', value: stats.activeStates, icon: CheckCircle, iconColor: 'text-emerald-600', iconBg: 'bg-emerald-100/60', bg: 'bg-white/40' },
-    { name: 'Pending Apps', value: stats.pendingStates, icon: Clock, iconColor: 'text-amber-600', iconBg: 'bg-amber-100/60', bg: 'bg-white/40' },
-    { name: 'Ready to Practice', value: stats.readyStates, icon: AlertCircle, iconColor: 'text-blue-600', iconBg: 'bg-blue-100/60', bg: 'bg-white/40' },
+    { name: 'Active States', value: stats.activeStates, icon: CheckCircle, iconColor: 'text-emerald-400', iconBg: 'bg-emerald-500/20', bg: 'bg-emerald-500/10', highlight: true },
+    { name: 'Applications in Progress', value: stats.pendingStates, icon: Clock, iconColor: 'text-amber-600', iconBg: 'bg-amber-100/60', bg: 'bg-white/40' },
+    { name: 'Active Licenses', value: stats.readyStates, icon: AlertCircle, iconColor: 'text-blue-600', iconBg: 'bg-blue-100/60', bg: 'bg-white/40' },
   ];
 
   const careerStatCards = [
@@ -190,17 +218,20 @@ export default function DashboardPage() {
         <>
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             {statCards.map((stat) => (
-              <div key={stat.name} className={`glass-card rounded-2xl relative overflow-hidden group`}>
+              <div 
+                key={stat.name} 
+                className={`rounded-2xl relative overflow-hidden group ${stat.highlight ? 'glass-card border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/50 transform md:scale-105 z-10 bg-gradient-to-br from-emerald-500/10 to-transparent' : 'glass-card'}`}
+              >
                 <div className={`absolute -right-6 -top-6 w-32 h-32 ${stat.iconBg} rounded-full blur-3xl opacity-20 group-hover:scale-150 transition-all duration-700 ease-out z-0`}></div>
                 <div className="p-6 flex flex-col justify-between h-full relative z-10">
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`p-3 rounded-xl flex-shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.2)] bg-white/5 border border-white/10`}>
+                    <div className={`p-3 rounded-xl flex-shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.2)] bg-white/5 border border-white/10 ${stat.highlight ? 'bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : ''}`}>
                       <stat.icon className={`h-6 w-6 ${stat.iconColor} drop-shadow-md`} aria-hidden="true" />
                     </div>
                   </div>
                   <div>
-                    <dt className="text-sm font-bold text-zinc-400 mb-1">{stat.name}</dt>
-                    <dd className="text-4xl font-extrabold text-zinc-100 tracking-tight drop-shadow-sm">{stat.value}</dd>
+                    <dt className={`text-sm font-bold mb-1 ${stat.highlight ? 'text-emerald-400' : 'text-zinc-400'}`}>{stat.name}</dt>
+                    <dd className={`text-4xl font-extrabold tracking-tight drop-shadow-sm ${stat.highlight ? 'text-emerald-50' : 'text-zinc-100'}`}>{stat.value}</dd>
                   </div>
                 </div>
               </div>
@@ -251,18 +282,26 @@ export default function DashboardPage() {
               <div className="p-2 flex-1 relative z-10">
                 <ul className="space-y-1">
                   {expiringSoon.map((item, idx) => (
-                    <li key={idx} className="p-4 rounded-xl hover:bg-white/5 flex justify-between items-center transition-all duration-300 hover:shadow-sm hover:-translate-y-[2px] border border-transparent hover:border-white/10 cursor-default">
-                      <div>
-                        <p className="text-sm font-bold text-zinc-200">{item.state}</p>
-                        <p className="text-sm text-zinc-400 font-medium">{item.type}</p>
-                      </div>
-                      <span className="inline-flex items-center rounded-lg bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-400 border border-rose-500/20 shadow-[0_0_8px_rgba(244,63,94,0.15)]">
-                        {item.date === 'Expired' ? 'Expired' : `in ${item.date}`}
-                      </span>
+                    <li key={idx}>
+                      <Link href={`/licenses/${item.id}`} className="p-4 rounded-xl hover:bg-white/5 flex justify-between items-center transition-all duration-300 hover:shadow-sm hover:-translate-y-[2px] border border-transparent hover:border-white/10 group/link">
+                        <div>
+                          <p className="text-sm font-bold text-zinc-200 group-hover/link:text-indigo-400 transition-colors">{item.type}</p>
+                          <p className="text-xs text-zinc-400 font-medium">{item.state}</p>
+                        </div>
+                        <span className={`inline-flex items-center rounded-lg px-3 py-1 text-xs font-bold border shadow-sm ${
+                          item.date === 'Expired' 
+                            ? 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' 
+                            : parseInt(item.date) < 30 
+                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_8px_rgba(244,63,94,0.15)]'
+                              : 'bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
+                        }`}>
+                          {item.date === 'Expired' ? 'Expired' : `in ${item.date}`}
+                        </span>
+                      </Link>
                     </li>
                   ))}
                   {expiringSoon.length === 0 && (
-                    <li className="p-6 text-center text-sm font-medium text-zinc-500">No items expiring in the next 90 days.</li>
+                    <li className="p-6 text-center text-sm font-medium text-emerald-400/80">No upcoming expirations</li>
                   )}
                 </ul>
               </div>
@@ -282,18 +321,22 @@ export default function DashboardPage() {
               <div className="p-2 flex-1 relative z-10">
                 <ul className="space-y-1">
                   {needsAction.map((item, idx) => (
-                    <li key={idx} className="p-4 rounded-xl hover:bg-white/5 flex justify-between items-center transition-all duration-300 hover:shadow-sm hover:-translate-y-[2px] border border-transparent hover:border-white/10 group/item cursor-default">
-                      <div>
-                        <p className="text-sm font-bold text-zinc-200">{item.state}</p>
-                        <p className="text-sm text-zinc-400 font-medium">{item.action}</p>
-                      </div>
-                      <Link href={`/licenses/${item.id}`} className="px-4 py-2 text-sm font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg opacity-0 group-hover/item:opacity-100 hover:bg-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)] transition-all duration-300">
-                        Fix
+                    <li key={idx}>
+                      <Link href={`/licenses/${item.id}`} className="p-4 rounded-xl hover:bg-white/5 flex justify-between items-center transition-all duration-300 hover:shadow-sm hover:-translate-y-[2px] border border-transparent hover:border-white/10 group/link">
+                        <div>
+                          <p className="text-sm font-bold text-zinc-200 group-hover/link:text-indigo-400 transition-colors">{item.state}</p>
+                          <p className="text-sm text-amber-400 font-medium">{item.action}</p>
+                        </div>
+                        <span className="px-4 py-2 text-sm font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg opacity-0 group-hover/link:opacity-100 hover:bg-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)] transition-all duration-300">
+                          Resolve
+                        </span>
                       </Link>
                     </li>
                   ))}
                   {needsAction.length === 0 && (
-                    <li className="p-6 text-center text-sm font-medium text-zinc-500">All caught up!</li>
+                    <li className="p-6 text-center text-sm font-medium text-emerald-400/80 flex items-center justify-center gap-2">
+                      <CheckCircle className="w-4 h-4" /> All states up to date
+                    </li>
                   )}
                 </ul>
               </div>
@@ -341,7 +384,7 @@ export default function DashboardPage() {
                       {l.stateName}
                     </Link>
                   )) : (
-                    <p className="text-sm font-medium text-zinc-500">No states in the pipeline yet.</p>
+                    <p className="text-sm font-medium text-emerald-400/80">No applications in progress</p>
                   )}
                 </div>
             </div>
