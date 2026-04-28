@@ -7,6 +7,8 @@ import { StateLicense } from '@/types/schema';
 import { Plus, ArrowRight, Loader2, Map, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getUserLicenses, deleteLicense } from '@/lib/firestore';
+import { ExpirationBadge } from '@/components/ui/ExpirationBadge';
+import { getLicenseExpiration } from '@/lib/expiration';
 
 export default function LicensesPage() {
   const { user } = useAuth();
@@ -82,6 +84,16 @@ export default function LicensesPage() {
         if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
+      });
+    } else {
+      // Default sort by soonest expiration first
+      sortableLicenses.sort((a, b) => {
+        const expA = getLicenseExpiration(a);
+        const expB = getLicenseExpiration(b);
+        if (!expA && !expB) return 0;
+        if (!expA) return 1;
+        if (!expB) return -1;
+        return expA.daysRemaining - expB.daysRemaining;
       });
     }
     return sortableLicenses;
@@ -171,6 +183,7 @@ export default function LicensesPage() {
                     <tr key={license.id} className={`hover:bg-white/5 transition-all duration-300 group ${license.applicationStatus === 'avoid_licensing' ? 'bg-rose-500/10 border-rose-500/20' : idx !== sortedLicenses.length - 1 ? 'border-b border-white/5' : ''}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-bold text-zinc-100">{license.stateName}</div>
+                        <ExpirationBadge info={getLicenseExpiration(license)} className="mt-1" showExactDate={false} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.rnStatus, license.rnExpirationDate, license.isRnCompact)}</div>
@@ -212,6 +225,7 @@ export default function LicensesPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-bold text-zinc-100">{license.stateName}</h3>
+                      <ExpirationBadge info={getLicenseExpiration(license)} className="mt-2 mb-1" showExactDate={true} />
                       <div className="mt-1 flex items-center gap-2">
                          <StatusBadge 
                            status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.applicationStatus === 'not_started' || license.applicationStatus === 'researching' ? 'pipeline' : (license.readyStatus || 'not_ready'))} 

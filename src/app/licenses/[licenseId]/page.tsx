@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { LicenseForm } from '@/components/forms/LicenseForm';
+import { LicenseTasks } from '@/components/licenses/LicenseTasks';
+import { ExpirationBadge } from '@/components/ui/ExpirationBadge';
+import { getLicenseExpiration } from '@/lib/expiration';
 import { 
   FileText, 
   MapPin, 
@@ -158,7 +161,8 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
               <MapPin className="w-8 h-8 text-indigo-400 mr-3 drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]" />
               {license.stateName}
             </h1>
-            <p className="text-sm text-zinc-400 mt-1 font-medium">APRN & RN License Profile</p>
+            <p className="text-sm text-zinc-400 mt-1 font-medium mb-3">APRN & RN License Profile</p>
+            <ExpirationBadge info={getLicenseExpiration(license)} showExactDate={true} />
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
@@ -444,6 +448,9 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                   )}
                 </ul>
               </div>
+
+              {/* License Tasks */}
+              <LicenseTasks license={license} onUpdate={handleUpdate} />
 
               {/* CEU Requirements */}
               {license.ceuRequirementsNotes && (

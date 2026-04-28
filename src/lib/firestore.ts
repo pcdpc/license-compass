@@ -103,8 +103,16 @@ export async function getLicenseByState(userId: string, stateCode: string): Prom
 }
 
 export async function createLicense(userId: string, data: Omit<StateLicense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const defaultTasks = [
+    { id: crypto.randomUUID(), title: 'Request transcripts', completed: false, dueDate: null, createdAt: serverTimestamp(), completedAt: null },
+    { id: crypto.randomUUID(), title: 'Apply for RN license', completed: false, dueDate: null, createdAt: serverTimestamp(), completedAt: null },
+    { id: crypto.randomUUID(), title: 'Submit application', completed: false, dueDate: null, createdAt: serverTimestamp(), completedAt: null },
+    { id: crypto.randomUUID(), title: 'Fingerprinting', completed: false, dueDate: null, createdAt: serverTimestamp(), completedAt: null },
+  ];
+
   const docRef = await addDoc(licensesCol(userId), stripUndefined({
     ...data,
+    tasks: data.tasks || defaultTasks,
     userId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),

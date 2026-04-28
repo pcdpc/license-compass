@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Map, AlertCircle, Clock, CheckCircle, Loader2, Briefcase, Bookmark, Send, Building } from 'lucide-react';
+import { Map, AlertCircle, Clock, CheckCircle, Loader2, Briefcase, Bookmark, Send, Building, ListTodo } from 'lucide-react';
 import { getUserLicenses, getUserDocuments, getUserCareers, toDate } from '@/lib/firestore';
-import { LicenseDocument, StateLicense, CareerOpportunity } from '@/types/schema';
+import { LicenseDocument, StateLicense, CareerOpportunity, LicenseTask } from '@/types/schema';
+import { Timestamp } from 'firebase/firestore';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -142,6 +143,24 @@ export default function DashboardPage() {
       action: l.nextAction || 'Update application status',
       id: l.id
     }));
+
+  // Compile Task Metrics
+  const allTasks: (LicenseTask & { stateName: string, licenseId: string })[] = [];
+  licenses.forEach(l => {
+    if (l.tasks) {
+      l.tasks.forEach(t => allTasks.push({ ...t, stateName: l.stateName, licenseId: l.id || '' }));
+    }
+  });
+
+  const openTasks = allTasks.filter(t => !t.completed);
+  
+  const tasksWithDueDate = openTasks.filter(t => t.dueDate !== null);
+  tasksWithDueDate.sort((a, b) => {
+    const timeA = a.dueDate instanceof Timestamp ? a.dueDate.toMillis() : (a.dueDate as any)?.seconds * 1000;
+    const timeB = b.dueDate instanceof Timestamp ? b.dueDate.toMillis() : (b.dueDate as any)?.seconds * 1000;
+    return timeA - timeB;
+  });
+  const nextDueTask = tasksWithDueDate.length > 0 ? tasksWithDueDate[0] : null;
 
   const statCards = [
     { name: 'Total States', value: stats.totalStates, icon: Map, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100/60', bg: 'bg-white/40' },
@@ -324,6 +343,45 @@ export default function DashboardPage() {
                   )) : (
                     <p className="text-sm font-medium text-zinc-500">No states in the pipeline yet.</p>
                   )}
+                </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Tasks Widget */}
+            <div className="glass-panel rounded-2xl p-6 relative overflow-hidden group">
+                <div className="absolute -right-8 -top-8 w-40 h-40 bg-fuchsia-500/10 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                <div className="flex justify-between items-center mb-5 relative z-10">
+                  <h2 className="text-lg font-bold text-zinc-100 flex items-center">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-fuchsia-500/20 text-fuchsia-400 mr-3 shadow-[0_0_15px_rgba(217,70,239,0.3)] border border-fuchsia-500/20 group-hover:scale-105 transition-transform">
+                      <ListTodo className="h-5 w-5" />
+                    </span>
+                    Tasks
+                  </h2>
+                </div>
+                
+                <div className="relative z-10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400 font-medium">Total Open Tasks:</span>
+                    <span className="text-xl font-bold text-zinc-100">{openTasks.length}</span>
+                  </div>
+                  
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                    <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Next Due Task</h3>
+                    {nextDueTask ? (
+                      <Link href={`/licenses/${nextDueTask.licenseId}`} className="block hover:-translate-y-[2px] transition-transform">
+                        <p className="text-sm font-bold text-zinc-200 truncate">{nextDueTask.title}</p>
+                        <div className="flex justify-between mt-1">
+                          <p className="text-xs text-zinc-400 font-medium">{nextDueTask.stateName}</p>
+                          <p className="text-xs text-fuchsia-400 font-medium">
+                            {toDate(nextDueTask.dueDate)?.toLocaleDateString()}
+                          </p>
+                        </div>
+                      </Link>
+                    ) : (
+                      <p className="text-sm text-zinc-500 font-medium">No tasks with due dates.</p>
+                    )}
+                  </div>
                 </div>
             </div>
           </div>

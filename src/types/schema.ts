@@ -72,6 +72,15 @@ export type CredentialStatus = 'not_required' | 'not_started' | 'pending' | 'act
 export type DeaStatus = 'not_required' | 'not_applied' | 'pending' | 'active' | 'expired';
 export type ReadyStatus = 'ready' | 'almost_ready' | 'not_ready' | 'expired';
 
+export interface LicenseTask {
+  id: string;
+  title: string;
+  completed: boolean;
+  dueDate: Timestamp | null;
+  createdAt: Timestamp;
+  completedAt: Timestamp | null;
+}
+
 export interface StateLicense {
   id?: string;
   userId: string;
@@ -155,6 +164,7 @@ export interface StateLicense {
   };
 
   tags: string[];
+  tasks?: LicenseTask[];
   archived: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
