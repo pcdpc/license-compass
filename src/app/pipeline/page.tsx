@@ -100,7 +100,7 @@ export default function PipelinePage() {
                       <div className="text-sm text-zinc-400 font-medium capitalize">{license.applicationStatus.replace('_', ' ')}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                       <StatusBadge status={license.readyStatus || 'not_ready'} />
+                       <StatusBadge status="pipeline" />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link href={`/licenses/${license.id}`} className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-bold transition-colors group/link px-4 py-2 bg-indigo-500/10 rounded-lg hover:bg-indigo-500/20">

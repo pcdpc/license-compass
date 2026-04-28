@@ -179,7 +179,7 @@ export default function LicensesPage() {
                         <div className="text-sm text-zinc-400 font-medium">{getStatusDisplay(license.aprnStatus, license.aprnExpirationDate)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <StatusBadge status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.readyStatus || 'not_ready')} />
+                        <StatusBadge status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.applicationStatus === 'not_started' || license.applicationStatus === 'researching' ? 'pipeline' : (license.readyStatus || 'not_ready'))} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-zinc-500 font-medium">{license.nextAction || 'Review Application'}</div>
@@ -214,7 +214,7 @@ export default function LicensesPage() {
                       <h3 className="text-lg font-bold text-zinc-100">{license.stateName}</h3>
                       <div className="mt-1 flex items-center gap-2">
                          <StatusBadge 
-                           status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.readyStatus || 'not_ready')} 
+                           status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.applicationStatus === 'not_started' || license.applicationStatus === 'researching' ? 'pipeline' : (license.readyStatus || 'not_ready'))} 
                            className="text-[10px] px-2 py-0.5" 
                          />
                       </div>

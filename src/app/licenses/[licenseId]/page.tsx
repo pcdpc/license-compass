@@ -162,7 +162,7 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
-              <StatusBadge status={license.readyStatus} className="text-sm px-3 py-1.5" />
+              <StatusBadge status={license.applicationStatus === 'avoid_licensing' ? 'avoid_licensing' : (license.applicationStatus === 'not_started' || license.applicationStatus === 'researching' ? 'pipeline' : (license.readyStatus || 'not_ready'))} className="text-sm px-3 py-1.5" />
               <div className="text-sm font-medium text-zinc-400">Readiness Score: <span className="text-emerald-400 font-bold">{license.readinessScore}%</span></div>
             </div>
             {!isEditing && (

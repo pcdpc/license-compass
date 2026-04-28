@@ -3,11 +3,11 @@ import { ReadyStatus } from '@/types/schema';
 import { CheckCircle, AlertTriangle, XCircle, Clock } from 'lucide-react';
 
 interface StatusBadgeProps {
-  status: ReadyStatus | 'avoid_licensing';
+  status: ReadyStatus | 'avoid_licensing' | 'pipeline';
   className?: string;
 }
 
-const statusConfig: Record<ReadyStatus | 'avoid_licensing', { label: string; bg: string; text: string; border: string; glow: string; icon: React.ReactNode }> = {
+const statusConfig: Record<ReadyStatus | 'avoid_licensing' | 'pipeline', { label: string; bg: string; text: string; border: string; glow: string; icon: React.ReactNode }> = {
   ready: {
     label: 'Ready',
     bg: 'bg-emerald-500/10',
@@ -26,11 +26,19 @@ const statusConfig: Record<ReadyStatus | 'avoid_licensing', { label: string; bg:
   },
   not_ready: {
     label: 'Not Ready',
-    bg: 'bg-rose-500/10',
-    text: 'text-rose-400',
-    border: 'border-rose-500/20',
-    glow: 'shadow-[0_0_8px_rgba(251,113,133,0.3)]',
+    bg: 'bg-orange-500/10',
+    text: 'text-orange-400',
+    border: 'border-orange-500/20',
+    glow: 'shadow-[0_0_8px_rgba(249,115,22,0.3)]',
     icon: <XCircle className="w-4 h-4 mr-1.5" />,
+  },
+  pipeline: {
+    label: 'Pipeline',
+    bg: 'bg-fuchsia-500/10',
+    text: 'text-fuchsia-400',
+    border: 'border-fuchsia-500/20',
+    glow: 'shadow-[0_0_8px_rgba(217,70,239,0.3)]',
+    icon: <Clock className="w-4 h-4 mr-1.5" />,
   },
   avoid_licensing: {
     label: 'Avoid Licensing',
