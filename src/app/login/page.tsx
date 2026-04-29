@@ -83,7 +83,7 @@ export default function LoginPage() {
               <Compass className="w-12 h-12 text-white" />
             </div>
             <div>
-              <h1 className="ml-4 text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 text-glow leading-none">License Compass</h1>
+              <h1 className="ml-4 text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 text-glow leading-none">NP Compass</h1>
               <p className="ml-4 mt-1 text-[10px] font-medium text-zinc-500 italic tracking-wider uppercase opacity-70">powered by Primary Clinic</p>
             </div>
           </div>

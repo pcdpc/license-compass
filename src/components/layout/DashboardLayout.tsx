@@ -95,7 +95,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
               <div className="p-2 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.5)] border border-indigo-400/50 relative group-hover/brand:scale-105 transition-transform">
                 <Compass className="w-8 h-8 text-white" />
               </div>
-              <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 tracking-tight text-glow group-hover/brand:from-white group-hover/brand:to-zinc-300 transition-all">License Compass</span>
+              <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 tracking-tight text-glow group-hover/brand:from-white group-hover/brand:to-zinc-300 transition-all">NP Compass</span>
             </Link>
             <button 
               className="md:hidden p-2 rounded-lg text-zinc-400 hover:bg-white/10 transition-colors"
@@ -174,7 +174,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             <Menu className="w-6 h-6" />
           </button>
           <Link href="/" className="flex items-center px-4">
-             <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 text-glow">License Compass</span>
+             <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400 text-glow">NP Compass</span>
           </Link>
         </div>
         

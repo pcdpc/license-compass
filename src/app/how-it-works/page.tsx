@@ -243,7 +243,7 @@ export default function HowItWorksPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Email Support</p>
-                  <p className="text-sm font-bold text-zinc-200">support@license-compass.com</p>
+                  <p className="text-sm font-bold text-zinc-200">support@npcompass.app</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -262,8 +262,8 @@ export default function HowItWorksPage() {
             <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
               {/* REPLACE WITH YOUR ACTUAL WEB3FORMS ACCESS KEY */}
               <input type="hidden" name="access_key" value="326678aa-369a-4284-88d8-93f8d22d7eb3" />
-              <input type="hidden" name="subject" value="New Support Request - License Compass" />
-              <input type="hidden" name="from_name" value="License Compass Support" />
+              <input type="hidden" name="subject" value="New Support Request - NP Compass" />
+              <input type="hidden" name="from_name" value="NP Compass Support" />
               <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

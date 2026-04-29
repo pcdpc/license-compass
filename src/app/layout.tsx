@@ -7,8 +7,8 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "License Compass | NP License Tracker",
-  description: "Track your APRN/RN licenses, DEA status, and CEUs across all states.",
+  title: "NP Compass | NP License Tracker",
+  description: "The intelligent multi-state APRN license tracker and compliance engine.",
 };
 
 export default function RootLayout({
