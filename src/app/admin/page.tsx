@@ -15,7 +15,7 @@ import {
   Search
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getAllUsers, updateUserProfile, toDate, deleteUserFullAccount } from '@/lib/firestore';
+import { getAllUsers, updateUserProfile, toDate, deleteUserFullAccount, getUserLicenses, updateLicense } from '@/lib/firestore';
 import type { UserProfile } from '@/types/schema';
 import { useRouter } from 'next/navigation';
 
@@ -64,6 +64,30 @@ export default function AdminPage() {
       alert("Failed to update user status.");
     } finally {
       setProcessingId(null);
+    }
+  };
+
+  const handleCleanAllTasks = async () => {
+    if (!window.confirm('DANGER: This will remove ALL tasks from ALL licenses for ALL users in the database. Are you absolutely sure?')) return;
+    setLoading(true);
+    let count = 0;
+    try {
+      const allUsers = await getAllUsers();
+      for (const u of allUsers) {
+        const userLicenses = await getUserLicenses(u.id);
+        for (const license of userLicenses) {
+          if (license.tasks && license.tasks.length > 0) {
+            await updateLicense(u.id, license.id!, { tasks: [] });
+            count++;
+          }
+        }
+      }
+      alert(`Database cleanup complete! Removed tasks from ${count} licenses.`);
+    } catch (error) {
+      console.error("Error cleaning tasks:", error);
+      alert("Failed to clean up tasks.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -131,15 +155,23 @@ export default function AdminPage() {
           <p className="text-sm text-zinc-400 mt-1 font-medium">Manage user access, approvals, and system roles</p>
         </div>
 
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-          <input 
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all"
-          />
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+          <button 
+            onClick={handleCleanAllTasks}
+            className="px-4 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold hover:bg-rose-500/20 transition-all whitespace-nowrap"
+          >
+            Purge All Tasks
+          </button>
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <input 
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all"
+            />
+          </div>
         </div>
       </div>
 
