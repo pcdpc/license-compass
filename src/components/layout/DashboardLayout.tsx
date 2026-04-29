@@ -32,6 +32,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     if (!authLoading && !userProfile && pathname !== '/login') {
       router.push('/login');
     }
+    // Reset sign out loading state if we are authenticated
+    if (userProfile) {
+      setIsSignOutLoading(false);
+    }
   }, [userProfile, authLoading, pathname, router]);
 
   // 1. Loading state
