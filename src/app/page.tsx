@@ -141,7 +141,7 @@ export default function DashboardPage() {
   
   licenses.filter(l => l.applicationStatus !== 'avoid_licensing' && l.applicationStatus !== 'not_started' && l.applicationStatus !== 'researching').forEach(l => {
     // Priority 1: Incomplete tasks
-    const incompleteTasks = (l.tasks || []).filter(t => !t.completed);
+    const incompleteTasks = (l.tasks || []).filter(t => !t.completed && t.title && t.title.trim() !== '');
     if (incompleteTasks.length > 0) {
       const nextTask = incompleteTasks.slice().sort((a, b) => {
         if (!a.dueDate) return 1;
@@ -180,15 +180,24 @@ export default function DashboardPage() {
     }
   });
 
-  const openTasks = allTasks.filter(t => !t.completed);
+  const openTasks = allTasks.filter(t => !t.completed && t.title && t.title.trim() !== '');
   
-  const tasksWithDueDate = openTasks.filter(t => t.dueDate !== null);
-  tasksWithDueDate.sort((a, b) => {
-    const timeA = a.dueDate instanceof Timestamp ? a.dueDate.toMillis() : (a.dueDate as any)?.seconds * 1000;
-    const timeB = b.dueDate instanceof Timestamp ? b.dueDate.toMillis() : (b.dueDate as any)?.seconds * 1000;
-    return timeA - timeB;
+  // Sort tasks: due dates first, then newest
+  openTasks.sort((a, b) => {
+    if (a.dueDate && b.dueDate) {
+      const timeA = a.dueDate instanceof Timestamp ? a.dueDate.toMillis() : (a.dueDate as any)?.seconds * 1000;
+      const timeB = b.dueDate instanceof Timestamp ? b.dueDate.toMillis() : (b.dueDate as any)?.seconds * 1000;
+      return timeA - timeB;
+    }
+    if (a.dueDate) return -1;
+    if (b.dueDate) return 1;
+    
+    const timeA = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : (a.createdAt as any)?.seconds * 1000 || 0;
+    const timeB = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : (b.createdAt as any)?.seconds * 1000 || 0;
+    return timeB - timeA;
   });
-  const nextDueTask = tasksWithDueDate.length > 0 ? tasksWithDueDate[0] : null;
+
+  const displayTasks = openTasks.slice(0, 5);
 
   const statCards = [
     { name: 'Total States', value: stats.totalStates, icon: Map, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100/60', bg: 'bg-white/40' },
@@ -410,19 +419,29 @@ export default function DashboardPage() {
                   </div>
                   
                   <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Next Due Task</h3>
-                    {nextDueTask ? (
-                      <Link href={`/licenses/${nextDueTask.licenseId}`} className="block hover:-translate-y-[2px] transition-transform">
-                        <p className="text-sm font-bold text-zinc-200 truncate">{nextDueTask.title}</p>
-                        <div className="flex justify-between mt-1">
-                          <p className="text-xs text-zinc-400 font-medium">{nextDueTask.stateName}</p>
-                          <p className="text-xs text-fuchsia-400 font-medium">
-                            {toDate(nextDueTask.dueDate)?.toLocaleDateString()}
-                          </p>
-                        </div>
-                      </Link>
-                    ) : (
-                      <p className="text-sm text-zinc-500 font-medium">No tasks with due dates.</p>
+                    <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">Open Tasks</h3>
+                    <div className="space-y-3">
+                      {displayTasks.map(task => (
+                        <Link href={`/licenses/${task.licenseId}`} key={task.id} className="block p-3 rounded-lg bg-black/20 border border-white/5 hover:border-white/20 hover:bg-black/40 hover:-translate-y-[2px] transition-all">
+                          <p className="text-sm font-bold text-zinc-200 truncate">{task.title}</p>
+                          <div className="flex justify-between mt-1">
+                            <p className="text-xs text-zinc-400 font-medium">{task.stateName}</p>
+                            {task.dueDate && (
+                              <p className="text-xs text-fuchsia-400 font-medium">
+                                {toDate(task.dueDate)?.toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
+                        </Link>
+                      ))}
+                      {displayTasks.length === 0 && (
+                        <p className="text-sm text-zinc-500 font-medium text-center py-2">No open tasks.</p>
+                      )}
+                    </div>
+                    {openTasks.length > 5 && (
+                      <div className="mt-4 text-center">
+                        <span className="text-xs font-bold text-zinc-500">+{openTasks.length - 5} more tasks</span>
+                      </div>
                     )}
                   </div>
                 </div>
