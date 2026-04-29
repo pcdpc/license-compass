@@ -11,7 +11,10 @@ import {
   ChevronDown, 
   ChevronUp, 
   Award,
-  ShieldCheck
+  ShieldCheck,
+  Globe,
+  HelpCircle,
+  Mail
 } from 'lucide-react';
 
 interface FAQ {
@@ -221,6 +224,103 @@ export default function HowItWorksPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+      {/* Help & Support Section */}
+      <div className="mt-20 glass-panel rounded-[2.5rem] overflow-hidden border border-white/10">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          <div className="p-8 md:p-12 bg-gradient-to-br from-indigo-600/10 to-transparent border-r border-white/5">
+            <h2 className="text-3xl font-black text-white mb-6">Need more help?</h2>
+            <p className="text-zinc-400 font-medium leading-relaxed mb-8">
+              Our support team is dedicated to helping nurse practitioners navigate the complexities of multi-state licensing. 
+              Whether you have a technical question or need help with state-specific data, we're here for you.
+            </p>
+            
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <Mail className="w-5 h-5 text-indigo-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Email Support</p>
+                  <p className="text-sm font-bold text-zinc-200">support@license-compass.com</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <HelpCircle className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Average Response Time</p>
+                  <p className="text-sm font-bold text-zinc-200">Under 24 hours</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 md:p-12">
+            <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
+              {/* REPLACE WITH YOUR ACTUAL WEB3FORMS ACCESS KEY */}
+              <input type="hidden" name="access_key" value="326678aa-369a-4284-88d8-93f8d22d7eb3" />
+              <input type="hidden" name="subject" value="New Support Request - License Compass" />
+              <input type="hidden" name="from_name" value="License Compass Support" />
+              <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Your Name</label>
+                  <input 
+                    type="text" 
+                    name="name" 
+                    required 
+                    placeholder="Jane Doe" 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
+                  <input 
+                    type="email" 
+                    name="email" 
+                    required 
+                    placeholder="jane@provider.com" 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Topic</label>
+                <select 
+                  name="topic" 
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all appearance-none"
+                >
+                  <option value="General Question">General Question</option>
+                  <option value="State Requirement Issue">State Requirement Issue</option>
+                  <option value="Technical Support">Technical Support</option>
+                  <option value="Feature Request">Feature Request</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Message</label>
+                <textarea 
+                  name="message" 
+                  required 
+                  rows={4} 
+                  placeholder="How can we help you today?" 
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all resize-none"
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full py-4 bg-zinc-100 text-zinc-900 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-lg"
+              >
+                Send Support Request
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

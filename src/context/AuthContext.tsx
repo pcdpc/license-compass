@@ -13,6 +13,7 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { UserProfile } from '@/types/schema';
+import { sendPasswordResetEmail as firebaseSendPasswordResetEmail } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -21,6 +22,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   isSigningIn: boolean;
 }
@@ -32,6 +34,7 @@ const AuthContext = createContext<AuthContextType>({
   signInWithGoogle: async () => {},
   signInWithEmail: async () => {},
   signUpWithEmail: async () => {},
+  sendPasswordReset: async () => {},
   signOut: async () => {},
   isSigningIn: false,
 });
@@ -167,8 +170,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const sendPasswordReset = async (email: string) => {
+    try {
+      await firebaseSendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Error sending password reset', error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, userProfile, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, isSigningIn }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      userProfile, 
+      loading, 
+      signInWithGoogle, 
+      signInWithEmail, 
+      signUpWithEmail, 
+      sendPasswordReset,
+      signOut, 
+      isSigningIn 
+    }}>
       {children}
     </AuthContext.Provider>
   );

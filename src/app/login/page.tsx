@@ -7,12 +7,14 @@ import { Compass, ShieldCheck, Zap, Lock, Mail, User as UserIcon, ArrowRight, Lo
 import { useForm } from 'react-hook-form';
 
 export default function LoginPage() {
-  const { user, signInWithGoogle, signInWithEmail, signUpWithEmail, loading, isSigningIn } = useAuth();
+  const { user, signInWithGoogle, signInWithEmail, signUpWithEmail, sendPasswordReset, loading, isSigningIn } = useAuth();
   const router = useRouter();
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [error, setError] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
+  const [isResetLoading, setIsResetLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, getValues, formState: { errors } } = useForm({
     defaultValues: {
       email: '',
       password: '',
@@ -28,6 +30,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: any) => {
     setError(null);
+    setResetSent(false);
     try {
       if (authMode === 'login') {
         await signInWithEmail(data.email, data.password);
@@ -36,6 +39,25 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please check your credentials.');
+    }
+  };
+  
+  const handleForgotPassword = async () => {
+    const email = (getValues() as any).email;
+    if (!email) {
+      setError("Please enter your email address first to reset your password.");
+      return;
+    }
+    
+    setError(null);
+    setIsResetLoading(true);
+    try {
+      await sendPasswordReset(email);
+      setResetSent(true);
+    } catch (err: any) {
+      setError(err.message || "Failed to send reset email.");
+    } finally {
+      setIsResetLoading(false);
     }
   };
 
@@ -149,7 +171,14 @@ export default function LoginPage() {
               <div className="flex justify-between items-center px-1">
                 <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest leading-none">Password</label>
                 {authMode === 'login' && (
-                  <button type="button" className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors">Forgot?</button>
+                  <button 
+                    type="button" 
+                    onClick={handleForgotPassword}
+                    disabled={isResetLoading}
+                    className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors flex items-center gap-1"
+                  >
+                    {isResetLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Forgot?'}
+                  </button>
                 )}
               </div>
               <div className="relative group">
@@ -167,6 +196,13 @@ export default function LoginPage() {
             {error && (
               <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs font-bold text-rose-400 text-center">
                 {error}
+              </div>
+            )}
+
+            {resetSent && (
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs font-bold text-emerald-400 text-center">
+                Password reset link sent! <br/>
+                <span className="text-[10px] opacity-80 font-medium">(Check your spam folder if you don't see it)</span>
               </div>
             )}
 
