@@ -163,6 +163,7 @@ export interface StateLicense {
     otherFees: number;
   };
 
+  customCeRequirements?: any;
   tags: string[];
   tasks?: LicenseTask[];
   archived: boolean;
@@ -195,11 +196,13 @@ export type CeuCategory = 'general' | 'pharmacology' | 'ethics' | 'controlled_su
 export interface CeuEntry {
   id?: string;
   userId: string;
-  title: string;
+  courseName: string;
   provider: string;
   courseDate: Timestamp;
   hours: number;
-  category: CeuCategory;
+  pharmacologyHours: number;
+  controlledSubstanceHours: number;
+  category: string;
   subCategory?: string;
   certificateDocumentId?: string;
   appliesToStates: string[];
@@ -248,6 +251,61 @@ export interface CareerOpportunity {
   reminderDate?: Timestamp | null;
   currentEmployerContact?: string;
   currentRoleDetails?: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface AprnRequirementDefault {
+  state: string;
+  stateAbbreviation: string;
+  renewalCycle: string;
+  renewalDeadline: string;
+  totalCeHoursRequired: number | null;
+  pharmacologyHoursRequired: number | null;
+  controlledSubstanceHoursRequired: number | null;
+  opioidPainHoursRequired: number | null;
+  mandatoryTopics: string[];
+  oneTimeRequirements: string[];
+  requiresNationalCertification: boolean;
+  requiresPracticeHours: boolean;
+  practiceHoursRequired: number | null;
+  practiceHoursLookbackPeriod: string;
+  allowsAlternativeRenewalPath: boolean;
+  noCeRequired: boolean;
+  rawRequirementText: string;
+  notes: string;
+  sourceName: string;
+  sourceUrl?: string;
+  lastVerified: string;
+  verificationStatus: string;
+}
+
+export interface PracticeHourEntry {
+  id?: string;
+  userId: string;
+  stateAbbreviation: string;
+  startDate: Timestamp;
+  endDate: Timestamp | null;
+  hoursWorked: number;
+  daysWorked: number;
+  role: string;
+  setting: string;
+  notes: string;
+  documentationUrl?: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface CertificationEntry {
+  id?: string;
+  userId: string;
+  certifyingBody: string;
+  certificationName: string;
+  certificationNumber: string;
+  expirationDate: Timestamp | null;
+  certificateUploadUrl?: string;
+  appliesToStates: string[];
+  notes: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

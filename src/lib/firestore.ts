@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -13,7 +14,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotification, CareerOpportunity } from '@/types/schema';
+import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotification, CareerOpportunity, AprnRequirementDefault, PracticeHourEntry, CertificationEntry } from '@/types/schema';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -297,6 +298,94 @@ export async function deleteUserFullAccount(userId: string): Promise<void> {
 
   // 2. Delete the main User Profile
   await deleteDoc(doc(db, 'users', userId));
+}
+
+// ─── APRN Requirement Defaults ────────────────────────────────────────────────
+const aprnDefaultsCol = collection(db, 'aprnRequirementDefaults');
+
+export async function getAprnRequirementDefaults(): Promise<AprnRequirementDefault[]> {
+  try {
+    const q = query(aprnDefaultsCol, orderBy('stateAbbreviation', 'asc'));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as AprnRequirementDefault);
+  } catch (error) {
+    console.error("Error fetching requirements (check Firestore rules):", error);
+    return [];
+  }
+}
+
+export async function setAprnRequirementDefault(stateCode: string, data: Partial<AprnRequirementDefault>): Promise<void> {
+  await setDoc(doc(db, 'aprnRequirementDefaults', stateCode), stripUndefined(data), { merge: true });
+}
+
+// ─── Practice Hours ──────────────────────────────────────────────────────────
+const practiceHoursCol = (userId: string) => collection(db, 'users', userId, 'practiceHours');
+
+export async function getUserPracticeHours(userId: string): Promise<PracticeHourEntry[]> {
+  try {
+    const q = query(practiceHoursCol(userId), orderBy('startDate', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PracticeHourEntry));
+  } catch (error) {
+    console.error("Error fetching practice hours:", error);
+    return [];
+  }
+}
+
+export async function createPracticeHour(userId: string, data: Omit<PracticeHourEntry, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const docRef = await addDoc(practiceHoursCol(userId), stripUndefined({
+    ...data,
+    userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }));
+  return docRef.id;
+}
+
+export async function updatePracticeHour(userId: string, entryId: string, data: Partial<PracticeHourEntry>): Promise<void> {
+  await updateDoc(doc(db, 'users', userId, 'practiceHours', entryId), stripUndefined({
+    ...data,
+    updatedAt: serverTimestamp(),
+  }));
+}
+
+export async function deletePracticeHour(userId: string, entryId: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', userId, 'practiceHours', entryId));
+}
+
+// ─── Certifications ──────────────────────────────────────────────────────────
+const certificationsCol = (userId: string) => collection(db, 'users', userId, 'certifications');
+
+export async function getUserCertifications(userId: string): Promise<CertificationEntry[]> {
+  try {
+    const q = query(certificationsCol(userId), orderBy('expirationDate', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as CertificationEntry));
+  } catch (error) {
+    console.error("Error fetching certifications:", error);
+    return [];
+  }
+}
+
+export async function createCertification(userId: string, data: Omit<CertificationEntry, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const docRef = await addDoc(certificationsCol(userId), stripUndefined({
+    ...data,
+    userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }));
+  return docRef.id;
+}
+
+export async function updateCertification(userId: string, entryId: string, data: Partial<CertificationEntry>): Promise<void> {
+  await updateDoc(doc(db, 'users', userId, 'certifications', entryId), stripUndefined({
+    ...data,
+    updatedAt: serverTimestamp(),
+  }));
+}
+
+export async function deleteCertification(userId: string, entryId: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', userId, 'certifications', entryId));
 }
 
 // ─── Helpers moved to top ──────────────────────────────────────────────────

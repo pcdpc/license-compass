@@ -15,8 +15,8 @@ import {
   Search
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getAllUsers, updateUserProfile, toDate, deleteUserFullAccount, getUserLicenses, updateLicense } from '@/lib/firestore';
-import type { UserProfile } from '@/types/schema';
+import { getAllUsers, updateUserProfile, toDate, deleteUserFullAccount, getUserLicenses, updateLicense, getAprnRequirementDefaults, setAprnRequirementDefault } from '@/lib/firestore';
+import type { UserProfile, AprnRequirementDefault } from '@/types/schema';
 import { useRouter } from 'next/navigation';
 
 interface UserWithId extends UserProfile {
@@ -30,9 +30,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [importing, setImporting] = useState(false);
+  const [currentRequirements, setCurrentRequirements] = useState<AprnRequirementDefault[]>([]);
 
   useEffect(() => {
-    // Security check - redirect if not admin
     if (userProfile && userProfile.role !== 'admin') {
       router.push('/');
       return;
@@ -49,8 +50,14 @@ export default function AdminPage() {
       }
     };
 
+    const fetchRequirements = async () => {
+      const data = await getAprnRequirementDefaults();
+      setCurrentRequirements(data);
+    };
+
     if (userProfile?.role === 'admin') {
       fetchUsers();
+      fetchRequirements();
     }
   }, [userProfile, router]);
 
@@ -93,11 +100,8 @@ export default function AdminPage() {
 
   const handleDeleteUser = async (userId: string, email: string) => {
     if (email === 'larry.a.montgomery@gmail.com') return;
-    
     const confirmed = window.confirm(`DANGER: Are you sure you want to PERMANENTLY delete the account for ${email}? This will purge all their licenses, documents, and record history. This action cannot be undone.`);
-    
     if (!confirmed) return;
-
     setProcessingId(userId);
     try {
       await deleteUserFullAccount(userId);
@@ -107,6 +111,38 @@ export default function AdminPage() {
       alert("Failed to delete user account.");
     } finally {
       setProcessingId(null);
+    }
+  };
+
+  const handleImportRequirements = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const json = JSON.parse(event.target?.result as string);
+          if (!Array.isArray(json)) throw new Error("Invalid format: Expected an array of requirements.");
+          let count = 0;
+          for (const req of json) {
+            if (req.stateAbbreviation) {
+              await setAprnRequirementDefault(req.stateAbbreviation, req);
+              count++;
+            }
+          }
+          const updated = await getAprnRequirementDefaults();
+          setCurrentRequirements(updated);
+          alert(`Successfully imported ${count} state requirements.`);
+        } catch (err: any) {
+          alert(`Import failed: ${err.message}`);
+        }
+      };
+      reader.readAsText(file);
+    } catch (error) {
+      console.error("Error reading file:", error);
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -176,80 +212,6 @@ export default function AdminPage() {
       </div>
 
       <div className="glass-panel rounded-2xl overflow-hidden border border-white/10 shadow-xl">
-        {/* Mobile View: Cards */}
-        <div className="md:hidden divide-y divide-white/5">
-          {filteredUsers.map((user) => (
-            <div key={user.id} className="p-4 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-lg flex-shrink-0">
-                  {user.displayName?.charAt(0) || 'U'}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-zinc-100 truncate">{user.displayName}</p>
-                  <p className="text-xs text-zinc-500 font-medium truncate">{user.email}</p>
-                </div>
-                <div className="flex-shrink-0">
-                  {user.role === 'admin' ? (
-                    <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                  ) : (
-                    <ShieldAlert className="w-4 h-4 text-zinc-600" />
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Status</p>
-                  {getStatusBadge(user.status)}
-                </div>
-                <div className="space-y-1 text-right">
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Joined</p>
-                  <p className="text-xs text-zinc-100 font-medium">{toDate(user.createdAt)?.toLocaleDateString()}</p>
-                </div>
-              </div>
-
-              <div className="pt-2 flex flex-wrap gap-2 border-t border-white/5">
-                {user.email === 'larry.a.montgomery@gmail.com' ? (
-                  <span className="w-full text-center px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(99,102,241,0.2)] flex items-center justify-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Super User
-                  </span>
-                ) : (
-                  <>
-                    {user.status !== 'active' && (
-                      <button 
-                        onClick={() => handleStatusUpdate(user.id, 'active')}
-                        disabled={processingId === user.id}
-                        className="flex-1 px-3 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-xs font-bold hover:bg-emerald-500/20 transition-all disabled:opacity-50"
-                      >
-                        Approve
-                      </button>
-                    )}
-                    {user.status !== 'suspended' && (
-                      <button 
-                        onClick={() => handleStatusUpdate(user.id, 'suspended')}
-                        disabled={processingId === user.id}
-                        className="flex-1 px-3 py-2 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-xs font-bold hover:bg-amber-500/20 transition-all disabled:opacity-50"
-                      >
-                        Suspend
-                      </button>
-                    )}
-                    <button 
-                      onClick={() => handleDeleteUser(user.id, user.email)}
-                      disabled={processingId === user.id}
-                      className="flex-1 px-3 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50"
-                    >
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-          {filteredUsers.length === 0 && (
-            <div className="p-8 text-center text-sm font-medium text-zinc-500">No users found.</div>
-          )}
-        </div>
-
         {/* Desktop View: Table */}
         <div className="hidden md:block">
           <table className="w-full text-left">
@@ -336,7 +298,52 @@ export default function AdminPage() {
             </tbody>
           </table>
         </div>
+      </div>
 
+      {/* APRN Requirements Management Section */}
+      <div className="glass-panel p-8 rounded-2xl border border-white/10 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-indigo-400" />
+              Global APRN Requirements
+            </h2>
+            <p className="text-xs text-zinc-500 mt-1">Populate the master list of state CEU and competency rules via JSON</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <input 
+                type="file" 
+                id="json-import"
+                accept=".json"
+                onChange={handleImportRequirements}
+                className="hidden"
+              />
+              <label 
+                htmlFor="json-import"
+                className={`px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-xs font-bold hover:bg-indigo-500/20 transition-all cursor-pointer flex items-center gap-2 ${importing ? 'opacity-50 pointer-events-none' : ''}`}
+              >
+                {importing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <AlertCircle className="w-3.5 h-3.5" />}
+                Import Requirements JSON
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {currentRequirements.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+            {currentRequirements.map(req => (
+              <div key={req.stateAbbreviation} className="p-3 bg-white/5 border border-white/5 rounded-xl text-center group hover:border-indigo-500/30 transition-all">
+                <p className="text-sm font-black text-zinc-100">{req.stateAbbreviation}</p>
+                <p className="text-[9px] text-zinc-500 font-bold uppercase truncate">{req.state}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-10 border border-dashed border-white/5 rounded-2xl text-center">
+            <p className="text-sm text-zinc-500 italic">No requirements imported yet. Upload a JSON file to get started.</p>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

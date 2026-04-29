@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               createdAt: serverTimestamp() as any,
               updatedAt: serverTimestamp() as any,
               role: isSuperAdmin ? 'admin' : 'user',
-              status: isSuperAdmin ? 'active' : 'pending',
+              status: 'active', // Default to active for immediate access
               settings: {
                 emailNotifications: true,
                 notificationsEnabled: true,

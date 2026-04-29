@@ -100,14 +100,18 @@ export default function HowItWorksPage() {
       ]
     },
     {
-      title: 'CEU Tracking',
+      title: 'CEU & Competency Tracker',
       icon: Award,
       color: 'text-teal-400',
       bg: 'bg-teal-500/10',
-      description: 'Keep a log of your Continuing Education Units.',
+      description: 'Sophisticated tracking of state-specific APRN mandates.',
       points: [
-        'Record course names, dates, and the number of credits earned.',
-        'Keep all your continuing education records in one central location for easy renewal reporting.'
+        'Automated Mandates: The system tracks official Board of Nursing requirements for hours, pharmacology, and controlled substances.',
+        'Visual Progress: Real-time progress bars show how close you are to meeting state-specific totals.',
+        'CEU Addendum: Add manual notes or personalized requirements that appear alongside official board rules.',
+        'Multi-State Logging: Log a single course and apply it to multiple state licenses simultaneously.',
+        'Actionable Alerts: The Dashboard automatically identifies and warns you about missing CEU requirements for your active licenses.',
+        'Log History: Manage your full history of courses with the ability to delete or update records as needed.'
       ]
     }
   ];
@@ -132,6 +136,10 @@ export default function HowItWorksPage() {
     {
       question: 'What happens when a state is in the "Pipeline"?',
       answer: 'States marked as "Not Started" or "Researching" are considered to be in your Pipeline. They are excluded from your urgent "Needs Action" list so you can focus on active applications, but you can still view them in the "Applications in Progress" or Pipeline views.'
+    },
+    {
+      question: 'How do CEU mandates work?',
+      answer: 'NP Compass stores a database of official Board of Nursing requirements. When you have an active APRN license, the system automatically compares your logged courses against that state\'s specific mandates (including Pharmacology and Controlled Substance hours). If you have specialized local requirements, you can use the "CEU Addendum" feature on the license page to add your own manual notes.'
     }
   ];
 

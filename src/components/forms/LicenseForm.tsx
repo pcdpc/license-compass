@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import type { StateLicense, CredentialStatus, DeaStatus, ApplicationStatus, DocumentCategory } from '@/types/schema';
-import { Save, X, Link as LinkIcon, FileText } from 'lucide-react';
+import { Save, X, Link as LinkIcon, FileText, Award } from 'lucide-react';
 import { DocumentSelectorModal } from '../documents/DocumentSelectorModal';
 
 function formatDateForInput(dateVal: any): string {
@@ -370,15 +370,15 @@ export function LicenseForm({ initialData, onSubmit, onCancel, onDelete, isEditi
         </div>
       </div>
 
-      {/* CEU Requirements */}
+      {/* CEU Addendum */}
       <div className="glass-panel rounded-2xl p-6">
-        <h2 className="text-lg font-bold text-zinc-100 mb-5">CEU Requirements</h2>
+        <h2 className="text-lg font-bold text-zinc-100 mb-5">CEU Addendum</h2>
         <textarea
           value={form.ceuRequirementsNotes || ''}
           onChange={(e) => update('ceuRequirementsNotes', e.target.value)}
           rows={3}
           className={inputClass + ' resize-none'}
-          placeholder="Enter state-specific CEU requirements (e.g., 30 hours per year, 10 pharm hours)..."
+          placeholder="Enter state-specific CEU notes or manual requirements (e.g., 30 hours per year, 10 pharm hours)..."
         />
       </div>
 
@@ -414,6 +414,29 @@ export function LicenseForm({ initialData, onSubmit, onCancel, onDelete, isEditi
           {saving ? 'Saving...' : isEditing ? 'Update License' : 'Add License'}
         </button>
       </div>
+
+      {/* Clear Overrides Utility (Only if they exist) */}
+      {isEditing && initialData?.customCeRequirements && (
+        <div className="mt-12 p-6 border border-amber-500/20 bg-amber-500/5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-bold text-amber-400">Manual Override Detected</h3>
+            <p className="text-xs text-zinc-400 mt-1">This license is currently using custom requirements instead of the official Board rules. Would you like to reset it?</p>
+          </div>
+          <button 
+            type="button" 
+            onClick={() => {
+              if (window.confirm("This will clear all manual requirement overrides for this license and return to the official Board of Nursing rules. Your CEU logs will NOT be affected. Continue?")) {
+                update('customCeRequirements', null);
+                alert("Overrides cleared! Click 'Update License' to save the change.");
+              }
+            }}
+            className="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 rounded-xl text-xs font-black transition-all"
+          >
+            Reset to Official Rules
+          </button>
+        </div>
+      )}
+
       {/* Selector Modal */}
       <DocumentSelectorModal
         isOpen={isSelectorOpen}

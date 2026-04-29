@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { LicenseForm } from '@/components/forms/LicenseForm';
 import { LicenseTasks } from '@/components/licenses/LicenseTasks';
+import CeuRequirementPanel from '@/components/licenses/CeuRequirementPanel';
+import CeuForm from '@/components/forms/CeuForm';
 import { ExpirationBadge } from '@/components/ui/ExpirationBadge';
 import { getLicenseExpiration } from '@/lib/expiration';
 import { 
@@ -21,15 +23,16 @@ import {
   ExternalLink,
   Link as LinkIcon,
   Eye,
-  Download
+  Download,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { use } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { getLicense, updateLicense, deleteLicense, getDocumentsByState, toDate } from '@/lib/firestore';
+import { getLicense, updateLicense, deleteLicense, getDocumentsByState, toDate, getAprnRequirementDefaults, getUserCeus, getUserPracticeHours, getUserCertifications, createCeu } from '@/lib/firestore';
 import { calculateReadiness } from '@/lib/readiness';
-import type { StateLicense, DocumentCategory, LicenseDocument } from '@/types/schema';
+import type { StateLicense, DocumentCategory, LicenseDocument, AprnRequirementDefault, CeuEntry, PracticeHourEntry, CertificationEntry } from '@/types/schema';
 import { DocumentSelectorModal } from '@/components/documents/DocumentSelectorModal';
 
 export default function StateDetailPage({ params }: { params: Promise<{ licenseId: string }> }) {
@@ -39,8 +42,13 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
   
   const [license, setLicense] = useState<StateLicense | null>(null);
   const [associatedDocs, setAssociatedDocs] = useState<LicenseDocument[]>([]);
+  const [defaults, setDefaults] = useState<AprnRequirementDefault[]>([]);
+  const [ceus, setCeus] = useState<CeuEntry[]>([]);
+  const [practiceHours, setPracticeHours] = useState<PracticeHourEntry[]>([]);
+  const [certifications, setCertifications] = useState<CertificationEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isCeuModalOpen, setIsCeuModalOpen] = useState(false);
   
   // Selector State
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
@@ -55,8 +63,12 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const [licenseData] = await Promise.all([
-          getLicense(user.uid, licenseId)
+        const [licenseData, defaultData, ceuData, practiceData, certData] = await Promise.all([
+          getLicense(user.uid, licenseId),
+          getAprnRequirementDefaults(),
+          getUserCeus(user.uid),
+          getUserPracticeHours(user.uid),
+          getUserCertifications(user.uid)
         ]);
 
         if (isMounted) {
@@ -65,6 +77,10 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
             return;
           }
           setLicense(licenseData);
+          setDefaults(defaultData);
+          setCeus(ceuData);
+          setPracticeHours(practiceData);
+          setCertifications(certData);
           
           // Fetch all documents for this state (including 'ALL' state code)
           const docs = await getDocumentsByState(user.uid, licenseData.stateCode);
@@ -137,6 +153,20 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
     setIsSelectorOpen(false);
   };
 
+  const handleLogCeu = async (data: any) => {
+    if (!user) return;
+    try {
+      await createCeu(user.uid, data);
+      setIsCeuModalOpen(false);
+      // Refresh CEUs
+      const ceuData = await getUserCeus(user.uid);
+      setCeus(ceuData);
+    } catch (error) {
+      console.error('Error logging CEU:', error);
+      alert('Failed to log CEU');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[50vh] text-zinc-500">
@@ -197,6 +227,53 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
              onDelete={handleDelete}
              isEditing={true} 
            />
+
+           <div className="mt-8 pt-8 border-t border-white/5">
+             <h3 className="text-sm font-black text-zinc-500 uppercase tracking-widest mb-6">Reference: State Requirements</h3>
+             {(() => {
+               const STATE_ABBREV_MAP: Record<string, string> = {
+                 'District of Columbia': 'DC', 'Arizona': 'AZ', 'Florida': 'FL', 'Kansas': 'KS',
+                 'New Mexico': 'NM', 'Oklahoma': 'OK', 'Virginia': 'VA', 'Georgia': 'GA',
+                 'Washington': 'WA', 'Utah': 'UT',
+               };
+               const abbrev = (license.stateCode && license.stateCode.length === 2) 
+                 ? license.stateCode.toUpperCase() 
+                 : STATE_ABBREV_MAP[license.stateName] || license.stateCode || license.stateName;
+               
+               const requirement = (license.customCeRequirements as AprnRequirementDefault) || defaults.find(d => d.stateAbbreviation === abbrev);
+               
+               if (license.aprnRequired || license.ceuRequirementsNotes) {
+                 return (
+                   <CeuRequirementPanel 
+                     license={license}
+                     requirement={requirement || {
+                       state: license.stateName,
+                       stateAbbreviation: abbrev,
+                       renewalCycle: 'Unknown',
+                       renewalDeadline: 'Unknown',
+                       totalCeHoursRequired: 0,
+                       pharmacologyHoursRequired: 0,
+                       controlledSubstanceHoursRequired: 0,
+                       mandatoryTopics: [],
+                       oneTimeRequirements: [],
+                       requiresNationalCertification: false,
+                       requiresPracticeHours: false,
+                       noCeRequired: false,
+                       sourceName: 'No official rules uploaded yet',
+                       lastVerified: 'N/A',
+                       verificationStatus: 'missing'
+                     } as any}
+                     ceus={ceus}
+                     practiceHours={practiceHours}
+                     certifications={certifications}
+                     manualNotes={license.ceuRequirementsNotes}
+                     onLogCeu={() => setIsCeuModalOpen(true)}
+                   />
+                 );
+               }
+               return null;
+             })()}
+           </div>
         </div>
       ) : (
         <>
@@ -410,6 +487,53 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                   </div>
                 </div>
               )}
+
+              {/* CEU Requirement Summary Integration */}
+              {(() => {
+                const STATE_ABBREV_MAP: Record<string, string> = {
+                  'District of Columbia': 'DC', 'Arizona': 'AZ', 'Florida': 'FL', 'Kansas': 'KS',
+                  'New Mexico': 'NM', 'Oklahoma': 'OK', 'Virginia': 'VA', 'Georgia': 'GA',
+                  'Washington': 'WA', 'Utah': 'UT',
+                };
+                const abbrev = (license.stateCode && license.stateCode.length === 2) 
+                  ? license.stateCode.toUpperCase() 
+                  : STATE_ABBREV_MAP[license.stateName] || license.stateCode || license.stateName;
+                
+                const requirement = (license.customCeRequirements as AprnRequirementDefault) || defaults.find(d => d.stateAbbreviation === abbrev);
+                
+                // Always show the panel for APRN licenses if it's an APRN profile
+                // or if we have manual notes to show.
+                if (license.aprnRequired || license.ceuRequirementsNotes) {
+                  return (
+                    <CeuRequirementPanel 
+                      license={license}
+                      requirement={requirement || {
+                        state: license.stateName,
+                        stateAbbreviation: abbrev,
+                        renewalCycle: 'Unknown',
+                        renewalDeadline: 'Unknown',
+                        totalCeHoursRequired: 0,
+                        pharmacologyHoursRequired: 0,
+                        controlledSubstanceHoursRequired: 0,
+                        mandatoryTopics: [],
+                        oneTimeRequirements: [],
+                        requiresNationalCertification: false,
+                        requiresPracticeHours: false,
+                        noCeRequired: false,
+                        sourceName: 'No official rules uploaded yet',
+                        lastVerified: 'N/A',
+                        verificationStatus: 'missing'
+                      } as any}
+                      ceus={ceus}
+                      practiceHours={practiceHours}
+                      certifications={certifications}
+                      manualNotes={license.ceuRequirementsNotes}
+                      onLogCeu={() => setIsCeuModalOpen(true)}
+                    />
+                  );
+                }
+                return null;
+              })()}
             </div>
 
             {/* Right Column - Secondary Info */}
@@ -452,20 +576,8 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
               {/* License Tasks */}
               <LicenseTasks license={license} onUpdate={handleUpdate} />
 
-              {/* CEU Requirements */}
-              {license.ceuRequirementsNotes && (
-                <div className="glass-panel rounded-2xl p-6">
-                  <h2 className="text-sm font-bold text-zinc-200 border-b border-white/10 pb-2 mb-4">CEU Requirements</h2>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <p className="text-sm text-zinc-300 font-medium whitespace-pre-wrap leading-relaxed">
-                      {license.ceuRequirementsNotes}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-                {/* Associated Documents */}
-                <div className="glass-panel rounded-2xl p-6">
+              {/* Associated Documents */}
+              <div className="glass-panel rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
                   <h2 className="text-sm font-bold text-zinc-200">State Documents</h2>
                   <Link href="/documents" className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors">Manage All</Link>
@@ -521,6 +633,18 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
                   </div>
                 )}
               </div>
+
+              {/* General Notes Card */}
+              {license.notes && license.notes.trim() && (
+                <div className="glass-panel rounded-2xl p-6">
+                  <h2 className="text-sm font-bold text-zinc-200 border-b border-white/10 pb-2 mb-4">General Notes</h2>
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                    <p className="text-sm text-zinc-300 font-medium whitespace-pre-wrap leading-relaxed">
+                      {license.notes}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </>
@@ -535,6 +659,37 @@ export default function StateDetailPage({ params }: { params: Promise<{ licenseI
         filterState={license.stateCode}
         title={selectorConfig.title}
       />
+
+      {/* Log CEU Modal */}
+      {isCeuModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsCeuModalOpen(false)}></div>
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div className="mb-4 flex items-center justify-between px-4">
+              <h2 className="text-xl font-black text-white">Log CEU for {license.stateName}</h2>
+              <button onClick={() => setIsCeuModalOpen(false)} className="p-2 hover:bg-white/10 rounded-full text-zinc-400">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <CeuForm 
+              onSubmit={handleLogCeu} 
+              onCancel={() => setIsCeuModalOpen(false)} 
+              initialData={{
+                courseName: '',
+                provider: '',
+                courseDate: new Date().toISOString().split('T')[0],
+                hours: 0,
+                pharmacologyHours: 0,
+                controlledSubstanceHours: 0,
+                appliesToStates: [license.stateCode], // Pre-fill with current state
+                category: 'General CEU',
+                notes: '',
+                certificateUrl: ''
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

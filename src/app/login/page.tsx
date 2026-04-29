@@ -66,10 +66,13 @@ export default function LoginPage() {
             </div>
           </div>
           <h2 className="text-5xl font-extrabold mb-8 leading-tight text-white drop-shadow-md">
-            Your clinical footprint, <span className="text-indigo-400">simplified.</span>
+            Track Every License. <span className="text-indigo-400">Never Miss a Renewal.</span>
           </h2>
-          <p className="text-xl text-zinc-400 mb-12 font-medium leading-relaxed">
-            The intelligent multi-state APRN license tracker and compliance engine for modern practitioners.
+          <p className="text-xl text-zinc-400 mb-2 font-medium leading-relaxed">
+            CEUs, expirations, and multi-state licensing—all in one place.
+          </p>
+          <p className="text-sm text-indigo-400/80 mb-12 font-bold uppercase tracking-wider">
+            Built for nurse practitioners managing multiple state licenses.
           </p>
           
           <div className="space-y-6">
@@ -79,7 +82,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <h3 className="font-bold text-zinc-100 text-lg">Automated Compliance</h3>
-                <p className="text-zinc-400 text-sm font-medium mt-1">Never miss a renewal. We track DEAs, licenses, and malpractice expiration for you.</p>
+                <p className="text-zinc-400 text-sm font-medium mt-1">We track licenses, CEUs, and expirations so you don’t miss anything.</p>
               </div>
             </div>
             <div className="flex items-start glass-panel p-6 rounded-2xl border border-white/10 group hover:border-white/20 transition-all">
@@ -88,7 +91,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <h3 className="font-bold text-zinc-100 text-lg">Smart CEU Application</h3>
-                <p className="text-zinc-400 text-sm font-medium mt-1">Upload one certificate. Apply it to every applicable state requirement instantly.</p>
+                <p className="text-zinc-400 text-sm font-medium mt-1">Upload once. Apply CEUs across all eligible states instantly.</p>
               </div>
             </div>
           </div>
@@ -103,10 +106,12 @@ export default function LoginPage() {
               <Lock className="w-8 h-8 text-indigo-400 drop-shadow-[0_0_10px_rgba(129,140,248,0.4)]" />
             </div>
             <h2 className="text-3xl font-black text-zinc-100 tracking-tight text-glow">
-              {authMode === 'login' ? 'Login or Sign Up' : 'Create Account'}
+              Access Your Dashboard
             </h2>
             <p className="text-zinc-400 mt-2 font-medium">
-              {authMode === 'login' ? 'Access your practitioner dashboard' : 'Join the modern nursing credential platform'}
+              {authMode === 'login' 
+                ? 'Sign in to manage your licenses and stay compliant.' 
+                : 'Sign up to start your free trial and stay compliant.'}
             </p>
           </div>
 
@@ -174,7 +179,7 @@ export default function LoginPage() {
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <span className="mr-2">{authMode === 'login' ? 'Proceed' : 'Create Account'}</span>
+                  <span className="mr-2">{authMode === 'login' ? 'Sign In' : 'Start Free Trial'}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
@@ -205,12 +210,19 @@ export default function LoginPage() {
             Google
           </button>
 
-          <div className="text-center pt-2">
+          <div className="text-center pt-4 border-t border-white/5">
             <button
               onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
-              className="text-xs font-bold text-zinc-500 hover:text-indigo-400 transition-colors uppercase tracking-widest"
+              className="group/btn flex flex-col items-center gap-1 w-full"
             >
-              {authMode === 'login' ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
+              <span className="text-xs font-bold text-indigo-400 transition-colors uppercase tracking-widest">
+                {authMode === 'login' 
+                  ? "Start your free 14-day trial — create an account" 
+                  : "Already have an account? Sign In"}
+              </span>
+              {authMode === 'login' && (
+                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">No credit card required</span>
+              )}
             </button>
           </div>
         </div>

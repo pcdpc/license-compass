@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Map, AlertCircle, Clock, CheckCircle, Loader2, Briefcase, Bookmark, Send, Building, ListTodo } from 'lucide-react';
-import { getUserLicenses, getUserDocuments, getUserCareers, toDate } from '@/lib/firestore';
-import { LicenseDocument, StateLicense, CareerOpportunity, LicenseTask } from '@/types/schema';
+import { getUserLicenses, getUserDocuments, getUserCareers, toDate, getAprnRequirementDefaults, getUserCeus } from '@/lib/firestore';
+import { LicenseDocument, StateLicense, CareerOpportunity, LicenseTask, AprnRequirementDefault, CeuEntry } from '@/types/schema';
 import { Timestamp } from 'firebase/firestore';
 import { getLicenseExpiration } from '@/lib/expiration';
 import { ExpirationBadge } from '@/components/ui/ExpirationBadge';
@@ -19,6 +19,8 @@ export default function DashboardPage() {
   const [licenses, setLicenses] = useState<StateLicense[]>([]);
   const [documents, setDocuments] = useState<LicenseDocument[]>([]);
   const [careers, setCareers] = useState<CareerOpportunity[]>([]);
+  const [defaults, setDefaults] = useState<AprnRequirementDefault[]>([]);
+  const [ceus, setCeus] = useState<CeuEntry[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
@@ -32,15 +34,19 @@ export default function DashboardPage() {
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const [licenseData, docData, careerData] = await Promise.all([
+        const [licenseData, docData, careerData, defaultData, ceuData] = await Promise.all([
           getUserLicenses(user.uid),
           getUserDocuments(user.uid),
-          getUserCareers(user.uid)
+          getUserCareers(user.uid),
+          getAprnRequirementDefaults(),
+          getUserCeus(user.uid)
         ]);
         if (isMounted) {
           setLicenses(licenseData);
           setDocuments(docData);
           setCareers(careerData);
+          setDefaults(defaultData);
+          setCeus(ceuData);
           setDataLoading(false);
         }
       } catch (error) {
@@ -198,6 +204,85 @@ export default function DashboardPage() {
   });
 
   const displayTasks = openTasks.slice(0, 5);
+
+  // Compile Missing CEU/Competency Requirements
+  const missingReqs: { state: string, text: string, due: string, daysRemaining: number, action: string, type: string }[] = [];
+  
+  const STATE_ABBREV_MAP: Record<string, string> = {
+    'District of Columbia': 'DC',
+    'Arizona': 'AZ',
+    'Florida': 'FL',
+    'Kansas': 'KS',
+    'New Mexico': 'NM',
+    'Oklahoma': 'OK',
+    'Virginia': 'VA',
+    'Georgia': 'GA',
+    'Washington': 'WA',
+    'Utah': 'UT',
+  };
+
+  const activeAprnLicenses = licenses.filter(l => {
+    // Check aprnStatus contains "Active" (case insensitive)
+    const aprnStatusStr = String(l.aprnStatus || '').toLowerCase();
+    const isAprnActive = aprnStatusStr.includes('active');
+    
+    // Check readiness or readyStatus
+    const readiness = String((l as any).readiness || l.readyStatus || '').toLowerCase();
+    const isReady = readiness === 'ready' || readiness === 'almost_ready' || readiness === 'almost ready';
+    
+    return isAprnActive && isReady;
+  });
+
+  activeAprnLicenses.forEach(l => {
+    const stateAbbrev = STATE_ABBREV_MAP[l.stateName] || l.stateCode || l.stateName;
+    const req = l.customCeRequirements || defaults.find(d => d.stateAbbreviation === stateAbbrev);
+    if (!req || req.noCeRequired) return;
+
+    let daysRemaining = 999;
+    let dueString = req.renewalDeadline || 'Unknown';
+    if (l.aprnExpirationDate) {
+      const exp = getLicenseExpiration(l);
+      if (exp) {
+        daysRemaining = exp.daysRemaining;
+        dueString = exp.date.toLocaleDateString();
+      }
+    }
+
+    const stateCeus = ceus.filter(c => 
+      Array.isArray(c.appliesToStates) && 
+      (c.appliesToStates.includes(l.stateCode) || c.appliesToStates.includes('ALL'))
+    );
+    const completedTotal = stateCeus.reduce((sum, c) => sum + (c.hours || 0), 0);
+    
+    if (completedTotal < (req.totalCeHoursRequired || 0)) {
+      missingReqs.push({
+        state: l.stateName,
+        text: `${(req.totalCeHoursRequired || 0) - completedTotal} CEU hours remaining`,
+        due: dueString,
+        daysRemaining,
+        action: 'Log CEU',
+        type: 'ceu'
+      });
+    }
+
+    // Pharmacology
+    if (req.pharmacologyHoursRequired) {
+      const completedPharm = stateCeus.reduce((sum, c) => sum + (c.pharmacologyHours || 0), 0);
+      if (completedPharm < req.pharmacologyHoursRequired) {
+        missingReqs.push({
+          state: l.stateName,
+          text: `${req.pharmacologyHoursRequired - completedPharm} Pharm hours remaining`,
+          due: dueString,
+          daysRemaining,
+          action: 'Log CEU',
+          type: 'pharm'
+        });
+      }
+    }
+  });
+
+  // Sort by urgency
+  missingReqs.sort((a, b) => a.daysRemaining - b.daysRemaining);
 
   const statCards = [
     { name: 'Total States', value: stats.totalStates, icon: Map, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100/60', bg: 'bg-white/40' },
@@ -443,6 +528,44 @@ export default function DashboardPage() {
                         <span className="text-xs font-bold text-zinc-500">+{openTasks.length - 5} more tasks</span>
                       </div>
                     )}
+                  </div>
+                </div>
+            </div>
+
+            {/* Upcoming CEUs / Missing Requirements Widget */}
+            <div className="glass-panel rounded-2xl p-6 relative overflow-hidden group">
+                <div className="absolute -right-8 -top-8 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                <div className="flex justify-between items-center mb-5 relative z-10">
+                  <h2 className="text-lg font-bold text-zinc-100 flex items-center">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 mr-3 shadow-[0_0_15px_rgba(99,102,241,0.3)] border border-indigo-500/20 group-hover:scale-105 transition-transform">
+                      <Clock className="h-5 w-5" />
+                    </span>
+                    Missing CEUs & Requirements
+                  </h2>
+                  <Link href="/ceus" className="text-xs font-bold text-indigo-400 hover:text-indigo-300">Manage CEUs</Link>
+                </div>
+                
+                <div className="relative z-10 space-y-4">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                    <div className="space-y-3">
+                      {missingReqs.slice(0, 5).map((req, idx) => (
+                        <div key={idx} className="p-3 rounded-lg bg-black/20 border border-white/5 hover:border-white/20 transition-all flex items-center justify-between group/item">
+                          <div>
+                            <p className="text-sm font-bold text-zinc-200">{req.state}</p>
+                            <p className="text-xs text-amber-400 font-medium">{req.text}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Due</p>
+                            <p className={`text-xs font-bold ${req.daysRemaining < 30 ? 'text-rose-400' : 'text-zinc-300'}`}>{req.due}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {missingReqs.length === 0 && (
+                        <p className="text-sm text-emerald-400/80 font-medium text-center py-4 flex items-center justify-center gap-2">
+                          <CheckCircle className="w-4 h-4" /> All CEU requirements met
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
             </div>

@@ -42,7 +42,7 @@ export async function generateUserDataCSV(userId: string, profile: UserProfile):
   rows.push([]); // Empty spacing row
 
   // Licenses Section
-  rows.push(['LICENSE', 'State', 'RN Status', 'RN Expiration', 'APRN Status', 'APRN Expiration', 'Notes']);
+  rows.push(['LICENSE', 'State', 'RN Status', 'RN Expiration', 'APRN Status', 'APRN Expiration', 'CEU Addendum', 'Notes']);
   licenses.forEach(l => {
     rows.push([
       'LICENSE',
@@ -51,6 +51,7 @@ export async function generateUserDataCSV(userId: string, profile: UserProfile):
       toDate(l.rnExpirationDate)?.toLocaleDateString() || 'N/A',
       l.aprnStatus || 'N/A',
       toDate(l.aprnExpirationDate)?.toLocaleDateString() || 'N/A',
+      l.ceuRequirementsNotes || '',
       l.notes || ''
     ]);
   });
@@ -62,7 +63,7 @@ export async function generateUserDataCSV(userId: string, profile: UserProfile):
     rows.push([
       'CEU',
       toDate(c.courseDate)?.toLocaleDateString() || '',
-      c.title,
+      c.courseName,
       c.provider,
       c.hours.toString(),
       c.category,
