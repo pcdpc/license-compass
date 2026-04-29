@@ -63,14 +63,21 @@ export default function CareerHubPage() {
     if (!user) return;
     try {
       if (editingCareer?.id) {
+        // Optimistic Update: Update the local list instantly
+        const updatedData = { ...editingCareer, ...data, updatedAt: new Date() };
+        setCareers(prev => prev.map(c => c.id === editingCareer.id ? updatedData as CareerOpportunity : c));
+        
+        // Background write
         await updateCareer(user.uid, editingCareer.id, data);
       } else {
         await createCareer(user.uid, data as any);
+        await fetchCareers(); // Still fetch for new entries to get the generated ID
       }
-      await fetchCareers();
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error saving career:', error);
+      // Rollback if needed
+      await fetchCareers();
     }
   };
 
