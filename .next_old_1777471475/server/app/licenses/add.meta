@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/licenses/layout,_N_T_/licenses/add/layout,_N_T_/licenses/add/page,_N_T_/licenses/add"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/licenses/add/__PAGE__",
+    "/licenses/add",
+    "/licenses",
+    "/_index",
+    "/_head"
+  ]
+}
