@@ -17,6 +17,13 @@ const initializeFirebaseAdmin = () => {
 
     const projectId = FIREBASE_PROJECT_ID || NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
+    // In production on Firebase Cloud Functions, always use the default Service Account (ADC)
+    // because private key strings often get mangled or double-escaped during deployment.
+    if (process.env.NODE_ENV === 'production' || process.env.K_SERVICE) {
+      console.log("[Firebase] Production environment detected. Using default service account/ADC.");
+      return admin.initializeApp();
+    }
+
     if (FIREBASE_PROJECT_ID && FIREBASE_CLIENT_EMAIL && FIREBASE_PRIVATE_KEY) {
       console.log(`[Firebase] Initializing with explicit credentials for project: ${projectId}`);
       return admin.initializeApp({
