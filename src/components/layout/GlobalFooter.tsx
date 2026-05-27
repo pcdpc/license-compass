@@ -6,12 +6,12 @@ export default function GlobalFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/10 bg-[#050505] pt-16 pb-8 relative overflow-hidden">
+    <footer className="border-t border-white/10 bg-[#050505] pt-16 pb-16 relative overflow-hidden flex-shrink-0">
       {/* Subtle background glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[800px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
       
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 mb-16">
           
           {/* Brand Col */}
           <div className="md:col-span-1">

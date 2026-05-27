@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Compass, ShieldCheck, Zap, Lock, Mail, User as UserIcon, ArrowRight, Loader2 } from 'lucide-react';
+import { Compass, ShieldCheck, Zap, Lock, Mail, User as UserIcon, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import MarketingSection from '@/components/landing/MarketingSection';
+
 
 export default function LoginPage() {
   const { user, signInWithGoogle, signInWithEmail, signUpWithEmail, sendPasswordReset, loading, isSigningIn } = useAuth();
@@ -14,6 +15,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [resetSent, setResetSent] = useState(false);
   const [isResetLoading, setIsResetLoading] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<'monthly' | 'annual' | null>(null);
+
 
   const { register, handleSubmit, getValues, formState: { errors } } = useForm({
     defaultValues: {
@@ -25,9 +28,20 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user && !loading) {
+      if (pendingPlan) {
+        const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK || "https://polar.sh/checkout/polar_c_iRU0afzoNq2ycCp1Dlvv0jZkLamkJVo1G9Cb20DTvch";
+        let url = checkoutLink;
+        const email = encodeURIComponent(user.email || '');
+        url += `?customer_email=${email}&metadata[firebaseUid]=${user.uid}&metadata[source]=npcompass-web-landing&metadata[selectedPlan]=${pendingPlan}`;
+        
+        // Clear pending plan so it doesn't reopen indefinitely
+        setPendingPlan(null);
+        window.location.href = url;
+        return;
+      }
       router.push('/');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, pendingPlan]);
 
   const onSubmit = async (data: any) => {
     setError(null);
@@ -278,7 +292,71 @@ export default function LoginPage() {
 
       {/* NEW MARKETING SECTION */}
       <MarketingSection />
+
+      {/* PRICING SECTION */}
+      <div className="w-full bg-[#050505] relative z-10 py-24 border-t border-white/5">
+        <div className="max-w-5xl mx-auto px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-black text-white mb-4">Start your free 14-day trial</h3>
+            <p className="text-lg text-zinc-400 font-medium">No credit card required. Cancel anytime.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Monthly Plan */}
+            <div className="glass-panel p-8 rounded-[2rem] border border-white/10 hover:border-indigo-500/50 transition-all flex flex-col items-center text-center">
+              <h4 className="text-2xl font-bold text-white mb-2">Monthly Plan</h4>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-5xl font-black text-indigo-400">$9.99</span>
+                <span className="text-zinc-500 font-bold">/month</span>
+              </div>
+              <ul className="space-y-3 text-zinc-400 mb-8 w-full text-left">
+                <li className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400" /> Multi-state tracking</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400" /> Expiration alerts</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400" /> CEU vault & organization</li>
+              </ul>
+              <button 
+                onClick={() => {
+                  setPendingPlan('monthly');
+                  setAuthMode('signup');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-4 bg-indigo-500/20 text-indigo-400 font-bold rounded-xl hover:bg-indigo-500/30 transition-all border border-indigo-500/30 uppercase tracking-widest mt-auto"
+              >
+                Start Monthly Trial
+              </button>
+            </div>
+
+            {/* Annual Plan */}
+            <div className="glass-panel p-8 rounded-[2rem] border border-indigo-500/50 shadow-[0_0_30px_rgba(99,102,241,0.15)] flex flex-col items-center text-center relative overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+              <div className="absolute top-4 right-4 bg-indigo-500/20 text-indigo-300 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-indigo-500/30">Most Popular</div>
+              <h4 className="text-2xl font-bold text-white mb-2">Annual Plan</h4>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-5xl font-black text-white">$99</span>
+                <span className="text-zinc-500 font-bold">/year</span>
+              </div>
+              <ul className="space-y-3 text-zinc-400 mb-8 w-full text-left">
+                <li className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400" /> Everything in Monthly</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400" /> Save 17% annually</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400" /> Premium support</li>
+              </ul>
+              <button 
+                onClick={() => {
+                  setPendingPlan('annual');
+                  setAuthMode('signup');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-700 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all uppercase tracking-widest mt-auto"
+              >
+                Start Annual Trial
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
+
+
 

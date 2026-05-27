@@ -34,7 +34,7 @@ export default function SupportPage() {
     },
     {
       question: "Can I cancel anytime?",
-      answer: "Yes. Our subscriptions are managed through Paddle and you can cancel your subscription at any time without penalty."
+      answer: "Yes. Our subscriptions are securely managed through Polar and you can cancel your subscription at any time without penalty."
     },
     {
       question: "Is payment required to start the trial?",

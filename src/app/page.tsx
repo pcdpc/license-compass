@@ -513,7 +513,14 @@ export default function DashboardPage() {
                             <p className="text-xs text-zinc-400 font-medium">{task.stateName}</p>
                             {task.dueDate && (
                               <p className="text-xs text-fuchsia-400 font-medium">
-                                {toDate(task.dueDate)?.toLocaleDateString()}
+                                {(() => {
+                                  try {
+                                    const d = toDate(task.dueDate);
+                                    return d && !isNaN(d.getTime()) ? d.toLocaleDateString() : '';
+                                  } catch (e) {
+                                    return '';
+                                  }
+                                })()}
                               </p>
                             )}
                           </div>

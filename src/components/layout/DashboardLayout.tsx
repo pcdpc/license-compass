@@ -15,20 +15,26 @@ import {
   Compass,
   ShieldCheck,
   Briefcase,
-  Info
+  Info,
+  Zap,
+  Clock
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { PendingApproval } from '@/components/auth/PendingApproval';
 import GlobalFooter from '@/components/layout/GlobalFooter';
+import { hasPremiumAccess } from '@/lib/billing';
+import { SubscriptionLocked } from '@/components/billing/SubscriptionLocked';
+import { toDate } from '@/lib/firestore';
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { userProfile, signOut, loading: authLoading } = useAuth();
+  const { user, userProfile, signOut, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isSignOutLoading, setIsSignOutLoading] = React.useState(false);
 
-  const publicRoutes = ['/login', '/terms', '/privacy', '/support', '/contact', '/refund-policy'];
+  const publicRoutes = ['/login', '/terms', '/privacy', '/support', '/contact', '/refund-policy', '/pricing'];
+  const billingRoutes = ['/billing', '/billing/success', '/pricing'];
 
   // Redirect to login if not authenticated and not on a public route
   React.useEffect(() => {
@@ -53,7 +59,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   // 2. If rendering public page, bypass layout but include footer
   if (publicRoutes.includes(pathname)) {
     return (
-      <div className="flex flex-col min-h-screen bg-[#050505] selection:bg-indigo-500/30">
+      <div className="flex flex-col min-h-screen min-h-[100dvh] bg-[#050505] selection:bg-indigo-500/30">
         <div className="flex-grow flex flex-col">
           {children}
         </div>
@@ -67,6 +73,12 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   
   if (userProfile && !isActive) {
     return <PendingApproval />;
+  }
+
+  // 4. Block users without a valid premium subscription (or active trial)
+  // EXCEPT if they are actively trying to access the billing or pricing pages to upgrade
+  if (userProfile && !hasPremiumAccess(userProfile) && !billingRoutes.includes(pathname)) {
+    return <SubscriptionLocked />;
   }
 
   const navItems = [
@@ -83,8 +95,74 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     navItems.push({ name: 'Admin', href: '/admin', icon: ShieldCheck });
   }
 
+  const renderSubscriptionStatus = () => {
+    if (!userProfile || !user || userProfile.role === 'admin') return null;
+
+    const status = userProfile.subscriptionStatus || 'none';
+    const isActive = status === 'active';
+    const isTrialing = status === 'trialing';
+
+    let endDate = null;
+    if (isTrialing && userProfile.trialEndDate) {
+      endDate = toDate(userProfile.trialEndDate);
+    } else if (isActive && userProfile.currentPeriodEnd) {
+      endDate = toDate(userProfile.currentPeriodEnd);
+    }
+
+    let daysLeft: number | null = null;
+    if (endDate) {
+      const diff = endDate.getTime() - Date.now();
+      daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+
+    const handleUpgrade = () => {
+      const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK || "https://buy.polar.sh/polar_cl_FtrsjM8NxMdhweCK3jqQkQfyBGnZEgwdLxQNO3mYKcT";
+      let url = checkoutLink;
+      if (user.email) {
+        url += `?customer_email=${encodeURIComponent(user.email)}&metadata[firebaseUid]=${user.uid}&metadata[source]=dashboard_sidebar`;
+      }
+      window.location.href = url;
+    };
+
+    if (isTrialing) {
+      return (
+        <div className="mb-3 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl space-y-2">
+          <div className="flex items-center justify-between text-indigo-300 text-xs font-bold uppercase tracking-widest">
+            <span>Free Trial</span>
+            {daysLeft !== null && <span>{daysLeft > 0 ? `${daysLeft} Days` : 'Ends Today'}</span>}
+          </div>
+          <button 
+            onClick={handleUpgrade}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-gradient-to-r from-indigo-500 to-blue-600 text-white text-[10px] font-bold rounded-lg hover:shadow-[0_0_10px_rgba(99,102,241,0.3)] transition-all uppercase tracking-widest"
+          >
+            <Zap className="w-3 h-3" /> Upgrade Now
+          </button>
+        </div>
+      );
+    }
+
+    if (isActive) {
+      return (
+        <div className="mb-3 p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl space-y-2">
+          <div className="flex items-center justify-between text-emerald-400 text-xs font-bold uppercase tracking-widest">
+            <span>Pro Plan</span>
+            {daysLeft !== null && <span>{daysLeft} Days</span>}
+          </div>
+          <button 
+            onClick={() => router.push('/billing')}
+            className="w-full py-1.5 bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 text-[10px] font-bold rounded-lg transition-all uppercase tracking-widest"
+          >
+            Manage Billing
+          </button>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
-    <div className="flex h-screen bg-transparent">
+    <div className="flex h-screen h-[100dvh] bg-transparent">
       {/* Mobile sidebar overlay */}
       {isMobileMenuOpen && (
         <div 
@@ -139,6 +217,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           </nav>
 
           <div className="p-4 border-t border-white/10">
+            {renderSubscriptionStatus()}
             <div className="flex items-center px-4 py-3 mb-2 rounded-xl bg-white/5 border border-white/10 shadow-sm backdrop-blur-md">
               <div className="flex-auto min-w-0">
                 <p className="text-sm font-semibold text-zinc-100 truncate">
@@ -188,8 +267,8 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           </Link>
         </div>
         
-        <main className="flex-1 overflow-y-auto focus:outline-none scroll-smooth flex flex-col relative z-0">
-          <div className="flex-grow px-4 py-8 mx-auto w-full max-w-7xl sm:px-6 md:px-8">
+        <main className="flex-1 overflow-y-scroll focus:outline-none scroll-smooth flex flex-col relative z-0">
+          <div className="px-4 py-8 mx-auto w-full max-w-7xl sm:px-6 md:px-8">
             {children}
           </div>
           <GlobalFooter />

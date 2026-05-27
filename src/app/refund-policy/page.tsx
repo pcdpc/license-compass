@@ -1,35 +1,45 @@
 import React from 'react';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+
+export const metadata = {
+  title: 'Refund Policy | NP Compass',
+};
 
 export default function RefundPolicyPage() {
-  const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
   return (
-    <div className="max-w-4xl mx-auto px-6 py-16 lg:px-8">
-      <Link href="/" className="inline-flex items-center text-sm font-medium text-zinc-400 hover:text-white mb-12 transition-colors">
-        <ChevronLeft className="w-4 h-4 mr-1" /> Back to Home
-      </Link>
-      
-      <div className="prose prose-invert prose-zinc max-w-none">
-        <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-400 mb-8 tracking-tight">Refund Policy</h1>
-        <p className="text-zinc-400 font-medium text-lg mb-12">Last Updated: {currentDate}</p>
+    <div className="min-h-screen bg-[#050505] text-zinc-300 py-20 px-6">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <Link href="/" className="text-indigo-400 hover:text-indigo-300 font-bold mb-8 inline-block">
+          &larr; Back to Home
+        </Link>
+        <h1 className="text-4xl font-extrabold text-white">Refund Policy</h1>
+        <p className="text-sm text-zinc-500">Last updated: May 2026</p>
+        
+        <div className="space-y-6 text-zinc-400 leading-relaxed">
+          <p>
+            At NP Compass, we aim to provide an exceptional tool for your professional licensing needs.
+          </p>
 
-        <section className="space-y-6">
-          <p className="text-zinc-300 leading-relaxed text-lg font-medium">
-            NP License Compass offers refunds within 14 days of the original purchase date.
+          <h2 className="text-2xl font-bold text-zinc-200 mt-8">1. Subscription Cancellations</h2>
+          <p>
+            You can cancel your subscription at any time. When you cancel, you will continue to have access to the premium features of NP Compass until the end of your current billing cycle.
           </p>
-          <p className="text-zinc-300 leading-relaxed text-lg font-medium">
-            If you are not satisfied with your subscription, you may request a full refund within 14 days of purchase.
+
+          <h2 className="text-2xl font-bold text-zinc-200 mt-8">2. Refunds</h2>
+          <p>
+            Because we offer a free trial period allowing you to evaluate the product, we generally do not offer refunds for charges that have already been processed for the current billing cycle.
           </p>
-          <p className="text-zinc-300 leading-relaxed text-lg font-medium">
-            To request a refund, contact:<br />
-            <a href="mailto:support@npcompass.app" className="text-indigo-400 hover:text-indigo-300 transition-colors">support@npcompass.app</a>
+
+          <h2 className="text-2xl font-bold text-zinc-200 mt-8">3. Exceptions</h2>
+          <p>
+            In rare cases, if there is a billing error on our end or from our payment processor (Polar), we will issue a full or partial refund. Please contact us within 7 days of the charge if you believe an error occurred.
           </p>
-          <p className="text-zinc-300 leading-relaxed text-lg font-medium">
-            Refunds requested after 14 days from the purchase date are not eligible.
+
+          <h2 className="text-2xl font-bold text-zinc-200 mt-8">4. Contact Us</h2>
+          <p>
+            To request a refund or if you have questions regarding billing, please email us at support@npcompass.app with "NP Compass Billing" as the subject line.
           </p>
-        </section>
+        </div>
       </div>
     </div>
   );

@@ -106,7 +106,7 @@ export default function LandingPricing() {
 
         <div className="mt-12 text-center">
           <p className="text-xs text-zinc-500 font-medium">
-            Subscription management and billing will be powered through Paddle.
+            Billing is securely processed by Polar. NP Compass does not store full credit card numbers.
           </p>
         </div>
       </div>

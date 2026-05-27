@@ -26,6 +26,24 @@ export interface UserProfile {
   malpracticeCertNumber?: string;
   malpracticeCertExpiration?: Timestamp | null;
 
+  // Subscription & Billing
+  subscriptionProvider?: "polar";
+  polarCustomerId?: string | null;
+  polarSubscriptionId?: string | null;
+  polarCheckoutId?: string | null;
+  polarOrderId?: string | null;
+  subscriptionStatus?: "none" | "trialing" | "active" | "past_due" | "canceled" | "revoked" | "refunded";
+  accountStatus?: "pending" | "trialing" | "active" | "past_due" | "suspended" | "canceled";
+  plan?: "monthly" | "annual" | null;
+  currentPeriodStart?: Timestamp | null;
+  currentPeriodEnd?: Timestamp | null;
+  trialStartDate?: Timestamp | null;
+  trialEndDate?: Timestamp | null;
+  lastPaymentAt?: Timestamp | null;
+  lastWebhookEventId?: string | null;
+  billingEmail?: string;
+
+
   settings: {
     emailNotifications: boolean;
     notificationsEnabled: boolean; // Global setting for in-app or overall

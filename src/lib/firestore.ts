@@ -22,8 +22,18 @@ import type { StateLicense, CeuEntry, LicenseDocument, UserProfile, InAppNotific
 export function toDate(ts: any): Date | null {
   if (!ts) return null;
   if (ts instanceof Date) return ts;
-  if (ts?.toDate) return ts.toDate();
+  if (typeof ts === 'function') return null;
+  if (typeof ts === 'string') {
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof ts === 'number') {
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (ts?.toDate && typeof ts.toDate === 'function') return ts.toDate();
   if (ts?.seconds) return new Date(ts.seconds * 1000);
+  if (ts?._seconds) return new Date(ts._seconds * 1000);
   return null;
 }
 

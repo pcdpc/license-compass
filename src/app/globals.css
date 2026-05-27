@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #09090b; /* Deep zinc 950 */
@@ -11,7 +13,6 @@ body {
   background-image: 
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120,119,198,0.2) 0%, transparent 100%),
     radial-gradient(ellipse 60% 60% at 100% 100%, rgba(56,189,248,0.1) 0%, transparent 100%);
-  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

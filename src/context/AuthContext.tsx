@@ -57,18 +57,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (profileDoc.exists()) {
             let data = profileDoc.data() as UserProfile;
             
-            // Bootstrap Super Admin
-            if (firebaseUser.email === 'larry.a.montgomery@gmail.com') {
+            // Bootstrap Admins - only the designated super admin
+            const isAdmin = firebaseUser.email === 'larry.a.montgomery@gmail.com';
+            if (isAdmin) {
               if (data.role !== 'admin' || data.status !== 'active') {
                 data = { ...data, role: 'admin', status: 'active' };
                 await setDoc(doc(db, 'users', firebaseUser.uid), data, { merge: true });
               }
             }
+
+            // Self-healing: if subscriptionStatus is missing, or is 'none' and they never had a trial date set, default to trialing
+            if (!data.subscriptionStatus || (data.subscriptionStatus === 'none' && !data.trialEndDate)) {
+              const trialEnds = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+              data.subscriptionStatus = 'trialing';
+              data.trialEndDate = trialEnds as any;
+              await setDoc(doc(db, 'users', firebaseUser.uid), {
+                subscriptionStatus: 'trialing',
+                trialEndDate: trialEnds
+              }, { merge: true });
+            }
             
             setUserProfile(data);
           } else {
             // First time login - create default profile
-            const isSuperAdmin = firebaseUser.email === 'larry.a.montgomery@gmail.com';
+            const isAdmin = firebaseUser.email === 'larry.a.montgomery@gmail.com';
             
             const newProfile: UserProfile = {
               email: firebaseUser.email || '',
@@ -76,8 +88,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               photoURL: firebaseUser.photoURL || '',
               createdAt: serverTimestamp() as any,
               updatedAt: serverTimestamp() as any,
-              role: isSuperAdmin ? 'admin' : 'user',
+              role: isAdmin ? 'admin' : 'user',
               status: 'active', // Default to active for immediate access
+              subscriptionStatus: 'trialing',
+              trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14-day free trial
               settings: {
                 emailNotifications: true,
                 notificationsEnabled: true,
@@ -149,10 +163,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsSigningIn(true);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, pass);
-      // Wait for onAuthStateChanged to handle profile creation, 
-      // but we might want to update displayName immediately
-      // Actually, our onAuthStateChanged logic already creates a profile if it doesn't exist.
-      // We can update the profile later if needed, but for now this is clean.
+      
+      // Immediately create the user document with the typed name, 
+      // preventing onAuthStateChanged from initializing it as 'New User'
+      const newProfile: UserProfile = {
+        email: email,
+        displayName: name || 'New User',
+        photoURL: '',
+        createdAt: serverTimestamp() as any,
+        updatedAt: serverTimestamp() as any,
+        role: 'user',
+        status: 'active', // Default to active for immediate access
+        subscriptionStatus: 'trialing',
+        trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14-day free trial
+        settings: {
+          emailNotifications: true,
+          notificationsEnabled: true,
+          alertSettings: {
+            license180: true,
+            license90: true,
+            license60: true,
+            license30: true,
+            license7: true,
+            deaExpiration: true,
+            missingDocuments: true,
+          },
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York',
+        },
+        stats: {
+          totalStates: 0,
+          activeStates: 0,
+          pendingStates: 0,
+          readyStates: 0,
+        },
+      };
+      
+      await setDoc(doc(db, 'users', user.uid), newProfile);
+      setUserProfile(newProfile);
     } catch (error) {
       console.error('Error signing up with Email', error);
       throw error;

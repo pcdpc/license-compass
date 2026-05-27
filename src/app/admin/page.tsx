@@ -18,6 +18,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getAllUsers, updateUserProfile, toDate, deleteUserFullAccount, getUserLicenses, updateLicense, getAprnRequirementDefaults, setAprnRequirementDefault } from '@/lib/firestore';
 import type { UserProfile, AprnRequirementDefault } from '@/types/schema';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
 
 interface UserWithId extends UserProfile {
   id: string;
@@ -104,11 +105,26 @@ export default function AdminPage() {
     if (!confirmed) return;
     setProcessingId(userId);
     try {
-      await deleteUserFullAccount(userId);
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch('/api/admin/delete-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId })
+      });
+      
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to delete user');
+      }
+
       setUsers(prev => prev.filter(u => u.id !== userId));
-    } catch (error) {
+      alert(`Successfully deleted ${email} from both Authentication and Firestore.`);
+    } catch (error: any) {
       console.error("Error deleting user:", error);
-      alert("Failed to delete user account.");
+      alert(`Failed to delete user account: ${error.message}`);
     } finally {
       setProcessingId(null);
     }
@@ -283,7 +299,7 @@ export default function AdminPage() {
                             </button>
                           )}
                           <button 
-                            onClick={() => handleDeleteUser(user.id, user.email)}
+                            onClick={() => handleDeleteUser(user.id, user.email ?? user.id)}
                             disabled={processingId === user.id}
                             className="px-3 py-1.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50"
                           >

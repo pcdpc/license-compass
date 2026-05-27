@@ -18,12 +18,15 @@ import {
   Plus,
   Trash2,
   Download,
-  FileText
+  FileText,
+  AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { updateUserProfile, toDate } from '@/lib/firestore';
 import { generateUserDataCSV, downloadCSV } from '@/lib/export-utils';
 import type { UserProfile, Timestamp } from '@/types/schema';
+import { auth } from '@/lib/firebase';
+import { hasPremiumAccess } from '@/lib/billing';
 
 const US_STATES = [
   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
@@ -43,6 +46,10 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [showCancelSubModal, setShowCancelSubModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Form state
   const [form, setForm] = useState<Partial<UserProfile>>({});
@@ -100,9 +107,40 @@ export default function SettingsPage() {
   };
 
   const formatDateForInput = (dateVal: any): string => {
-    const d = toDate(dateVal);
-    if (!d) return '';
-    return d.toISOString().split('T')[0];
+    try {
+      const d = toDate(dateVal);
+      if (!d || isNaN(d.getTime())) return '';
+      return d.toISOString().split('T')[0];
+    } catch (e) {
+      return '';
+    }
+  };
+
+  const handleCancelSubscription = () => {
+    // Direct them to support email for cancellation right now, or the billing page
+    window.location.href = "mailto:support@npcompass.app?subject=Cancel%20Subscription%20(No%20Refund)&body=Please%20cancel%20my%20subscription.%20I%20understand%20there%20are%20no%20refunds.";
+    setShowCancelSubModal(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE' || !user) return;
+    setIsDeleting(true);
+    try {
+      // Import this dynamically or ensure it's available
+      const { deleteUserFullAccount } = await import('@/lib/firestore');
+      await deleteUserFullAccount(user.uid);
+      await user.delete();
+      // Auth context will detect deletion and log them out
+    } catch (error: any) {
+      console.error("Delete account error:", error);
+      if (error.code === 'auth/requires-recent-login') {
+        alert("For security reasons, you must log out and log back in before deleting your account.");
+      } else {
+        alert("Failed to delete account. Please contact support.");
+      }
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
   };
 
   if (!userProfile) return null;
@@ -380,6 +418,8 @@ export default function SettingsPage() {
         {/* Right Column - Settings & Misc */}
         <div className="space-y-8">
           
+          {/* Billing moved to /billing */}
+          
           {/* Notifications */}
           <div className="glass-panel rounded-2xl overflow-hidden p-6 space-y-6">
             <div className="flex items-center gap-3 border-b border-white/5 pb-4">
@@ -482,8 +522,127 @@ export default function SettingsPage() {
             </div>
           </div>
 
+          {/* Danger Zone */}
+          <div className="glass-panel rounded-2xl overflow-hidden p-6 space-y-6 border border-rose-500/20">
+            <div className="flex items-center gap-3 border-b border-rose-500/10 pb-4">
+              <div className="p-2 bg-rose-500/10 rounded-xl">
+                <AlertTriangle className="w-5 h-5 text-rose-500" />
+              </div>
+              <h2 className="text-lg font-bold text-rose-500">Danger Zone</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="p-4 bg-rose-500/5 border border-rose-500/10 rounded-xl space-y-3">
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-200">Cancel Subscription</h3>
+                  <p className="text-xs text-zinc-400 mt-1">Cancel your premium access. You will retain access until the end of your billing cycle. No refunds are provided.</p>
+                </div>
+                <button 
+                  onClick={() => setShowCancelSubModal(true)}
+                  className="px-4 py-2 bg-white/5 hover:bg-rose-500/10 text-zinc-300 hover:text-rose-400 border border-white/10 hover:border-rose-500/30 text-xs font-bold rounded-lg transition-all"
+                >
+                  Cancel Subscription
+                </button>
+              </div>
+
+              <div className="p-4 bg-rose-500/5 border border-rose-500/10 rounded-xl space-y-3">
+                <div>
+                  <h3 className="text-sm font-bold text-rose-400">Delete Account</h3>
+                  <p className="text-xs text-zinc-400 mt-1">Permanently delete your account, personal data, licenses, and documents. This cannot be undone.</p>
+                </div>
+                <button 
+                  onClick={() => setShowDeleteModal(true)}
+                  className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white border border-rose-400/50 text-xs font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      {/* Cancel Subscription Modal */}
+      {showCancelSubModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-2xl relative">
+            <button onClick={() => setShowCancelSubModal(false)} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-amber-500/20 rounded-full">
+                <AlertTriangle className="w-6 h-6 text-amber-500" />
+              </div>
+              <h3 className="text-xl font-bold text-zinc-100">Cancel Subscription?</h3>
+            </div>
+            <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
+              Are you sure you want to cancel your subscription? You will retain access until the end of your current billing period. <strong>Please note that per our Refund Policy, no refunds will be issued for partial months or unused time.</strong>
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => setShowCancelSubModal(false)}
+                className="px-4 py-2 text-sm font-bold text-zinc-400 hover:text-zinc-200"
+              >
+                Go Back
+              </button>
+              <button 
+                onClick={handleCancelSubscription}
+                className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black text-sm font-bold rounded-xl transition-all"
+              >
+                Confirm Cancellation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-[#0a0a0a] border border-rose-500/30 rounded-2xl p-6 shadow-[0_0_50px_rgba(244,63,94,0.1)] relative">
+            <button onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-rose-500/20 rounded-full">
+                <AlertTriangle className="w-6 h-6 text-rose-500" />
+              </div>
+              <h3 className="text-xl font-bold text-rose-500">Delete Account</h3>
+            </div>
+            <p className="text-sm text-zinc-400 mb-4 leading-relaxed">
+              This action is <strong>permanent and cannot be undone</strong>. All your personal data, licenses, CEUs, documents, and settings will be permanently erased from our servers.
+            </p>
+            <div className="mb-6">
+              <label className="block text-xs font-bold text-zinc-500 mb-2 uppercase tracking-widest">Type "DELETE" to confirm</label>
+              <input 
+                type="text" 
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                className="w-full bg-black border border-rose-500/30 rounded-xl px-4 py-2.5 text-sm text-rose-100 placeholder-rose-900 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50"
+                placeholder="DELETE"
+              />
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
+                className="px-4 py-2 text-sm font-bold text-zinc-400 hover:text-zinc-200 disabled:opacity-50"
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText !== 'DELETE' || isDeleting}
+                className="px-4 py-2 bg-rose-500 hover:bg-rose-600 disabled:bg-rose-500/30 disabled:text-rose-200/50 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center min-w-[120px]"
+              >
+                {isDeleting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Delete Forever'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
