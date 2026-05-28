@@ -103,7 +103,11 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     const isSuspended = userProfile.paymentSuspended === true || accStatus === 'suspended' || status === 'past_due';
 
     const handleUpgrade = () => {
-      const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK || "https://buy.polar.sh/polar_cl_FtrsjM8NxMdhweCK3jqQkQfyBGnZEgwdLxQNO3mYKcT";
+      const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK;
+      if (!checkoutLink) {
+        console.error("Missing NEXT_PUBLIC_POLAR_CHECKOUT_LINK environment variable");
+        return;
+      }
       let url = checkoutLink;
       if (user.email) {
         url += `?customer_email=${encodeURIComponent(user.email)}&metadata[firebaseUid]=${user.uid}&metadata[source]=dashboard_sidebar`;

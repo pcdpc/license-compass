@@ -21,14 +21,24 @@ export default function BillingPage() {
   };
 
   const handleUpgrade = () => {
-    setLoading(true);
-    const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK || "https://buy.polar.sh/polar_cl_FtrsjM8NxMdhweCK3jqQkQfyBGnZEgwdLxQNO3mYKcT";
-    let url = checkoutLink;
-    if (user) {
-      const email = encodeURIComponent(user.email || '');
-      url += `?customer_email=${email}&metadata[firebaseUid]=${user.uid}&metadata[source]=np_compass`;
+    try {
+      setLoading(true);
+      const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK;
+      
+      if (!checkoutLink) {
+        throw new Error("Missing Polar checkout link. Please configure NEXT_PUBLIC_POLAR_CHECKOUT_LINK.");
+      }
+
+      let url = checkoutLink;
+      if (user) {
+        const email = encodeURIComponent(user.email || '');
+        url += `?customer_email=${email}&metadata[firebaseUid]=${user.uid}&metadata[source]=np_compass`;
+      }
+      window.location.href = url;
+    } catch (error) {
+      console.error("Failed to initiate checkout:", error);
+      setLoading(false);
     }
-    window.location.href = url;
   };
 
   if (!userProfile) return null;
