@@ -22,3 +22,7 @@ env:
     value: "G-9SELKRFV3D"
   - variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
     value: "https://license-compass-default-rtdb.firebaseio.com"
+  - variable: POLAR_WEBHOOK_SECRET
+    secret: polar_webhook_secret
+  - variable: NEXT_PUBLIC_POLAR_CHECKOUT_LINK
+    secret: polar_checkout_link
