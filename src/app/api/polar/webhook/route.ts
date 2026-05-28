@@ -14,7 +14,7 @@ export const POST = Webhooks({
     try {
       const type = (payload as any).type;
       const data = (payload as any).data;
-      const eventId = data?.id || (payload as any).id; // fallback to payload.id if it exists, but usually data.id for Polar
+      const eventId = (payload as any).id; // DO NOT fallback to data.id, because data.id is the subscription/customer ID!
 
       if (eventId) {
         const eventDocRef = adminDb.collection('webhook_events').doc(eventId);
@@ -24,6 +24,9 @@ export const POST = Webhooks({
           return;
         }
         await eventDocRef.set(cleanObj({ processedAt: new Date(), type, data }));
+      } else {
+        // Log it anyway without an ID
+        await adminDb.collection('webhook_events').add(cleanObj({ processedAt: new Date(), type, data }));
       }
 
       console.log(`[Polar Webhook] Received event: ${type}`);
