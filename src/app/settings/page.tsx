@@ -60,6 +60,134 @@ export default function SettingsPage() {
     }
   }, [userProfile]);
 
+  // Subscription Info Helper
+  const getSubscriptionInfo = () => {
+    if (!userProfile) return null;
+    
+    const role = userProfile.role;
+    if (role === 'admin') {
+      return {
+        statusLabel: 'Super Admin Access',
+        colorClass: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+        message: 'You have full system administrator privileges and bypass all subscription controls.',
+        details: []
+      };
+    }
+
+    const provider = userProfile.subscriptionProvider || 'NP Compass (Internal)';
+    const status = userProfile.subscriptionStatus || 'none';
+    const accStatus = userProfile.accountStatus;
+    const isSuspended = userProfile.paymentSuspended === true || accStatus === 'suspended';
+    
+    const trialStart = toDate(userProfile.trialStartDate) || toDate(userProfile.createdAt) || new Date();
+    const trialEnd = toDate(userProfile.trialEndDate);
+    const now = new Date();
+    
+    // 1. Payment Suspended
+    if (isSuspended) {
+      return {
+        statusLabel: 'Payment Required',
+        colorClass: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
+        message: 'Your account is suspended due to a payment issue or failed renewal. Access is restricted until payment is resolved.',
+        details: [
+          { label: 'Provider', value: provider },
+          { label: 'Status', value: 'Suspended' }
+        ]
+      };
+    }
+
+    // 2. Trial Status / Expired Trial Status
+    if (status === 'trialing' || accStatus === 'trial' || accStatus === 'trialing' || trialEnd) {
+      if (trialEnd) {
+        const totalTrialMs = trialEnd.getTime() - trialStart.getTime();
+        const totalDays = Math.max(1, Math.round(totalTrialMs / (1000 * 60 * 60 * 24)));
+        const elapsedMs = now.getTime() - trialStart.getTime();
+        const elapsedDays = Math.max(1, Math.ceil(elapsedMs / (1000 * 60 * 60 * 24)));
+        const daysLeft = Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        const dayNumber = Math.min(totalDays, elapsedDays);
+        
+        const isExpired = trialEnd < now;
+        if (isExpired) {
+          return {
+            statusLabel: 'Expired Trial',
+            colorClass: 'text-zinc-500 bg-zinc-500/10 border-zinc-500/20 border',
+            message: 'Your 14-day free trial has expired. Upgrade your account to keep access to licenses and CEU management.',
+            details: [
+              { label: 'Trial Started', value: trialStart.toLocaleDateString() },
+              { label: 'Trial Ended', value: trialEnd.toLocaleDateString() }
+            ]
+          };
+        }
+
+        if (status === 'trialing' || accStatus === 'trial' || accStatus === 'trialing') {
+          return {
+            statusLabel: `Trial Active — Day ${dayNumber} of ${totalDays}`,
+            colorClass: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.1)]',
+            message: `You are currently on a free trial. You have ${daysLeft} days remaining to explore premium features.`,
+            details: [
+              { label: 'Trial Start Date', value: trialStart.toLocaleDateString() },
+              { label: 'Trial End Date', value: trialEnd.toLocaleDateString() },
+              { label: 'Days Remaining', value: `${daysLeft} days` }
+            ]
+          };
+        }
+      }
+    }
+
+    // 3. Subscription Active
+    if (status === 'active' || accStatus === 'active') {
+      const renewalDate = userProfile.currentPeriodEnd ? toDate(userProfile.currentPeriodEnd) : null;
+      return {
+        statusLabel: 'Subscription Active',
+        colorClass: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]',
+        message: 'Thank you for being a premium subscriber! You have full access to all features, trackers, and notifications.',
+        details: [
+          { label: 'Subscription Provider', value: provider },
+          { label: 'Current Period End', value: renewalDate ? renewalDate.toLocaleDateString() : 'N/A' },
+          { label: 'Status', value: 'Active' }
+        ]
+      };
+    }
+
+    // 4. Subscription Canceled (Grace Period checking)
+    if (status === 'canceled' || accStatus === 'canceled') {
+      const periodEnd = userProfile.currentPeriodEnd ? toDate(userProfile.currentPeriodEnd) : null;
+      const isPast = periodEnd ? periodEnd < now : true;
+      
+      if (isPast) {
+        return {
+          statusLabel: 'Canceled',
+          colorClass: 'text-zinc-500 bg-zinc-500/10 border-zinc-500/20',
+          message: 'Your subscription has been canceled and the active billing period has ended. Access is locked.',
+          details: [
+            { label: 'Subscription Provider', value: provider },
+            { label: 'Access Ended', value: periodEnd ? periodEnd.toLocaleDateString() : 'N/A' }
+          ]
+        };
+      }
+
+      return {
+        statusLabel: 'Canceled — Ending Soon',
+        colorClass: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+        message: 'Your subscription has been canceled, but you retain access until the end of your current billing period.',
+        details: [
+          { label: 'Subscription Provider', value: provider },
+          { label: 'Access Expiration', value: periodEnd ? periodEnd.toLocaleDateString() : 'N/A' }
+        ]
+      };
+    }
+
+    // 5. Default fallback
+    return {
+      statusLabel: 'No Active Subscription',
+      colorClass: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
+      message: 'Your account does not have an active subscription or trial. Please upgrade to unlock NP Compass.',
+      details: []
+    };
+  };
+
+  const subInfo = getSubscriptionInfo();
+
   const update = (path: string, value: any) => {
     setForm(prev => {
       const keys = path.split('.');
@@ -418,7 +546,41 @@ export default function SettingsPage() {
         {/* Right Column - Settings & Misc */}
         <div className="space-y-8">
           
-          {/* Billing moved to /billing */}
+          {/* Subscription & Billing Status Section */}
+          {subInfo && (
+            <div className="glass-panel rounded-2xl overflow-hidden p-6 space-y-6">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <div className="p-2 bg-indigo-500/10 rounded-xl">
+                  <CreditCard className="w-5 h-5 text-indigo-400" />
+                </div>
+                <h2 className="text-lg font-bold text-zinc-100">Subscription Status</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-zinc-400">Account Status</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${subInfo.colorClass}`}>
+                    {subInfo.statusLabel}
+                  </span>
+                </div>
+
+                <p className="text-sm text-zinc-400 font-medium leading-relaxed bg-white/5 border border-white/5 p-4 rounded-xl">
+                  {subInfo.message}
+                </p>
+
+                {subInfo.details.length > 0 && (
+                  <div className="space-y-2.5 pt-2 border-t border-white/5">
+                    {subInfo.details.map((detail, idx) => (
+                      <div key={idx} className="flex justify-between text-xs">
+                        <span className="text-zinc-500 font-semibold">{detail.label}</span>
+                        <span className="text-zinc-200 font-bold">{detail.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           
           {/* Notifications */}
           <div className="glass-panel rounded-2xl overflow-hidden p-6 space-y-6">

@@ -69,6 +69,7 @@ export const POST = Webhooks({
           await updateUserBilling(getUid(data.metadata), {
             subscriptionProvider: "polar",
             polarCustomerId: data.id,
+            providerCustomerId: data.id,
             billingEmail: data.email
           }, data.id);
           break;
@@ -76,11 +77,16 @@ export const POST = Webhooks({
         case 'subscription.created':
         case 'subscription.active':
         case 'subscription.updated':
+          const isSubActive = data.status === 'active';
           await updateUserBilling(getUid(data.metadata), {
             subscriptionProvider: "polar",
             polarSubscriptionId: data.id,
             polarCustomerId: data.customer_id,
+            providerSubscriptionId: data.id,
+            providerCustomerId: data.customer_id,
             subscriptionStatus: data.status,
+            accountStatus: isSubActive ? 'active' : data.status === 'trialing' ? 'trial' : 'active',
+            paymentSuspended: false,
             currentPeriodStart: data.current_period_start ? new Date(data.current_period_start) : null,
             currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
             // Assuming the product/price information tells us if it's monthly or annual
@@ -89,10 +95,20 @@ export const POST = Webhooks({
           break;
 
         case 'subscription.past_due':
+          await updateUserBilling(getUid(data.metadata), {
+            subscriptionStatus: data.status,
+            accountStatus: 'suspended',
+            paymentSuspended: true,
+            currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
+          }, data.customer_id);
+          break;
+
         case 'subscription.canceled':
         case 'subscription.revoked':
           await updateUserBilling(getUid(data.metadata), {
             subscriptionStatus: data.status,
+            accountStatus: 'canceled',
+            paymentSuspended: false,
             currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
           }, data.customer_id);
           break;

@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper to check if caller is an admin
+    function isAdmin() {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      
+      allow create: if request.auth != null && (
+        isAdmin() || (
+          request.auth.uid == userId 
+          && request.resource.data.role == 'user'
+          && (request.resource.data.subscriptionStatus == 'trialing' || !('subscriptionStatus' in request.resource.data))
+          && (request.resource.data.accountStatus == 'trial' || !('accountStatus' in request.resource.data))
+        )
+      );
+      
+      allow update: if request.auth != null && (
+        isAdmin() || (
+          request.auth.uid == userId
+          && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)
+          && (!('subscriptionStatus' in request.resource.data) || request.resource.data.subscriptionStatus == resource.data.subscriptionStatus)
+          && (!('accountStatus' in request.resource.data) || request.resource.data.accountStatus == resource.data.accountStatus)
+          && (!('trialStartDate' in request.resource.data) || request.resource.data.trialStartDate == resource.data.trialStartDate)
+          && (!('trialEndDate' in request.resource.data) || request.resource.data.trialEndDate == resource.data.trialEndDate)
+          && (!('paymentSuspended' in request.resource.data) || request.resource.data.paymentSuspended == resource.data.paymentSuspended)
+          && (!('polarSubscriptionId' in request.resource.data) || request.resource.data.polarSubscriptionId == resource.data.polarSubscriptionId)
+          && (!('paddleSubscriptionId' in request.resource.data) || request.resource.data.paddleSubscriptionId == resource.data.paddleSubscriptionId)
+          && (!('stripeSubscriptionId' in request.resource.data) || request.resource.data.stripeSubscriptionId == resource.data.stripeSubscriptionId)
+          && (!('providerSubscriptionId' in request.resource.data) || request.resource.data.providerSubscriptionId == resource.data.providerSubscriptionId)
+          && (!('subscriptionProvider' in request.resource.data) || request.resource.data.subscriptionProvider == resource.data.subscriptionProvider)
+          && (!('providerCustomerId' in request.resource.data) || request.resource.data.providerCustomerId == resource.data.providerCustomerId)
+          && (!('currentPeriodEnd' in request.resource.data) || request.resource.data.currentPeriodEnd == resource.data.currentPeriodEnd)
+        )
+      );
+      
+      allow delete: if isAdmin();
+      
+      // Subcollections
+      match /licenses/{licenseId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+      match /ceus/{ceuId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+      match /documents/{docId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+      match /notifications/{notifId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+      match /practiceHours/{hourId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+      match /certifications/{certId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+      match /careers/{careerId} { allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin()); }
+    }
+    
+    // Global APRN defaults rule
+    match /aprnRequirementDefaults/{stateCode} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}

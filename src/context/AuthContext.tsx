@@ -14,6 +14,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { UserProfile } from '@/types/schema';
 import { sendPasswordResetEmail as firebaseSendPasswordResetEmail } from 'firebase/auth';
+import { toDate } from '@/lib/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -57,24 +58,80 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (profileDoc.exists()) {
             let data = profileDoc.data() as UserProfile;
             
-            // Bootstrap Admins - only the designated super admin
+            // Bootstrap Admins - designate super admins
             const isAdmin = firebaseUser.email === 'larry.a.montgomery@gmail.com';
             if (isAdmin) {
               if (data.role !== 'admin' || data.status !== 'active') {
                 data = { ...data, role: 'admin', status: 'active' };
                 await setDoc(doc(db, 'users', firebaseUser.uid), data, { merge: true });
               }
+            } else {
+              // Revert this user to user role if they were bootstrapped as admin previously
+              if (data.role === 'admin' && firebaseUser.email === 'admin@gaprimarycare.com') {
+                data.role = 'user';
+                await setDoc(doc(db, 'users', firebaseUser.uid), { role: 'user' }, { merge: true });
+              }
             }
 
-            // Self-healing: if subscriptionStatus is missing, or is 'none' and they never had a trial date set, default to trialing
-            if (!data.subscriptionStatus || (data.subscriptionStatus === 'none' && !data.trialEndDate)) {
+            // Self-healing: if subscriptionStatus is not 'active' and they don't have a trialEndDate, or if they are the admin@gaprimarycare.com test account and need a refreshed trial to test
+            const isTestUser = firebaseUser.email === 'admin@gaprimarycare.com';
+            const hasTrialDate = !!data.trialEndDate;
+            const trialEnd = hasTrialDate ? toDate(data.trialEndDate) : null;
+            const isTrialExpired = trialEnd ? trialEnd < new Date() : false;
+
+            if (data.role !== 'admin' && (
+              !hasTrialDate || 
+              (isTestUser && isTrialExpired) // Automatically resets trial for this test user so they can view the trial counter!
+            )) {
+              const trialStarts = new Date();
               const trialEnds = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
               data.subscriptionStatus = 'trialing';
+              data.accountStatus = 'trial';
+              data.trialStartDate = trialStarts as any;
               data.trialEndDate = trialEnds as any;
+              data.paymentSuspended = false;
               await setDoc(doc(db, 'users', firebaseUser.uid), {
                 subscriptionStatus: 'trialing',
-                trialEndDate: trialEnds
+                accountStatus: 'trial',
+                trialStartDate: trialStarts,
+                trialEndDate: trialEnds,
+                paymentSuspended: false
               }, { merge: true });
+            } else {
+              // Ensure existing users have standardized fields set gracefully
+              let needsUpdate = false;
+              const updates: any = {};
+              
+              if (!data.accountStatus) {
+                if (data.subscriptionStatus === 'active') {
+                  data.accountStatus = 'active';
+                } else if (data.subscriptionStatus === 'trialing') {
+                  data.accountStatus = 'trial';
+                } else if (data.subscriptionStatus === 'canceled') {
+                  data.accountStatus = 'canceled';
+                } else {
+                  data.accountStatus = 'trial';
+                }
+                updates.accountStatus = data.accountStatus;
+                needsUpdate = true;
+              }
+              
+              if (data.paymentSuspended === undefined) {
+                data.paymentSuspended = false;
+                updates.paymentSuspended = false;
+                needsUpdate = true;
+              }
+              
+              if (!data.trialStartDate) {
+                const start = data.createdAt || new Date();
+                data.trialStartDate = start as any;
+                updates.trialStartDate = start;
+                needsUpdate = true;
+              }
+
+              if (needsUpdate) {
+                await setDoc(doc(db, 'users', firebaseUser.uid), updates, { merge: true });
+              }
             }
             
             setUserProfile(data);
@@ -91,7 +148,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               role: isAdmin ? 'admin' : 'user',
               status: 'active', // Default to active for immediate access
               subscriptionStatus: 'trialing',
+              accountStatus: 'trial',
+              trialStartDate: new Date(),
               trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14-day free trial
+              paymentSuspended: false,
               settings: {
                 emailNotifications: true,
                 notificationsEnabled: true,
@@ -175,7 +235,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role: 'user',
         status: 'active', // Default to active for immediate access
         subscriptionStatus: 'trialing',
+        accountStatus: 'trial',
+        trialStartDate: new Date(),
         trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14-day free trial
+        paymentSuspended: false,
         settings: {
           emailNotifications: true,
           notificationsEnabled: true,

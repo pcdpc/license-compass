@@ -27,18 +27,22 @@ export interface UserProfile {
   malpracticeCertExpiration?: Timestamp | null;
 
   // Subscription & Billing
-  subscriptionProvider?: "polar";
+  subscriptionProvider?: "polar" | "paddle" | "stripe" | string;
   polarCustomerId?: string | null;
   polarSubscriptionId?: string | null;
   polarCheckoutId?: string | null;
   polarOrderId?: string | null;
+  providerCustomerId?: string | null;
+  providerSubscriptionId?: string | null;
   subscriptionStatus?: "none" | "trialing" | "active" | "past_due" | "canceled" | "revoked" | "refunded";
-  accountStatus?: "pending" | "trialing" | "active" | "past_due" | "suspended" | "canceled";
+  accountStatus?: "pending" | "trial" | "trialing" | "active" | "past_due" | "suspended" | "canceled";
   plan?: "monthly" | "annual" | null;
   currentPeriodStart?: Timestamp | null;
   currentPeriodEnd?: Timestamp | null;
   trialStartDate?: Timestamp | null;
   trialEndDate?: Timestamp | null;
+  trialDaysRemaining?: number | null;
+  paymentSuspended?: boolean;
   lastPaymentAt?: Timestamp | null;
   lastWebhookEventId?: string | null;
   billingEmail?: string;

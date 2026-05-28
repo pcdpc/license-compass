@@ -99,21 +99,8 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     if (!userProfile || !user || userProfile.role === 'admin') return null;
 
     const status = userProfile.subscriptionStatus || 'none';
-    const isActive = status === 'active';
-    const isTrialing = status === 'trialing';
-
-    let endDate = null;
-    if (isTrialing && userProfile.trialEndDate) {
-      endDate = toDate(userProfile.trialEndDate);
-    } else if (isActive && userProfile.currentPeriodEnd) {
-      endDate = toDate(userProfile.currentPeriodEnd);
-    }
-
-    let daysLeft: number | null = null;
-    if (endDate) {
-      const diff = endDate.getTime() - Date.now();
-      daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    }
+    const accStatus = userProfile.accountStatus || 'none';
+    const isSuspended = userProfile.paymentSuspended === true || accStatus === 'suspended' || status === 'past_due';
 
     const handleUpgrade = () => {
       const checkoutLink = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_LINK || "https://buy.polar.sh/polar_cl_FtrsjM8NxMdhweCK3jqQkQfyBGnZEgwdLxQNO3mYKcT";
@@ -124,11 +111,47 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       window.location.href = url;
     };
 
+    if (isSuspended) {
+      return (
+        <div className="mb-3 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl space-y-2">
+          <div className="flex items-center justify-between text-rose-400 text-xs font-bold uppercase tracking-widest">
+            <span>Suspended</span>
+          </div>
+          <p className="text-[10px] text-rose-300 font-medium">Payment issue detected.</p>
+          <button 
+            onClick={handleUpgrade}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-gradient-to-r from-rose-500 to-red-600 text-white text-[10px] font-bold rounded-lg hover:shadow-[0_0_10px_rgba(244,63,94,0.3)] transition-all uppercase tracking-widest"
+          >
+            <Zap className="w-3 h-3" /> Upgrade Now
+          </button>
+        </div>
+      );
+    }
+
+    const isActive = status === 'active' || accStatus === 'active';
+    const isTrialing = status === 'trialing' || accStatus === 'trial' || accStatus === 'trialing';
+
+    let endDate = null;
+    if (isTrialing && userProfile.trialEndDate) {
+      endDate = toDate(userProfile.trialEndDate);
+    } else if (isActive && userProfile.currentPeriodEnd) {
+      endDate = toDate(userProfile.currentPeriodEnd);
+    } else if ((status === 'canceled' || accStatus === 'canceled') && userProfile.currentPeriodEnd) {
+      endDate = toDate(userProfile.currentPeriodEnd);
+    }
+
+    let daysLeft: number | null = null;
+    if (endDate) {
+      const diff = endDate.getTime() - Date.now();
+      daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+
     if (isTrialing) {
+      const isExpired = endDate ? endDate < new Date() : false;
       return (
         <div className="mb-3 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl space-y-2">
           <div className="flex items-center justify-between text-indigo-300 text-xs font-bold uppercase tracking-widest">
-            <span>Free Trial</span>
+            <span>{isExpired ? 'Trial Expired' : 'Free Trial'}</span>
             {daysLeft !== null && <span>{daysLeft > 0 ? `${daysLeft} Days` : 'Ends Today'}</span>}
           </div>
           <button 

@@ -15,24 +15,33 @@ export function hasPremiumAccess(userProfile: UserProfile | null | undefined): b
   // Super admin always has access
   if (userProfile.role === 'admin') return true;
 
+  // Block if suspended
+  if (userProfile.paymentSuspended === true || userProfile.accountStatus === 'suspended') {
+    return false;
+  }
+
   const status = userProfile.subscriptionStatus;
+  const accStatus = userProfile.accountStatus;
   const now = new Date();
 
-  if (status === 'active') {
+  // Active status yields access
+  if (status === 'active' || accStatus === 'active') {
     return true;
   }
 
-  if (status === 'trialing') {
-    if (!userProfile.trialEndDate) return true; // assuming valid trial if no date set yet, or false depending on strictness
+  // Trial access is valid if the trial is active and not expired
+  if (status === 'trialing' || accStatus === 'trial' || accStatus === 'trialing') {
+    if (!userProfile.trialEndDate) return true; // Default to active trial if no date set
     const trialEnd = toDate(userProfile.trialEndDate);
     return trialEnd ? trialEnd > now : false;
   }
 
+  // Grace period access for canceled subscriptions
   if (status === 'canceled' && userProfile.currentPeriodEnd) {
     const periodEnd = toDate(userProfile.currentPeriodEnd);
     return periodEnd ? periodEnd > now : false;
   }
 
-  // Any other status ('expired', 'past_due', 'suspended', 'none') is blocked.
+  // Any other status (e.g., none, expired, or past_due) is blocked
   return false;
 }
