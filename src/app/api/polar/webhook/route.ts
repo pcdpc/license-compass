@@ -21,14 +21,28 @@ export const POST = Webhooks({
 
       console.log(`[Polar Webhook] Received event: ${type}`);
 
-      // Helper to update user document by uid or by looking up polarCustomerId
-      const updateUserBilling = async (uid: string | undefined, updates: any, polarCustomerId: string | null = null) => {
+      // Helper to update user document by uid, by looking up polarCustomerId, or by matching email
+      const updateUserBilling = async (
+        uid: string | undefined,
+        updates: any,
+        polarCustomerId: string | null = null,
+        email: string | null = null
+      ) => {
         let userRef = null;
 
         if (uid) {
           userRef = adminDb.collection('users').doc(uid);
-        } else if (polarCustomerId) {
+        }
+
+        if (!userRef && polarCustomerId) {
           const snapshot = await adminDb.collection('users').where('polarCustomerId', '==', polarCustomerId).limit(1).get();
+          if (!snapshot.empty) {
+            userRef = snapshot.docs[0].ref;
+          }
+        }
+
+        if (!userRef && email) {
+          const snapshot = await adminDb.collection('users').where('email', '==', email).limit(1).get();
           if (!snapshot.empty) {
             userRef = snapshot.docs[0].ref;
           }
@@ -37,23 +51,30 @@ export const POST = Webhooks({
         if (userRef) {
           const doc = await userRef.get();
           if (doc.exists) {
-            await userRef.update({
+            // Include polarCustomerId mapping if it is set in updates or passed separately
+            const finalUpdates: any = {
               ...updates,
               updatedAt: new Date(),
               lastWebhookEventId: (payload as any).id || null
-            });
+            };
+            if (polarCustomerId && !doc.data()?.polarCustomerId) {
+              finalUpdates.polarCustomerId = polarCustomerId;
+              finalUpdates.providerCustomerId = polarCustomerId;
+            }
+            await userRef.update(finalUpdates);
             console.log(`[Polar Webhook] Updated user ${userRef.id} successfully.`);
           } else {
             console.warn(`[Polar Webhook] User document ${userRef.id} not found.`);
           }
         } else {
-          console.warn(`[Polar Webhook] No user found for UID: ${uid} or Customer ID: ${polarCustomerId}`);
+          console.warn(`[Polar Webhook] No user found for UID: ${uid}, Customer ID: ${polarCustomerId}, or Email: ${email}`);
           await adminDb.collection('unresolvedBillingEvents').add({
             eventId: (payload as any).id,
             type: (payload as any).type,
             data: (payload as any).data,
             uid: uid || null,
             polarCustomerId: polarCustomerId || null,
+            email: email || null,
             createdAt: new Date(),
           });
         }
@@ -61,6 +82,8 @@ export const POST = Webhooks({
 
       // Extract metadata firebaseUid if available
       const getUid = (metadata: any) => metadata?.firebaseUid || null;
+
+      const customerEmail = data.customer?.email || data.user?.email || data.email || null;
 
       switch (type) {
         case 'customer.created':
@@ -71,7 +94,7 @@ export const POST = Webhooks({
             polarCustomerId: data.id,
             providerCustomerId: data.id,
             billingEmail: data.email
-          }, data.id);
+          }, data.id, data.email);
           break;
 
         case 'subscription.created':
@@ -91,7 +114,7 @@ export const POST = Webhooks({
             currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
             // Assuming the product/price information tells us if it's monthly or annual
             // If data.price isn't available, we may just keep whatever they selected or infer it
-          }, data.customer_id);
+          }, data.customer_id, customerEmail);
           break;
 
         case 'subscription.past_due':
@@ -100,7 +123,7 @@ export const POST = Webhooks({
             accountStatus: 'suspended',
             paymentSuspended: true,
             currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
-          }, data.customer_id);
+          }, data.customer_id, customerEmail);
           break;
 
         case 'subscription.canceled':
@@ -110,7 +133,7 @@ export const POST = Webhooks({
             accountStatus: 'canceled',
             paymentSuspended: false,
             currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
-          }, data.customer_id);
+          }, data.customer_id, customerEmail);
           break;
 
         case 'order.created':
@@ -120,7 +143,7 @@ export const POST = Webhooks({
           await updateUserBilling(getUid(data.metadata), {
             polarOrderId: data.id,
             lastPaymentAt: new Date(),
-          }, data.customer_id);
+          }, data.customer_id, customerEmail);
           break;
 
         case 'refund.created':
