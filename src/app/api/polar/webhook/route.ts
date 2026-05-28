@@ -1,13 +1,20 @@
 import { Webhooks } from "@polar-sh/nextjs";
 import { adminDb } from "@/lib/firebase-admin";
 
+// Helper to remove undefined values so Firestore doesn't crash
+const cleanObj = (obj: any) => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v !== undefined)
+  );
+};
+
 export const POST = Webhooks({
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET || "",
   onPayload: async (payload) => {
     try {
       const type = (payload as any).type;
       const data = (payload as any).data;
-      const eventId = (payload as any).id;
+      const eventId = data?.id || (payload as any).id; // fallback to payload.id if it exists, but usually data.id for Polar
 
       if (eventId) {
         const eventDocRef = adminDb.collection('webhook_events').doc(eventId);
@@ -16,14 +23,14 @@ export const POST = Webhooks({
           console.log(`[Polar Webhook] Event ${eventId} already processed. Skipping.`);
           return;
         }
-        await eventDocRef.set({ processedAt: new Date(), type, data });
+        await eventDocRef.set(cleanObj({ processedAt: new Date(), type, data }));
       }
 
       console.log(`[Polar Webhook] Received event: ${type}`);
 
       // Helper to update user document by uid, by looking up polarCustomerId, or by matching email
       const updateUserBilling = async (
-        uid: string | undefined,
+        uid: string | undefined | null,
         updates: any,
         polarCustomerId: string | null = null,
         email: string | null = null
@@ -55,28 +62,28 @@ export const POST = Webhooks({
             const finalUpdates: any = {
               ...updates,
               updatedAt: new Date(),
-              lastWebhookEventId: (payload as any).id || null
+              lastWebhookEventId: eventId || null
             };
             if (polarCustomerId && !doc.data()?.polarCustomerId) {
               finalUpdates.polarCustomerId = polarCustomerId;
               finalUpdates.providerCustomerId = polarCustomerId;
             }
-            await userRef.update(finalUpdates);
+            await userRef.update(cleanObj(finalUpdates));
             console.log(`[Polar Webhook] Updated user ${userRef.id} successfully.`);
           } else {
             console.warn(`[Polar Webhook] User document ${userRef.id} not found.`);
           }
         } else {
           console.warn(`[Polar Webhook] No user found for UID: ${uid}, Customer ID: ${polarCustomerId}, or Email: ${email}`);
-          await adminDb.collection('unresolvedBillingEvents').add({
-            eventId: (payload as any).id,
-            type: (payload as any).type,
-            data: (payload as any).data,
+          await adminDb.collection('unresolvedBillingEvents').add(cleanObj({
+            eventId: eventId || null,
+            type: type || null,
+            data: data || null,
             uid: uid || null,
             polarCustomerId: polarCustomerId || null,
             email: email || null,
             createdAt: new Date(),
-          });
+          }));
         }
       };
 
