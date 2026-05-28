@@ -181,6 +181,24 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       );
     }
 
+    if (status === 'canceled' || accStatus === 'canceled') {
+      const isPast = endDate ? endDate < new Date() : true;
+      return (
+        <div className={`mb-3 p-3 ${isPast ? 'bg-zinc-500/10 border-zinc-500/20' : 'bg-amber-500/10 border-amber-500/20'} rounded-xl space-y-2`}>
+          <div className={`flex items-center justify-between ${isPast ? 'text-zinc-400' : 'text-amber-400'} text-xs font-bold uppercase tracking-widest`}>
+            <span>{isPast ? 'Canceled' : 'Ending Soon'}</span>
+            {daysLeft !== null && !isPast && <span>{daysLeft} Days</span>}
+          </div>
+          <button 
+            onClick={() => router.push('/billing')}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-[10px] font-bold rounded-lg hover:shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all uppercase tracking-widest"
+          >
+            <Zap className="w-3 h-3" /> Renew Plan
+          </button>
+        </div>
+      );
+    }
+
     return null;
   };
 

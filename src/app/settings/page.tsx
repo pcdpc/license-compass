@@ -21,6 +21,7 @@ import {
   FileText,
   AlertTriangle
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { updateUserProfile, toDate } from '@/lib/firestore';
 import { generateUserDataCSV, downloadCSV } from '@/lib/export-utils';
@@ -42,7 +43,8 @@ const labelClass = "block text-sm font-bold text-zinc-300 mb-1.5";
 const selectClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none";
 
 export default function SettingsPage() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -578,6 +580,16 @@ export default function SettingsPage() {
                     ))}
                   </div>
                 )}
+
+                <div className="pt-4 border-t border-white/5">
+                  <button 
+                    onClick={() => router.push('/billing')}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-200 border border-white/10 font-bold text-sm rounded-xl transition-all"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    Manage Billing / Renew Plan
+                  </button>
+                </div>
               </div>
             </div>
           )}
