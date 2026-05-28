@@ -111,17 +111,15 @@ export const POST = Webhooks({
           await updateUserBilling(getUid(data.metadata), {
             subscriptionProvider: "polar",
             polarSubscriptionId: data.id,
-            polarCustomerId: data.customer_id,
+            polarCustomerId: data.customerId,
             providerSubscriptionId: data.id,
-            providerCustomerId: data.customer_id,
+            providerCustomerId: data.customerId,
             subscriptionStatus: data.status,
             accountStatus: isSubActive ? 'active' : data.status === 'trialing' ? 'trial' : 'active',
             paymentSuspended: false,
-            currentPeriodStart: data.current_period_start ? new Date(data.current_period_start) : null,
-            currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
-            // Assuming the product/price information tells us if it's monthly or annual
-            // If data.price isn't available, we may just keep whatever they selected or infer it
-          }, data.customer_id, customerEmail);
+            currentPeriodStart: data.currentPeriodStart ? new Date(data.currentPeriodStart) : null,
+            currentPeriodEnd: data.currentPeriodEnd ? new Date(data.currentPeriodEnd) : null,
+          }, data.customerId, customerEmail);
           break;
 
         case 'subscription.past_due':
@@ -129,8 +127,8 @@ export const POST = Webhooks({
             subscriptionStatus: data.status,
             accountStatus: 'suspended',
             paymentSuspended: true,
-            currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
-          }, data.customer_id, customerEmail);
+            currentPeriodEnd: data.currentPeriodEnd ? new Date(data.currentPeriodEnd) : null,
+          }, data.customerId, customerEmail);
           break;
 
         case 'subscription.canceled':
@@ -139,8 +137,8 @@ export const POST = Webhooks({
             subscriptionStatus: data.status,
             accountStatus: 'canceled',
             paymentSuspended: false,
-            currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
-          }, data.customer_id, customerEmail);
+            currentPeriodEnd: data.currentPeriodEnd ? new Date(data.currentPeriodEnd) : null,
+          }, data.customerId, customerEmail);
           break;
 
         case 'order.created':
@@ -150,7 +148,7 @@ export const POST = Webhooks({
           await updateUserBilling(getUid(data.metadata), {
             polarOrderId: data.id,
             lastPaymentAt: new Date(),
-          }, data.customer_id, customerEmail);
+          }, data.customerId, customerEmail);
           break;
 
         case 'refund.created':
