@@ -16,6 +16,21 @@ import { UserProfile } from '@/types/schema';
 import { sendPasswordResetEmail as firebaseSendPasswordResetEmail } from 'firebase/auth';
 import { toDate } from '@/lib/firestore';
 
+const triggerOnboardingEmail = async (user: User) => {
+  try {
+    const token = await user.getIdToken();
+    fetch('/api/emails/onboarding', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }).catch(e => console.error('Failed to trigger onboarding email:', e));
+  } catch (error) {
+    console.error('Failed to get token for onboarding email:', error);
+  }
+};
+
 interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
@@ -175,6 +190,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             };
             await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
             setUserProfile(newProfile);
+            triggerOnboardingEmail(firebaseUser);
           }
         } catch (error) {
           console.error("Error fetching/creating user profile:", error);
@@ -263,6 +279,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       await setDoc(doc(db, 'users', user.uid), newProfile);
       setUserProfile(newProfile);
+      triggerOnboardingEmail(user);
     } catch (error) {
       console.error('Error signing up with Email', error);
       throw error;

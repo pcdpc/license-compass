@@ -46,7 +46,7 @@ export interface UserProfile {
   lastPaymentAt?: Timestamp | null;
   lastWebhookEventId?: string | null;
   billingEmail?: string;
-
+  onboardingEmailSent?: boolean;
 
   settings: {
     emailNotifications: boolean;
