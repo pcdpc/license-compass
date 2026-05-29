@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     
     if (userData?.onboardingEmailSent) {
       // Already sent, ignore silently
-      console.log(\`[Onboarding Email] Email already sent to \${callerUid}, skipping.\`);
+      console.log(`[Onboarding Email] Email already sent to ${callerUid}, skipping.`);
       return NextResponse.json({ success: true, message: 'Already sent' }, { status: 200 });
     }
 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
     // Determine dashboard URL based on environment
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.npcompass.com';
-    const dashboardUrl = \`\${baseUrl}/dashboard\`;
+    const dashboardUrl = `${baseUrl}/dashboard`;
 
     const subject = 'Welcome to NP Compass – Built by NPs, for NPs';
     const htmlBody = getOnboardingEmailHtml(userName, dashboardUrl);
@@ -53,13 +53,13 @@ export async function POST(req: Request) {
     const resendApiKey = process.env.RESEND_API_KEY;
 
     if (resendApiKey) {
-      console.log(\`[Onboarding Email] Sending welcome email to \${userEmail}...\`);
+      console.log(`[Onboarding Email] Sending welcome email to ${userEmail}...`);
       try {
         const resendResponse = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': \`Bearer \${resendApiKey}\`
+            'Authorization': `Bearer ${resendApiKey}`
           },
           body: JSON.stringify({
             from: 'NP Compass <welcome@npcompass.app>', // Typical welcome email address
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
           console.error('[Onboarding Email] Resend API error:', resendError);
           // Don't throw, we just log it. We want to avoid blocking the client.
         } else {
-          console.log(\`[Onboarding Email] Successfully sent welcome email to \${userEmail}\`);
+          console.log(`[Onboarding Email] Successfully sent welcome email to ${userEmail}`);
           // Mark as sent in DB
           await callerDocRef.update({ onboardingEmailSent: true });
         }
@@ -87,9 +87,9 @@ export async function POST(req: Request) {
       console.warn('[Onboarding Email] RESEND_API_KEY not set. Simulating email send.');
       console.log('=========================================');
       console.log('   --- ONBOARDING EMAIL LOG SIMULATION ---');
-      console.log(\`   TO: \${userEmail}\`);
-      console.log(\`   CC: support@npcompass.app\`);
-      console.log(\`   SUBJECT: \${subject}\`);
+      console.log(`   TO: ${userEmail}`);
+      console.log(`   CC: support@npcompass.app`);
+      console.log(`   SUBJECT: ${subject}`);
       console.log('=========================================');
       // Mark as sent in DB even if simulated so we don't keep triggering
       await callerDocRef.update({ onboardingEmailSent: true });

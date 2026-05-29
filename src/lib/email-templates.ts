@@ -339,10 +339,10 @@ export function getOnboardingEmailHtml(userName: string, dashboardUrl: string): 
 }
 
 export function getOnboardingEmailText(userName: string, dashboardUrl: string): string {
-  return \`Welcome to NP Compass
+  return `Welcome to NP Compass
 The professional platform designed specifically for Nurse Practitioners.
 
-Hi \${userName},
+Hi ${userName},
 
 Thank you for joining NP Compass! We are incredibly excited to have you as part of our growing community.
 
@@ -355,7 +355,7 @@ Features to explore:
 - Credential Organization: Keep certifications, licenses, and professional records in one place.
 - Professional Compliance: Stay ahead of important deadlines and requirements.
 
-Get started by visiting your dashboard: \${dashboardUrl}
+Get started by visiting your dashboard: ${dashboardUrl}
 
 What's Next?
 1. Add your licenses.
@@ -371,5 +371,5 @@ Thank you for trusting NP Compass. We are honored to be a small part of your pro
 support@npcompass.app
 NP Compass
 "Designed by Nurse Practitioners. Built for Nurse Practitioners."
-\`;
+`;
 }
