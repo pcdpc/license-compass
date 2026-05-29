@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { adminAuth, adminDb, adminInitError } from '@/lib/firebase-admin';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -35,28 +37,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing or empty body parameter' }, { status: 400 });
     }
 
-    const smtpUser = process.env.EMAIL_SERVER_USER;
-    const smtpPassword = process.env.EMAIL_SERVER_PASSWORD;
-
-    if (smtpUser && smtpPassword) {
-      console.log(`[Admin Email] Sending real email to ${userEmails.length} recipients via Nodemailer...`);
+    if (process.env.RESEND_API_KEY) {
+      console.log(`[Admin Email] Sending real email to ${userEmails.length} recipients via Resend...`);
       try {
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-            user: smtpUser,
-            pass: smtpPassword,
-          },
-        });
-
-        // Ensure we send emails in a way that respects BCC or individual sending to avoid exposing emails
-        // For simplicity, we'll send a single email with all users in BCC
-        await transporter.sendMail({
-          from: `"NP Compass Admin" <${smtpUser}>`,
-          to: smtpUser, // Send to self
-          bcc: userEmails, // BCC all users
+        const { data, error } = await resend.emails.send({
+          from: 'NP Compass Admin <support@npcompass.app>',
+          to: ['support@npcompass.app'],
+          bcc: userEmails,
           subject: subject,
           html: `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #0b0c10; color: #c5c6c7; border-radius: 8px; border: 1px solid #1f2833;">
             <h2 style="color: #66fcf1; border-bottom: 2px solid #1f2833; padding-bottom: 10px;">NP Compass System Notification</h2>
@@ -70,10 +57,15 @@ export async function POST(req: Request) {
           text: body
         });
 
-        console.log('[Admin Email] Successfully dispatched emails via Nodemailer.');
+        if (error) {
+          console.error('[Admin Email] Resend API Error:', error);
+          throw new Error(error.message);
+        }
+
+        console.log('[Admin Email] Successfully dispatched emails via Resend:', data);
         return NextResponse.json({ success: true, simulated: false }, { status: 200 });
       } catch (err: any) {
-        console.error('[Admin Email] Error sending via Nodemailer, falling back to simulation logs:', err.message);
+        console.error('[Admin Email] Error sending via Resend, falling back to simulation logs:', err.message);
       }
     }
 

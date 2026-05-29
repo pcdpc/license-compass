@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { adminAuth, adminDb, adminInitError } from '@/lib/firebase-admin';
 import { getOnboardingEmailHtml, getOnboardingEmailText } from '@/lib/email-templates';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -47,39 +49,30 @@ export async function POST(req: Request) {
     const htmlBody = getOnboardingEmailHtml(userName, dashboardUrl);
     const textBody = getOnboardingEmailText(userName, dashboardUrl);
 
-    const smtpUser = process.env.EMAIL_SERVER_USER;
-    const smtpPassword = process.env.EMAIL_SERVER_PASSWORD;
-
-    if (smtpUser && smtpPassword) {
-      console.log(`[Onboarding Email] Sending welcome email to ${userEmail}...`);
+    if (process.env.RESEND_API_KEY) {
+      console.log(`[Onboarding Email] Sending real email to ${userEmail} via Resend...`);
       try {
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-            user: smtpUser,
-            pass: smtpPassword,
-          },
-        });
-
-        await transporter.sendMail({
-          from: `"NP Compass" <${smtpUser}>`,
+        const { data, error } = await resend.emails.send({
+          from: 'NP Compass <support@npcompass.app>',
           to: userEmail,
-          cc: smtpUser,
           subject: subject,
-          text: textBody,
           html: htmlBody,
+          text: textBody
         });
 
-        console.log(`[Onboarding Email] Successfully sent welcome email to ${userEmail}`);
-        // Mark as sent in DB
+        if (error) {
+          console.error('[Onboarding Email] Resend API Error:', error);
+          throw new Error(error.message);
+        }
+
+        console.log('[Onboarding Email] Successfully sent via Resend:', data);
         await callerDocRef.set({ onboardingEmailSent: true }, { merge: true });
+        return NextResponse.json({ success: true, simulated: false }, { status: 200 });
       } catch (err: any) {
-        console.error('[Onboarding Email] Error sending via Nodemailer:', err.message);
+        console.error('[Onboarding Email] Error sending via Resend, falling back to simulation logs:', err.message);
       }
     } else {
-      console.warn('[Onboarding Email] EMAIL_SERVER_USER or EMAIL_SERVER_PASSWORD not set. Simulating email send.');
+      console.warn('[Onboarding Email] RESEND_API_KEY not set. Simulating email send.');
       console.log('=========================================');
       console.log('   --- ONBOARDING EMAIL LOG SIMULATION ---');
       console.log(`   TO: ${userEmail}`);
