@@ -23,11 +23,7 @@ export async function POST(req: Request) {
     const callerDocRef = adminDb.collection('users').doc(callerUid);
     const callerDoc = await callerDocRef.get();
     
-    if (!callerDoc.exists) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 404 });
-    }
-
-    const userData = callerDoc.data();
+    const userData = callerDoc.exists ? callerDoc.data() : null;
     
     if (userData?.onboardingEmailSent) {
       // Already sent, ignore silently
@@ -62,7 +58,7 @@ export async function POST(req: Request) {
             'Authorization': `Bearer ${resendApiKey}`
           },
           body: JSON.stringify({
-            from: 'NP Compass <welcome@npcompass.app>', // Typical welcome email address
+            from: 'NP Compass <admin@npcompass.app>', // Ensure sender is verified
             to: [userEmail],
             cc: ['support@npcompass.app'],
             subject: subject,
@@ -78,7 +74,7 @@ export async function POST(req: Request) {
         } else {
           console.log(`[Onboarding Email] Successfully sent welcome email to ${userEmail}`);
           // Mark as sent in DB
-          await callerDocRef.update({ onboardingEmailSent: true });
+          await callerDocRef.set({ onboardingEmailSent: true }, { merge: true });
         }
       } catch (err: any) {
         console.error('[Onboarding Email] Error sending via Resend API:', err.message);
@@ -92,7 +88,7 @@ export async function POST(req: Request) {
       console.log(`   SUBJECT: ${subject}`);
       console.log('=========================================');
       // Mark as sent in DB even if simulated so we don't keep triggering
-      await callerDocRef.update({ onboardingEmailSent: true });
+      await callerDocRef.set({ onboardingEmailSent: true }, { merge: true });
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
