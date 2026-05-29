@@ -58,7 +58,7 @@ export async function POST(req: Request) {
             'Authorization': `Bearer ${resendApiKey}`
           },
           body: JSON.stringify({
-            from: 'NP Compass <admin@npcompass.app>', // Ensure sender is verified
+            from: 'NP Compass <support@npcompass.app>', // Ensure sender is verified
             to: [userEmail],
             cc: ['support@npcompass.app'],
             subject: subject,
