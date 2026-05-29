@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminAuth, adminDb, adminInitError } from '@/lib/firebase-admin';
+import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   try {
@@ -34,44 +35,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing or empty body parameter' }, { status: 400 });
     }
 
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const smtpUser = process.env.EMAIL_SERVER_USER;
+    const smtpPassword = process.env.EMAIL_SERVER_PASSWORD;
 
-    if (resendApiKey) {
-      console.log(`[Admin Email] Sending real email to ${userEmails.length} recipients via Resend...`);
+    if (smtpUser && smtpPassword) {
+      console.log(`[Admin Email] Sending real email to ${userEmails.length} recipients via Nodemailer...`);
       try {
-        const resendResponse = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${resendApiKey}`
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+            user: smtpUser,
+            pass: smtpPassword,
           },
-          body: JSON.stringify({
-            from: 'NP Compass Admin <admin@npcompass.app>',
-            to: userEmails,
-            subject: subject,
-            html: `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #0b0c10; color: #c5c6c7; border-radius: 8px; border: 1px solid #1f2833;">
-              <h2 style="color: #66fcf1; border-bottom: 2px solid #1f2833; padding-bottom: 10px;">NP Compass System Notification</h2>
-              <div style="font-size: 16px; line-height: 1.6; margin-top: 20px;">
-                ${body.replace(/\n/g, '<br />')}
-              </div>
-              <div style="margin-top: 30px; font-size: 12px; color: #45a29e; border-top: 1px solid #1f2833; padding-top: 10px; text-align: center;">
-                This is an official administrative email sent by your NP Compass platform administrators.
-              </div>
-            </div>`,
-            text: body
-          })
         });
 
-        if (!resendResponse.ok) {
-          const resendError = await resendResponse.text();
-          console.error('[Admin Email] Resend API error response:', resendError);
-          throw new Error(`Resend provider failed: ${resendError}`);
-        }
+        // Ensure we send emails in a way that respects BCC or individual sending to avoid exposing emails
+        // For simplicity, we'll send a single email with all users in BCC
+        await transporter.sendMail({
+          from: `"NP Compass Admin" <${smtpUser}>`,
+          to: smtpUser, // Send to self
+          bcc: userEmails, // BCC all users
+          subject: subject,
+          html: `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #0b0c10; color: #c5c6c7; border-radius: 8px; border: 1px solid #1f2833;">
+            <h2 style="color: #66fcf1; border-bottom: 2px solid #1f2833; padding-bottom: 10px;">NP Compass System Notification</h2>
+            <div style="font-size: 16px; line-height: 1.6; margin-top: 20px;">
+              ${body.replace(/\n/g, '<br />')}
+            </div>
+            <div style="margin-top: 30px; font-size: 12px; color: #45a29e; border-top: 1px solid #1f2833; padding-top: 10px; text-align: center;">
+              This is an official administrative email sent by your NP Compass platform administrators.
+            </div>
+          </div>`,
+          text: body
+        });
 
-        console.log('[Admin Email] Successfully dispatched emails via Resend.');
+        console.log('[Admin Email] Successfully dispatched emails via Nodemailer.');
         return NextResponse.json({ success: true, simulated: false }, { status: 200 });
       } catch (err: any) {
-        console.error('[Admin Email] Error sending via Resend API, falling back to simulation logs:', err.message);
+        console.error('[Admin Email] Error sending via Nodemailer, falling back to simulation logs:', err.message);
       }
     }
 

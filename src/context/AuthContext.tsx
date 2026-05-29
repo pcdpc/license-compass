@@ -13,7 +13,7 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { UserProfile } from '@/types/schema';
-import { sendPasswordResetEmail as firebaseSendPasswordResetEmail } from 'firebase/auth';
+import { sendPasswordResetEmail as firebaseSendPasswordResetEmail, sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { toDate } from '@/lib/firestore';
 
 const triggerOnboardingEmail = async (user: User) => {
@@ -39,6 +39,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
+  sendVerificationEmail: () => Promise<void>;
   signOut: () => Promise<void>;
   isSigningIn: boolean;
 }
@@ -51,6 +52,7 @@ const AuthContext = createContext<AuthContextType>({
   signInWithEmail: async () => {},
   signUpWithEmail: async () => {},
   sendPasswordReset: async () => {},
+  sendVerificationEmail: async () => {},
   signOut: async () => {},
   isSigningIn: false,
 });
@@ -279,6 +281,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       await setDoc(doc(db, 'users', user.uid), newProfile);
       setUserProfile(newProfile);
+      
+      // Send Firebase Email Verification
+      await firebaseSendEmailVerification(user);
+
+      // We continue to send the custom onboarding welcome email
       triggerOnboardingEmail(user);
     } catch (error) {
       console.error('Error signing up with Email', error);
@@ -306,6 +313,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const sendVerificationEmail = async () => {
+    if (auth.currentUser) {
+      try {
+        await firebaseSendEmailVerification(auth.currentUser);
+      } catch (error) {
+        console.error('Error sending verification email', error);
+        throw error;
+      }
+    } else {
+      throw new Error('No user is signed in to send verification email');
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -315,6 +335,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signInWithEmail, 
       signUpWithEmail, 
       sendPasswordReset,
+      sendVerificationEmail,
       signOut, 
       isSigningIn 
     }}>

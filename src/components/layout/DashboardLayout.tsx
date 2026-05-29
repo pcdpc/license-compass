@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { PendingApproval } from '@/components/auth/PendingApproval';
+import { VerifyEmail } from '@/components/auth/VerifyEmail';
 import GlobalFooter from '@/components/layout/GlobalFooter';
 import { hasPremiumAccess } from '@/lib/billing';
 import { SubscriptionLocked } from '@/components/billing/SubscriptionLocked';
@@ -73,6 +74,11 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   
   if (userProfile && !isActive) {
     return <PendingApproval />;
+  }
+
+  // 3.5 Block unverified emails
+  if (user && !user.emailVerified) {
+    return <VerifyEmail />;
   }
 
   // 4. Block users without a valid premium subscription (or active trial)
