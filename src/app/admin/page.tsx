@@ -142,6 +142,69 @@ export default function AdminPage() {
     }
   };
 
+  const handleExtendTrial = async (user: UserProfile & { id: string }) => {
+    setProcessingId(user.id);
+    try {
+      const now = new Date();
+      const currentEnd = toDate(user.trialEndDate);
+      
+      let newTrialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      if (currentEnd && currentEnd > now) {
+        newTrialEnd = new Date(currentEnd.getTime() + 7 * 24 * 60 * 60 * 1000);
+      }
+      
+      await updateUserProfile(user.id, { 
+        trialEndDate: newTrialEnd as any,
+        accountStatus: 'trial'
+      });
+      
+      setUsers(prev => prev.map(u => u.id === user.id ? { ...u, trialEndDate: newTrialEnd as any, accountStatus: 'trial' } : u));
+      alert(`Trial successfully extended by 7 days for ${user.email}.`);
+    } catch (error) {
+      console.error("Error extending trial:", error);
+      alert("Failed to extend trial.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleSendExtensionOffer = async (user: UserProfile & { id: string }) => {
+    if (!user.email) {
+      alert("This user has no email address.");
+      return;
+    }
+    setProcessingId(user.id);
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch('/api/admin/send-offer-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userEmail: user.email })
+      });
+      
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to send offer email');
+      }
+      
+      const data = await res.json();
+      if (data.simulated) {
+        alert(`[Simulation Mode] Trial extension offer email logged for ${user.email}.`);
+      } else {
+        alert(`Trial extension offer email successfully sent to ${user.email}.`);
+      }
+    } catch (error: any) {
+      console.error("Email dispatch failed:", error);
+      alert(`Failed to send email: ${error.message}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+
   const handleImportRequirements = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -482,14 +545,31 @@ export default function AdminPage() {
                       <p className="text-xs text-zinc-500 font-medium">{toDate(user.createdAt)?.toLocaleDateString()}</p>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex flex-col items-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         {user.email === 'larry.a.montgomery@gmail.com' ? (
                           <span className="px-4 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(99,102,241,0.2)] flex items-center gap-2">
                             <ShieldCheck className="w-3.5 h-3.5" /> Super User (Owner)
                           </span>
                         ) : (
                           <>
-                            {user.status !== 'active' && (
+                            <div className="flex items-center gap-2">
+                              <button 
+                                onClick={() => handleExtendTrial(user)}
+                                disabled={processingId === user.id}
+                                className="px-3 py-1.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-lg text-[10px] font-bold hover:bg-indigo-500/20 transition-all disabled:opacity-50 whitespace-nowrap"
+                              >
+                                Extend Trial 7 Days
+                              </button>
+                              <button 
+                                onClick={() => handleSendExtensionOffer(user)}
+                                disabled={processingId === user.id}
+                                className="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg text-[10px] font-bold hover:bg-blue-500/20 transition-all disabled:opacity-50 whitespace-nowrap flex items-center gap-1"
+                              >
+                                <Mail className="w-3 h-3" /> Send Offer
+                              </button>
+                            </div>
+                            <div className="flex items-center justify-end gap-2">
+                              {user.status !== 'active' && (
                               <button 
                                 onClick={() => handleStatusUpdate(user.id, 'active')}
                                 disabled={processingId === user.id}
@@ -514,6 +594,7 @@ export default function AdminPage() {
                             >
                               Delete
                             </button>
+                            </div>
                           </>
                         )}
                       </div>
