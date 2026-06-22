@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Compass, ShieldCheck, Zap, Lock, Mail, User as UserIcon, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { Compass, ShieldCheck, Zap, Lock, Mail, User as UserIcon, ArrowRight, Loader2, CheckCircle2, Star, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import MarketingSection from '@/components/landing/MarketingSection';
 
@@ -139,6 +139,58 @@ export default function LoginPage() {
 
       {/* Right side - Auth Form */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 bg-transparent relative overflow-y-auto">
+        
+        {/* PROMO BADGE */}
+        <div className="w-full max-w-md mb-8 relative group">
+          {/* Animated glow behind */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-40 group-hover:opacity-70 transition duration-1000 group-hover:duration-200"></div>
+          
+          <div className="relative bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 flex flex-col items-center text-center overflow-hidden h-full shadow-2xl">
+            {/* Sparkles background effect */}
+            <div className="absolute top-0 right-0 -mt-4 -mr-4 text-purple-500/10 pointer-events-none">
+              <Sparkles className="w-24 h-24" />
+            </div>
+            <div className="absolute bottom-0 left-0 -mb-4 -ml-4 text-indigo-500/10 pointer-events-none">
+              <Star className="w-20 h-20" />
+            </div>
+            
+            <div className="inline-flex items-center justify-center gap-2 mb-3 relative z-10">
+              <Star className="w-5 h-5 text-amber-400 fill-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+              <h3 className="text-xl md:text-2xl font-black text-white tracking-tight drop-shadow-md">Join Now — Get 65% Off</h3>
+              <Star className="w-5 h-5 text-amber-400 fill-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+            </div>
+            
+            <p className="text-zinc-300 font-medium text-sm md:text-base mb-2 relative z-10">
+              Only <span className="text-white font-bold text-lg">$3.50/month</span> for your first 6 months
+            </p>
+            
+            <div className="bg-white/5 border border-white/10 rounded-xl px-6 py-3 my-4 backdrop-blur-md relative overflow-hidden z-10 w-full max-w-[280px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 mix-blend-overlay"></div>
+              <p className="text-xs text-zinc-400 uppercase tracking-widest font-bold mb-1">Use code at checkout</p>
+              <p className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-400 tracking-wider font-mono drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">NP2026</p>
+            </div>
+            
+            <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest mt-1 mb-5 flex items-center justify-center gap-1.5 relative z-10">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              14-day free trial still included
+            </p>
+            
+            <button 
+              type="button"
+              onClick={() => {
+                setAuthMode('signup');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="w-full relative inline-flex h-12 overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-zinc-50 z-10 hover:scale-[1.02] transition-transform duration-300"
+            >
+              <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl bg-[#050505] px-3 py-1 text-sm font-black text-white uppercase tracking-widest backdrop-blur-3xl transition-colors hover:bg-[#0a0a0a] gap-2">
+                Start Free Trial <ArrowRight className="w-4 h-4" />
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div className="w-full max-w-md space-y-8 glass-panel p-8 md:p-10 rounded-[2rem] relative z-10 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)]">
           <div className="text-center">
             <div className="inline-flex items-center justify-center p-4 bg-white/5 border border-white/10 rounded-2xl shadow-inner mb-6 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
