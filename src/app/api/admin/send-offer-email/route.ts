@@ -94,7 +94,7 @@ export async function POST(req: Request) {
     `;
 
     if (process.env.RESEND_API_KEY) {
-      console.log(\`[Admin Email] Sending promotional extension email to \${userEmail} via Resend...\`);
+      console.log(`[Admin Email] Sending promotional extension email to ${userEmail} via Resend...`);
       try {
         const { data, error } = await resend.emails.send({
           from: 'NP Compass <hello@npcompass.app>',
@@ -115,13 +115,13 @@ export async function POST(req: Request) {
     }
 
     // Fallback simulation log
-    console.log('\\n=========================================');
+    console.log('\n=========================================');
     console.log('   --- ADMIN EMAIL LOG SIMULATION ---');
-    console.log(\`   SENDER: NP Compass <hello@npcompass.app>\`);
-    console.log(\`   TO: \${userEmail}\`);
-    console.log(\`   SUBJECT: \${subject}\`);
-    console.log(\`   HTML PREVIEW LENGTH: \${htmlBody.length} characters\`);
-    console.log('=========================================\\n');
+    console.log(`   SENDER: NP Compass <hello@npcompass.app>`);
+    console.log(`   TO: ${userEmail}`);
+    console.log(`   SUBJECT: ${subject}`);
+    console.log(`   HTML PREVIEW LENGTH: ${htmlBody.length} characters`);
+    console.log('=========================================\n');
 
     return NextResponse.json({ success: true, simulated: true }, { status: 200 });
   } catch (error: any) {
